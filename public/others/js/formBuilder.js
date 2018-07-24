@@ -143,6 +143,8 @@ onLoad = () => {
 
                 }
 
+                console.log(document.getElementById('main-section'));
+
                 document.getElementById('right-section').innerHTML = "";
                 console.log(document.getElementById('main-section').childNodes);
                 checkForMe('main-section', 1, "none");
@@ -226,11 +228,11 @@ onDragOver = (event) => {
                     // distanceY = tempY;
                     distance = Math.min(distance1, distance2, distance3)
                     tempEl = cren[i].id;
-                //     //console.log("**2**");
-                //     //console.log(document.getElementById(tempEl));
-                //     //console.log(distance);
-                //     //console.log("**2**");
-                 } else {
+                    //     //console.log("**2**");
+                    //     //console.log(document.getElementById(tempEl));
+                    //     //console.log(distance);
+                    //     //console.log("**2**");
+                } else {
                     distance1 = Math.sqrt(Math.pow((point1X - distanceX), 2) + Math.pow((distanceY - point1Y), 2));
                     distance2 = Math.sqrt(Math.pow((point2X - distanceX), 2) + Math.pow((distanceY - point2Y), 2));
                     distance3 = Math.sqrt(Math.pow((point3X - distanceX), 2) + Math.pow((distanceY - point3Y), 2));
@@ -350,21 +352,27 @@ drop2 = (event) => {
 
     var buttonClose = document.createElement("BUTTON");
     buttonClose.innerText = "X";
-    buttonClose.className = "right";
+    //buttonClose.className = "right";
     buttonClose.id = "buttonClose"
     var button1 = document.createElement("BUTTON");
     var button2 = document.createElement("BUTTON");
+    var button3 = document.createElement("BUTTON");
 
     button1.innerText = "Append Child";
     button1.id = "appendChild"
     button2.innerText = "Swap";
     button2.id = "swapElement";
+    button3.innerText = "Before the Element";
+    button3.id = "beforeElement";
     button1.className = "btn btn-primary"
     button2.className = "btn btn-primary"
+    button3.className = "btn btn-primary"
     button1.style.margin = "auto"
     button2.style.margin = "auto"
+    button3.style.margin = "auto"
     button1.style.display = "block"
     button2.style.display = "block"
+    button3.style.display = "block"
     var newDiv = document.createElement("DIV");
     newDiv.style.height = "150px";
     newDiv.style.width = "200px";
@@ -381,6 +389,8 @@ drop2 = (event) => {
     newDiv.appendChild(button1);
     newDiv.appendChild(hr);
     newDiv.appendChild(button2);
+    newDiv.appendChild(hr);
+    newDiv.appendChild(button3);
 
     //    document.getElementById("app").style.display = "none";
     document.getElementById("app").style.opacity = 0.3;
@@ -481,6 +491,7 @@ drop = (event) => {
     sourceElement = (event.dataTransfer.getData("dr"));
     id = new Date().getTime();
 
+    var noClick = "N";
 
     if (sourceElement == "container") {
         ;
@@ -654,6 +665,7 @@ drop = (event) => {
             //newContainer.style.margin="20px";
             event.target.appendChild(newText);
         } else {
+            noClick = "Y";
             alert("Input text can be applied only to a form");
         }
     }
@@ -663,7 +675,10 @@ drop = (event) => {
     document.getElementById('right-section').innerHTML = "";
     checkForMe('main-section', 1, "none");
     //console.log("I AM DONE");
-    document.getElementById('display' + ts).click();
+    if (noClick != "Y") {
+        document.getElementById('display' + ts).click();
+
+    }
     if (sourceElement == "form") {
         bindObject(objs[0].schemaName, ts);
 
@@ -697,6 +712,7 @@ var curBorder = "";
 
 document.getElementById('right-section').addEventListener('click', (ev) => {
     var tesmp = ev.target.id;
+    var expId = ev.target.id;
 
     tesmp = tesmp.replace("display", "")
     tesmp = tesmp.replace("exp", "")
@@ -705,13 +721,17 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     //console.log(document.getElementById(tesmp));
     if (cur.length > 0 && document.getElementById(cur) != undefined &&
         document.getElementById(cur).style != null) {
-        if (testArr[cur] != undefined && testArr[cur] != "undefined" && !(testArr[cur].includes(tesmp))) {
-            for (var te = 0; te < testArr[cur].length; te++) {
-                document.getElementById("display" + testArr[cur][te]).style.display = "none";
+        // if (testArr[cur] != undefined && testArr[cur] != "undefined" && !(testArr[cur].includes(tesmp))) {
+        //     for (var te = 0; te < testArr[cur].length; te++) {
+        //         console.log("EXPANDED");
+        //         var tempMargin = String(document.getElementById("display" + cur).style.margin).substr(0, String(document.getElementById("display" + cur).style.margin).indexOf("px"));
 
-            }
-            document.getElementById("exp"+cur).innerText="+";
-        }
+        //         document.getElementById("display" + testArr[cur][te]).style.display = "none";
+        //         document.getElementById("display" + testArr[cur][te]).style.margin = tempMargin + 5 + "px";
+
+        //     }
+        //     document.getElementById("exp" + cur).innerText = "+";
+        // }
         document.getElementById(cur).style.border = curBorder;
         if (document.getElementById("display" + cur) != null && document.getElementById("display" + cur).style != null) {
             document.getElementById("display" + cur).style.backgroundColor = "grey";
@@ -723,12 +743,16 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     //console.log(cur);
     //console.log(testArr);
     //console.log(document.getElementById(cur).innerText);
-    if (document.getElementById("exp"+cur).innerText == "-") {
+    console.log(cur);
+    if ((String(expId).indexOf("exp") != -1)) {
         //console.log("@@@@");
         //console.log(testArr[cur]);
+        
         if (testArr[cur] != undefined && testArr[cur] != "undefined") {
             for (var te = 0; te < testArr[cur].length; te++) {
                 //console.log(document.getElementById(cur));
+                var tempMargin = String(document.getElementById("display" + cur).style.margin).substr(0, String(document.getElementById("display" + cur).style.margin).indexOf("px"));
+                document.getElementById("display" + testArr[cur][te]).style.margin = tempMargin + 15 + "px";
                 document.getElementById("display" + testArr[cur][te]).style.display = "block";
                 document.getElementById("display" + testArr[cur][te]).style.backgroundColor = "yellow";
             }
@@ -1054,8 +1078,20 @@ checkForMe = (mainNode, count, parent) => {
         else {
             testArr[parent] = [];
         }
-        if (parent != "main-section") {
-            temp.style.display = "none";
+        if (parent != "main-section" && parent!="none") {
+            // temp.style.display = "none";
+            console.log("**");
+            console.log(parent);
+            console.log(document.getElementById(mainNode).name);
+            
+            var tempMargin = String(document.getElementById("display"+parent).style.marginLeft).substr(0, String(document.getElementById("display"+parent).style.marginLeft).indexOf("px"));
+            console.log(tempMargin);
+            console.log("**");
+
+            temp.style.marginLeft = (Number(tempMargin) + 15) + "px";
+        }
+        else {
+            temp.style.marginLeft = "0px"
         }
         temp.innerHTML = "";
         //        temp.appendChild(h3);
@@ -1086,6 +1122,8 @@ checkForMe = (mainNode, count, parent) => {
         }
     }
     // ////console.log("*******************");
+    console.log("***");
+    console.log(testArr);
 }
 
 

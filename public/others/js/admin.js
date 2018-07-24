@@ -24,7 +24,7 @@ loadUsers = () => {
                 newDiv.style.width = "100px";
                 document.getElementById('pop-up').style.position = "absolute";
                 newDiv.style.margin = "auto auto";
-                newDiv.innerHTML = '<select id="roleSelector" class=selectpicker form-control multiple></select><button id="editRole" class="btn btn-primary">Edit Roles</button>'
+                newDiv.innerHTML = '<select id="roleSelector" class=selectpicker form-control multiple></select><div><button id="editRole" class="btn btn-primary">Edit Roles</button></div>'
                 document.getElementById('pop-up').innerHTML = "";
                 document.getElementById('pop-up').appendChild(newDiv);
                 fetch('/roles', {
@@ -70,11 +70,19 @@ loadUsers = () => {
                         loadUsers();
                     })
                     document.getElementById('app').style.display = "block";
+                    document.getElementById('app').style.opacity = "1";
+
                     document.getElementById('pop-up').style.display = "none";
 
 
                 })
-                document.getElementById('app').style.display = "none";
+                document.getElementById('pop-up').style.position = "fixed";
+                document.getElementById('pop-up').style.top = 0;
+                document.getElementById('pop-up').style.left = 0;
+        
+                document.getElementById('app').style.opacity = "0.3";
+                document.getElementById('pop-up').style.opacity = "1";
+
 
 
             })
