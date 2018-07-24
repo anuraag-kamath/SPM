@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="/css/bootstrap-4.0.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/canvas.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12" id="test-load">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="row bor">
+                    <h4 id="t1" draggable="true" ondragstart="dragStart(event)">Anuraag</h4>
+                </div>
+                <div class="row bor">
+                    <h4 id="t3" draggable="true" ondragstart="dragStart(event)">AK</h4>
+                </div>
+
+            </div>
+            <div class="col-4">
+                <canvas id="myCanvas" style="width: 100%"></canvas>
+
+            </div>
+            <div class="col-4">
+                <div class="row bor">
+                    <h4 id="t2" ondragover="dragOver(event)" ondrop="dragEnd(event)">Kamath</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./canvas.js"></script>
+</body>
+
+</html>

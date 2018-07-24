@@ -1,0 +1,13 @@
+.edit, .trigger {
+    cursor: pointer;
+}
+
+#newprocess {
+    float: right;
+    text-decoration: none;
+}
+
+#newprocess:hover {
+    cursor: pointer;
+}
+

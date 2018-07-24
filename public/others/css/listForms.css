@@ -1,0 +1,16 @@
+.edit, .delete {
+    cursor: pointer;
+}
+
+#newForm {
+    float: right;
+}
+
+#newForm:hover {
+    cursor: pointer;
+}
+
+.right {
+    float: right;
+    margin-right: 20px;
+}

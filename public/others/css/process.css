@@ -1,0 +1,103 @@
+header {
+    text-align: center;
+    width: 100%;
+    background-color: aquamarine;
+}
+
+#back {
+    float:left;
+    cursor: pointer;
+}
+
+
+
+.lbl {
+    border: 2px solid red;
+}
+
+#heading-text {
+    display: none;
+}
+
+.header {
+    height: 10vh;
+}
+
+h6 {
+    text-align: center;
+}
+
+.row {
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+.save button {
+    display: block;
+    margin: auto;
+}
+
+footer input {
+    width:100%;
+}
+
+.save {
+    height: 10vh;
+}
+
+.mid-section {
+    height: 80vh;
+}
+
+#process-section {
+    overflow-y: scroll;
+}
+
+footer {
+    height: 20vh;
+    background-color: darkgrey;
+    display: none;
+    overflow: scroll;
+}
+
+.row .left-menu {
+    border-right: 2px solid black;
+
+}
+
+.lbl {
+    border: 2px solid black;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: center;
+}
+
+#addStep {
+    display: block;
+    margin: auto;
+    margin-top: 10px;
+}
+
+#newStep {
+    cursor: pointer;
+}
+
+.ctr {
+    padding: 10px 20px;
+    width: 100%;
+    text-align: center;
+}
+
+
+[id*="delete1"]:hover {
+    cursor: pointer;
+}
+
+[id*="lbl"]:hover {
+    cursor: pointer;
+}
+
+
+#toggle-down {
+    cursor: pointer;
+}
