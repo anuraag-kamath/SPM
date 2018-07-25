@@ -37,8 +37,8 @@ var app = express()
 var url = "";
 
 
-
-var port = process.env.PORT || 3000;
+console.log(process);
+var port = 80;
 
 var cors = require('cors')
 
