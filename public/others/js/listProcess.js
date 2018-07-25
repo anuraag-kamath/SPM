@@ -10,7 +10,7 @@ fetch('http://localhost:3000/process', {
     }
 ).then(
     function (res) {
-        ts = new Date().getTime();
+        ts = Math.ceil(new Date().getTime()*Math.random());
         if (JSON.parse(res).length > 0) {
             console.log(res);
             document.getElementById('noProcesses').style.display = "none";

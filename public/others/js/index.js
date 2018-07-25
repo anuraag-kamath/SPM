@@ -43,7 +43,7 @@ document.getElementById('logout').addEventListener('click', (ev) => {
 
 
 hashCheck = () => {
-    if (location.hash == "#listWorkitems") {
+    if (location.hash == "#listWorkitems" || location.hash == "#workitems") {
         loadPage("workitems", "List of Workitems")
     }//else if(location.hash.indexOf("frm")!=-1){
     //     formLoad(location.hash.substr(4));

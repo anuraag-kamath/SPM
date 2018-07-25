@@ -96,7 +96,7 @@ checkme = (processId) => {
         var options = "";
         for (var i in JSON.parse(res1)) {
             var newOption = document.createElement('option');
-            newOption.value = JSON.parse(res1)[i]._id
+            newOption.value = JSON.parse(res1)[i].roles[0].roleName;
             newOption.innerText = JSON.parse(res1)[i].roles[0].roleName;
             document.getElementById('participant').appendChild(newOption);
         }
@@ -133,6 +133,8 @@ document.getElementById('formName').addEventListener('focusout', (event) => {
 });
 
 document.getElementById('participant').addEventListener('focusout', (event) => {
+    console.log(currentElement);
+    console.log(event.target.value)
     document.getElementById(currentElement).setAttribute('participant', event.target.value);
 
 
@@ -435,6 +437,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
     } else {
         var tempArr = []
         json += ']}'
+        console.log(json);
         if (processId != undefined && processId.length > 0) {
             fetch('/process/' + processId, {
                 method: "PUT",

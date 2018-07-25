@@ -18,6 +18,7 @@ loadObject = (objectId) => {
 
 
 document.getElementById('addChild').addEventListener('click', (ev) => {
+    console.log("ADD");
     addChild("", "", "");
 })
 
@@ -39,7 +40,7 @@ addChild = (name, type, control) => {
     ts = new Date().getTime();
     newNode.className = "row"
     newNode.id = "div_" + ts;
-    newNode.innerHTML = '<div class="col-1"><h3>-></h3></div><div class="col-3"><input id="ele_' + ts + '" name="root " class="form-control" placeholder="element name" required value="' + name + '"></div><div class="col-3" ><select id="type_' + ts + '" class="form-control"><option ' + StringSelected + '>String</option><option ' + NumberSelected + '>Number</option><option ' + BooleanSelected + '>Boolean</option></select></div><div class="col-4"><select id="control_' + ts + '" class="form-control"><option selected>Text</option></select></div><div class="col-1></div>"'
+    newNode.innerHTML = '<div class="col-1"><h3>-></h3></div><div class="col-3"><input id="ele_' + ts + '" name="root " class="form-control" placeholder="element name" required value="' + name + '"></div><div class="col-3" ><select id="type_' + ts + '" class="form-control"><option ' + StringSelected + '>String</option><option ' + NumberSelected + '>Number</option><option ' + BooleanSelected + '>Boolean</option></select></div><div class="col-4"><select id="control_' + ts + '" class="form-control"><option value="text" selected>Text</option></select></div><div class="col-1></div>"'
     document.getElementById('myFormDiv').appendChild(newNode);
 }
 
@@ -54,7 +55,9 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
         if (_id != undefined && _id != '') {
             var elName = String(_id).replace('div_', 'ele_');
             var elType = String(_id).replace('div_', 'type_');
-            json += '"' + document.getElementById(elName).value + '":{"type":"' + document.getElementById(elType).value + '"}'
+            var elControl = String(_id).replace('div_', 'control_');
+            
+            json += '"' + document.getElementById(elName).value + '":{"type":"' + document.getElementById(elType).value + '","control":"'+document.getElementById(elControl).value+'"}'
             if (i != nodes.length - 1) {
                 json += ","
             }
@@ -80,6 +83,7 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
     }).then((prom) => {
         return prom.text();
     }).then((res) => {
+        window.location.hash="listObjects";
     })
 
 })

@@ -172,8 +172,8 @@ onLoad = (formId, processId, workitemId, instanceId) => {
                         }).then((prom) => {
                             return prom.text()
                         }).then((res) => {
+                            window.location.hash = "workitems"
                         })
-                        window.location.hash = "workitems"
                     });
                 }
 

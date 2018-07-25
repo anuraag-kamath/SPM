@@ -43,6 +43,16 @@ var port = 3000;
 var cors = require('cors')
 
 //newImports
+var {employee_v3}=require('./schemas/employee_v3')
+var {employee_v2}=require('./schemas/employee_v2')
+var {Questionnaire_v5}=require('./schemas/Questionnaire_v5')
+var {Questionnaire_v4}=require('./schemas/Questionnaire_v4')
+var {Questionnaire_v3}=require('./schemas/Questionnaire_v3')
+var {Questionnaire_v2}=require('./schemas/Questionnaire_v2')
+var {Questionnaire_v1}=require('./schemas/Questionnaire_v1')
+var {Questionnaire_v0}=require('./schemas/Questionnaire_v0')
+var {employee_v1}=require('./schemas/employee_v1')
+var { employee_v0 } = require('./schemas/employee_v0')
 var { sample_v2 } = require('./schemas/sample_v2')
 var { sample_v1 } = require('./schemas/sample_v1')
 var { sample_v0 } = require('./schemas/sample_v0')
@@ -203,37 +213,44 @@ app.use((req, res, next) => {
             user.findById(jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, (err, doc) => {
                 console.log("##222##")
                 console.log(req.path);
-                var roles = doc.user.roles;
-                var keys = Object.keys(wola);
-                var notApplicable = [];
-                for (var i = 0; i < keys.length; i++) {
-                    found = false;
-                    for (var j = 0; j < roles.length; j++) {
-                        if (roles[j] == keys[i]) {
-                            found = true;
+                if (doc.user != undefined) {
+                    var roles = doc.user.roles;
+                    var keys = Object.keys(wola);
+                    var notApplicable = [];
+                    for (var i = 0; i < keys.length; i++) {
+                        found = false;
+                        for (var j = 0; j < roles.length; j++) {
+                            if (roles[j] == keys[i]) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found == false) {
+                            notApplicable.push(wola[keys[i]]);
+                        }
+                    }
+                    var redirect = false;
+                    console.log(notApplicable);
+                    for (var k = 0; k < notApplicable.length; k++) {
+                        if (String(notApplicable[k]).indexOf(req.path) != -1) {
+                            redirect = true;
+                            console.log("REDIRECTED");
+                            res.redirect('/notAuthorized.html');
                             break;
                         }
                     }
-                    if (found == false) {
-                        notApplicable.push(wola[keys[i]]);
+                    if (redirect == false) {
+                        console.log("REDIRECTED1");
+                        console.log("##333##")
+                        next();
+
                     }
                 }
-                var redirect = false;
-                console.log(notApplicable);
-                for (var k = 0; k < notApplicable.length; k++) {
-                    if (String(notApplicable[k]).indexOf(req.path) != -1) {
-                        redirect = true;
-                        console.log("REDIRECTED");
-                        res.redirect('/notAuthorized.html');
-                        break;
-                    }
-                }
-                if (redirect == false) {
-                    console.log("REDIRECTED1");
-                    console.log("##333##")
-                    next();
+                else{
+                    res.redirect("/index.html")
 
                 }
+
             })
 
 
@@ -822,6 +839,236 @@ app.get('/workitems/:id', (req, res) => {
 
 //newSettersGetters
 
+app.get('/employee_v3/:id', (req, res) => {
+	employee_v3.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/employee_v3', (req, res) => {
+	employee_v3.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/employee_v3', (req, res) => {
+	console.log(req.body);
+	var obj1 = new employee_v3(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/employee_v2/:id', (req, res) => {
+	employee_v2.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/employee_v2', (req, res) => {
+	employee_v2.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/employee_v2', (req, res) => {
+	console.log(req.body);
+	var obj1 = new employee_v2(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/Questionnaire_v5/:id', (req, res) => {
+	Questionnaire_v5.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/Questionnaire_v5', (req, res) => {
+	Questionnaire_v5.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/Questionnaire_v5', (req, res) => {
+	console.log(req.body);
+	var obj1 = new Questionnaire_v5(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/Questionnaire_v4/:id', (req, res) => {
+	Questionnaire_v4.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/Questionnaire_v4', (req, res) => {
+	Questionnaire_v4.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/Questionnaire_v4', (req, res) => {
+	console.log(req.body);
+	var obj1 = new Questionnaire_v4(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/Questionnaire_v3/:id', (req, res) => {
+	Questionnaire_v3.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/Questionnaire_v3', (req, res) => {
+	Questionnaire_v3.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/Questionnaire_v3', (req, res) => {
+	console.log(req.body);
+	var obj1 = new Questionnaire_v3(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/Questionnaire_v2/:id', (req, res) => {
+	Questionnaire_v2.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/Questionnaire_v2', (req, res) => {
+	Questionnaire_v2.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/Questionnaire_v2', (req, res) => {
+	console.log(req.body);
+	var obj1 = new Questionnaire_v2(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/Questionnaire_v1/:id', (req, res) => {
+	Questionnaire_v1.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/Questionnaire_v1', (req, res) => {
+	Questionnaire_v1.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/Questionnaire_v1', (req, res) => {
+	console.log(req.body);
+	var obj1 = new Questionnaire_v1(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/Questionnaire_v0/:id', (req, res) => {
+	Questionnaire_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/Questionnaire_v0', (req, res) => {
+	Questionnaire_v0.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/Questionnaire_v0', (req, res) => {
+	console.log(req.body);
+	var obj1 = new Questionnaire_v0(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/employee_v1/:id', (req, res) => {
+	employee_v1.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/employee_v1', (req, res) => {
+	employee_v1.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/employee_v1', (req, res) => {
+	console.log(req.body);
+	var obj1 = new employee_v1(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/employee_v0/:id', (req, res) => {
+    employee_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/employee_v0', (req, res) => {
+    employee_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/employee_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new employee_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
 app.get('/sample_v2/:id', (req, res) => {
     sample_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
         console.log(docs);
@@ -952,24 +1199,24 @@ app.get('/roles', (req, res) => {
     var ids = req.query.ids;
     if (ids != undefined && ids != "undefined" && ids.length > 0) {
         var search = '{"$or": [';
-        oneAdded=false;
-        var noNeed=[];
+        oneAdded = false;
+        var noNeed = [];
         for (var e = 0; e < String(ids).split(',').length; e++) {
             try {
                 ObjectId(String(ids).split(",")[e]);
-                if (e != 0 && oneAdded==true) {
+                if (e != 0 && oneAdded == true) {
                     search += ",";
                 }
                 search += '{"_id":"' + String(ids).split(",")[e] + '"}'
-                oneAdded=true;
-                
+                oneAdded = true;
+
             }
             catch (e1) {
                 noNeed.push(String(ids).split(",")[e]);
             }
         }
         search += "]}"
-        
+
         console.log("IDS");
         console.log(ids);
         console.log("IDS");
@@ -979,7 +1226,7 @@ app.get('/roles', (req, res) => {
             for (var e1 = 0; e1 < docs.length; e1++) {
                 roleName += docs[e1].roles[0].roleName + " ";
             }
-            roleName+=noNeed.join(" ");
+            roleName += noNeed.join(" ");
             console.log("#$#$#$$#$");
             console.log(roleName);
             console.log(noNeed);

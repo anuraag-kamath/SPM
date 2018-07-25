@@ -22,8 +22,9 @@ fetch('http://localhost:3000/workitems?search={"status":"scheduled"}', {
             alpha = JSON.parse(res);
             for (var i = 0; i < alpha.length; i++) {
                 var row = document.createElement("tr");
-                row.innerHTML = "<td>" + (i + 1) + "</td><td>" + alpha[i]._id + "</td><td>" + alpha[i].instanceId + "</td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'>Trigger</a></td>"
+                row.innerHTML = "<td>" + (i + 1) + "</td><td>" + alpha[i]._id + "</td><td>" + alpha[i].instanceId + "</td><td id="+alpha[i].instanceId+"></td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'>Trigger</a></td>"
                 document.getElementById('workitems-body').appendChild(row);
+                
             }
         }
     })
