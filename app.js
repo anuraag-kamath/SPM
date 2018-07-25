@@ -38,7 +38,7 @@ var url = "";
 
 
 
-var port = 3000;
+var port = process.env.PORT || 3000;
 
 var cors = require('cors')
 
