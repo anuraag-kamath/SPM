@@ -43,15 +43,15 @@ var port = 9099;
 var cors = require('cors')
 
 //newImports
-var {employee_v3}=require('./schemas/employee_v3')
-var {employee_v2}=require('./schemas/employee_v2')
-var {Questionnaire_v5}=require('./schemas/Questionnaire_v5')
-var {Questionnaire_v4}=require('./schemas/Questionnaire_v4')
-var {Questionnaire_v3}=require('./schemas/Questionnaire_v3')
-var {Questionnaire_v2}=require('./schemas/Questionnaire_v2')
-var {Questionnaire_v1}=require('./schemas/Questionnaire_v1')
-var {Questionnaire_v0}=require('./schemas/Questionnaire_v0')
-var {employee_v1}=require('./schemas/employee_v1')
+var { employee_v3 } = require('./schemas/employee_v3')
+var { employee_v2 } = require('./schemas/employee_v2')
+var { Questionnaire_v5 } = require('./schemas/Questionnaire_v5')
+var { Questionnaire_v4 } = require('./schemas/Questionnaire_v4')
+var { Questionnaire_v3 } = require('./schemas/Questionnaire_v3')
+var { Questionnaire_v2 } = require('./schemas/Questionnaire_v2')
+var { Questionnaire_v1 } = require('./schemas/Questionnaire_v1')
+var { Questionnaire_v0 } = require('./schemas/Questionnaire_v0')
+var { employee_v1 } = require('./schemas/employee_v1')
 var { employee_v0 } = require('./schemas/employee_v0')
 var { sample_v2 } = require('./schemas/sample_v2')
 var { sample_v1 } = require('./schemas/sample_v1')
@@ -246,7 +246,7 @@ app.use((req, res, next) => {
 
                     }
                 }
-                else{
+                else {
                     res.redirect("/index.html")
 
                 }
@@ -840,210 +840,210 @@ app.get('/workitems/:id', (req, res) => {
 //newSettersGetters
 
 app.get('/employee_v3/:id', (req, res) => {
-	employee_v3.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v3.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/employee_v3', (req, res) => {
-	employee_v3.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v3.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/employee_v3', (req, res) => {
-	console.log(req.body);
-	var obj1 = new employee_v3(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new employee_v3(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/employee_v2/:id', (req, res) => {
-	employee_v2.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/employee_v2', (req, res) => {
-	employee_v2.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v2.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/employee_v2', (req, res) => {
-	console.log(req.body);
-	var obj1 = new employee_v2(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new employee_v2(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/Questionnaire_v5/:id', (req, res) => {
-	Questionnaire_v5.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v5.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/Questionnaire_v5', (req, res) => {
-	Questionnaire_v5.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v5.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/Questionnaire_v5', (req, res) => {
-	console.log(req.body);
-	var obj1 = new Questionnaire_v5(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new Questionnaire_v5(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/Questionnaire_v4/:id', (req, res) => {
-	Questionnaire_v4.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v4.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/Questionnaire_v4', (req, res) => {
-	Questionnaire_v4.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v4.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/Questionnaire_v4', (req, res) => {
-	console.log(req.body);
-	var obj1 = new Questionnaire_v4(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new Questionnaire_v4(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/Questionnaire_v3/:id', (req, res) => {
-	Questionnaire_v3.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v3.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/Questionnaire_v3', (req, res) => {
-	Questionnaire_v3.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v3.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/Questionnaire_v3', (req, res) => {
-	console.log(req.body);
-	var obj1 = new Questionnaire_v3(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new Questionnaire_v3(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/Questionnaire_v2/:id', (req, res) => {
-	Questionnaire_v2.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/Questionnaire_v2', (req, res) => {
-	Questionnaire_v2.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v2.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/Questionnaire_v2', (req, res) => {
-	console.log(req.body);
-	var obj1 = new Questionnaire_v2(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new Questionnaire_v2(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/Questionnaire_v1/:id', (req, res) => {
-	Questionnaire_v1.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/Questionnaire_v1', (req, res) => {
-	Questionnaire_v1.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v1.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/Questionnaire_v1', (req, res) => {
-	console.log(req.body);
-	var obj1 = new Questionnaire_v1(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new Questionnaire_v1(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/Questionnaire_v0/:id', (req, res) => {
-	Questionnaire_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/Questionnaire_v0', (req, res) => {
-	Questionnaire_v0.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    Questionnaire_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/Questionnaire_v0', (req, res) => {
-	console.log(req.body);
-	var obj1 = new Questionnaire_v0(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new Questionnaire_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/employee_v1/:id', (req, res) => {
-	employee_v1.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/employee_v1', (req, res) => {
-	employee_v1.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v1.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/employee_v1', (req, res) => {
-	console.log(req.body);
-	var obj1 = new employee_v1(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new employee_v1(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/employee_v0/:id', (req, res) => {
