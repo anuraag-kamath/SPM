@@ -1371,6 +1371,8 @@ app.use((req, res, next) => {
     res.redirect("/index.html")
 })
 
+console.log(process.env);
+
 app.listen(process.env.PORT || 5000, () => {
     console.log("Server started on:", port);
 })
