@@ -1,4 +1,4 @@
- {
+{
   "name": "spm",
   "version": "1.0.0",
   "description": "",
@@ -24,5 +24,9 @@
     "promise": "^8.0.1",
     "rand-token": "^0.4.0",
     "nodemon":"1.18.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.heroku.com/thawing-bastion-49504.git"
   }
 }
