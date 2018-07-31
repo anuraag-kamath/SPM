@@ -38,7 +38,7 @@ var app = express()
 var url = "";
 
 
-var port = 9099;
+var port = process.env.PORT || 9099;
 
 var cors = require('cors')
 
@@ -1374,7 +1374,7 @@ app.use((req, res, next) => {
 
 console.log(process.env);
 
-app.listen(process.env.PORT || port, () => {
+app.listen(port, () => {
     console.log("Server started on:", port);
 })
 
