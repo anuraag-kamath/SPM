@@ -3,7 +3,7 @@ const path = require('path')
 
 var { ObjectID } = require('mongodb');
 
-var { process } = require('./schemas/process')
+var { process1 } = require('./schemas/process')
 var { processMaster } = require('./schemas/processMaster')
 
 var { mongoose } = require('./db/database')
@@ -36,9 +36,8 @@ var app = express()
 
 
 var url = "";
-
-
-const PORT = process.env.PORT || 9099;
+console.log(process.env.PORT);
+const port = process.env.PORT || 9099;
 
 var cors = require('cors')
 
@@ -277,9 +276,9 @@ app.get('/whoami', (req, res) => {
 
 app.post('/process', (req, res) => {
     console.log(req.body);
-    var process1 = new process(req.body);
-    console.log(process1)
-    process1.save().then((doc) => {
+    var process2 = new process1(req.body);
+    console.log(process2)
+    process2.save().then((doc) => {
         console.log("*********");
         var master = new processMaster({ processName: req.body.processName, latestVersionId: doc._id, pastversions: [] });
         console.log("*********");
@@ -482,9 +481,9 @@ app.put('/process/:id', (req, res) => {
     console.log("RECIEVED!!!!");
 
     console.log(req.body);
-    var process1 = new process(req.body);
-    console.log(process1)
-    process1.save().then((doc) => {
+    var process2 = new process1(req.body);
+    console.log(process2)
+    process2.save().then((doc) => {
 
         process.findByIdAndUpdate(alpha, {
             obsolete: "yes"
@@ -524,9 +523,9 @@ app.put('/process/:id', (req, res) => {
 
 app.post('/process', (req, res) => {
     console.log(req.body);
-    var process1 = new process(req.body);
-    console.log(process1)
-    process1.save().then((doc) => {
+    var process2 = new process1(req.body);
+    console.log(process2)
+    process2.save().then((doc) => {
         var master = new processMaster({ processName: req.body.processName, latestVersionId: doc._id, pastversions: [] });
         master.save().then((doc1) => {
             res.send(`${doc1}`);
@@ -1372,7 +1371,6 @@ app.use((req, res, next) => {
     res.redirect("/index.html")
 })
 
-console.log(process.env);
 
 app.listen(port, () => {
     console.log("Server started on:", port);

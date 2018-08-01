@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var process = mongoose.model('process',
+var process1 = mongoose.model('process',
     {
         formName: {
             type: String
@@ -45,5 +45,5 @@ var process = mongoose.model('process',
 )
 
 module.exports = {
-    process
+    process1
 }
