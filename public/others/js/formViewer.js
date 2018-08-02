@@ -9,7 +9,7 @@ var formId = "";
 var workitemId = "";
 onLoad = (formId, processId, workitemId, instanceId) => {
 
-    fetch('http://localhost:3000/objects', {
+    fetch('/objects', {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
         objs = JSON.parse(res);
@@ -18,14 +18,14 @@ onLoad = (formId, processId, workitemId, instanceId) => {
     }).then(() => {
         var tempJSON = '{"processId":"' + processId + '"}'
 
-        fetch('http://localhost:3000/forms/' + formId, {
+        fetch('/forms/' + formId, {
             credentials: 'include'
         }).then((prom) => {
             return prom.text()
         }).then((res) => {
 
             if (workitemId.length == 0) {
-                fetch('http://localhost:3000/instance', {
+                fetch('/instance', {
                     method: "POST",
                     headers: {
                         'content-type': 'application/json'
@@ -161,7 +161,7 @@ onLoad = (formId, processId, workitemId, instanceId) => {
                             "instanceId": instanceId,
                             "objects": jsonBody
                         };
-                        fetch('http://localhost:3000/instance/' + instanceId + wi, {
+                        fetch('/instance/' + instanceId + wi, {
                             method: "POST",
                             headers: {
                                 'content-type': 'application/json'
@@ -287,7 +287,7 @@ loadObjects = () => {
     console.log("***************");
     console.log("INSTANCE LOAD");
     if (instanceId.length > 0) {
-        fetch('http://localhost:3000/instance/' + instanceId, {
+        fetch('/instance/' + instanceId, {
             credentials: 'include'
         }).then((prom) => {
             console.log("###########################################");
@@ -299,7 +299,7 @@ loadObjects = () => {
             console.log(res);
             console.log("***1");
             for (obj in JSON.parse(res).objects) {
-                fetch('http://localhost:3000/objects/' + JSON.parse(res).objects[obj].id + '/' + JSON.parse(res).objects[obj].name, {
+                fetch('/objects/' + JSON.parse(res).objects[obj].id + '/' + JSON.parse(res).objects[obj].name, {
                     credentials: 'include'
                 }).then((prom1) => prom1.text()).then((res2) => {
                     for (var i = 0; i < tempArr.length; i++) {

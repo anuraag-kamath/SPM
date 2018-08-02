@@ -1,4 +1,4 @@
-fetch('http://localhost:3000/objects?mode=show', {
+fetch('/objects?mode=show', {
     method: 'GET',
     headers: {
         'Access-Control-Allow-Origin': '*'
@@ -28,7 +28,7 @@ fetch('http://localhost:3000/objects?mode=show', {
                     window.location.hash = "objbdr" + String(event.target.id).replace("edit_", "")
                 });
                 document.getElementById("delete_" + alpha[i]._id).addEventListener('click', (event) => {
-                    fetch('http://localhost:3000/objects/' + event.target.id.replace('delete_', ''), {
+                    fetch('/objects/' + event.target.id.replace('delete_', ''), {
                         method: "DELETE",
                         credentials: 'include'
                     });

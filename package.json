@@ -11,18 +11,19 @@
     "test": "node test.js"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.2.0",
     "base-64": "^0.1.0",
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
+    "ejs": "^2.5.6",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.1.6",
+    "nodemon": "1.18.3",
     "promise": "^8.0.1",
-    "rand-token": "^0.4.0",
-    "nodemon":"1.18.3",
-    "ejs": "^2.5.6"
+    "rand-token": "^0.4.0"
   },
   "devDependencies": {
     "request": "^2.81.0",

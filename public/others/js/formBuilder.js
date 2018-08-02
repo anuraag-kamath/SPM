@@ -4,7 +4,7 @@ var formId = "";
 var keyValue = [];
 
 onLoad = () => {
-    fetch('http://localhost:3000/objects', {
+    fetch('/objects', {
 
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
@@ -25,7 +25,7 @@ onLoad = () => {
             ////console.log(formId);
         }
         if (formId != undefined && formId != "undefined" && formId.length > 0) {
-            fetch('http://localhost:3000/forms/' + formId, {
+            fetch('/forms/' + formId, {
 
                 credentials: 'include'
             }).then((prom) => {
@@ -1095,9 +1095,9 @@ checkForMe = (mainNode, count, parent) => {
         }
         temp.innerHTML = "";
         //        temp.appendChild(h3);
-        //        temp.innerHTML += '<p id="exp"'+mainNode+'><strong>+</strong> '+document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name+"</p> <br>" + par + mainNode + "<hr>";
-        //temp.innerHTML += '<p id="exp' + mainNode + '"><div><strong id="exp"'+mainNode+'>+</strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "</p><hr></div>";
-        temp.innerHTML += '<strong id="exp' + mainNode + '">+</strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
+        //        temp.innerHTML += '<p id="exp"'+mainNode+'><strong><i class="fas fa-plus"></i></strong> '+document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name+"</p> <br>" + par + mainNode + "<hr>";
+        //temp.innerHTML += '<p id="exp' + mainNode + '"><div><strong id="exp"'+mainNode+'><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "</p><hr></div>";
+        temp.innerHTML += '<strong id="exp' + mainNode + '"><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
         document.getElementById('right-section').appendChild(temp);
         document.getElementById('exp' + mainNode).addEventListener('click', (ev) => {
             if (document.getElementById(ev.target.id).innerText == "+") {
@@ -1170,7 +1170,7 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
         alert("Need a button called Submit in the form!");
     }
     else if (formId != undefined && formId.length > 0) {
-        fetch('http://localhost:3000/forms/' + formId, {
+        fetch('/forms/' + formId, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'
@@ -1186,7 +1186,7 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
             ////console.log(res);
         })
     } else {
-        fetch('http://localhost:3000/forms', {
+        fetch('/forms', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'

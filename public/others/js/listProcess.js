@@ -1,4 +1,4 @@
-fetch('http://localhost:3000/process', {
+fetch('/process', {
     method: 'GET',
     headers: {
         'Access-Control-Allow-Origin': '*'

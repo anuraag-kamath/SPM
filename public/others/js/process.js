@@ -1,4 +1,3 @@
-var processId = "";
 
 var objects = [];
 // document.addEventListener('click', (event) => {
@@ -7,17 +6,20 @@ var objects = [];
 //     }
 // })
 
+var steps = [];
+
 checkme = (processId) => {
 
     if (processId != undefined) {
 
-        fetch('http://localhost:3000/process?process=' + processId, {
+        fetch('/process?process=' + processId, {
             method: "GET",
             credentials: 'include'
         }).then((prom) => {
             return prom.text();
         }).then((response) => {
-            var steps = JSON.parse(response)[0].steps;
+            console.log(response);
+            steps = JSON.parse(response)[0].steps;
             for (var i = 0; i < steps.length; i++) {
                 step1 = steps[i].step1 || "";
                 step2 = steps[i].step2 || "";
@@ -27,14 +29,14 @@ checkme = (processId) => {
                 frm2 = steps[i].frm2 || "";
                 part1 = steps[i].part1 || "";
                 part2 = steps[i].part2 || "";
-                addProcess(step1, step2, lbl1, lbl2, frm1, frm2, part1, part2)
+                addProcess(step1, step2, lbl1, lbl2, frm1, frm2, part1, part2, steps[i]._id)
 
             }
             recalcCount();
 
             document.getElementById('heading').innerText = JSON.parse(response)[0].processName;
 
-            fetch('http://localhost:3000/forms?fields=name', {
+            fetch('/forms?fields=name', {
                 method: "GET",
                 credentials: 'include'
             }).then((prom) => {
@@ -55,11 +57,82 @@ checkme = (processId) => {
 
             });
 
+            if (calledFrom == "workitem") {
+                document.getElementById('left-menu-div').style.display = "none";
+                document.getElementById('header').style.display = "none";
+                document.getElementById('saveDiv').style.display = "none";
+
+                var deletes = document.getElementsByName("delete1");
+                console.log(deletes);
+                for (var i = 0; i < deletes.length; i++) {
+                    console.log(deletes[i]);
+                    document.getElementById(deletes[i].id).style.display = "none";
+                }
+                document.getElementById('process-section').className = "col-12";
+
+                console.log("@@@");
+                console.log(steps);
+                console.log("@@@");
+                var sendSteps = '';
+                for (var i = 0; i < steps.length; i++) {
+                    sendSteps += '"' + steps[i]._id + '"';
+                    if (i != steps.length - 1) {
+                        sendSteps += ",";
+                    }
+                }
+
+                fetch('/workitems?searchStep=' + sendSteps + '&instanceId=' + instanceId, {
+                    credentials: 'include'
+                }).then((prom) => prom.text()).then((res) => {
+                    console.log(res);
+                    var res = JSON.parse(res);
+                    for (var i = 0; i < res.length; i++) {
+                        if (res[i].status == "scheduled") {
+                            console.log(res[i]);
+                            if (document.getElementById('lbl1_' + res[i].stepId) != undefined &&
+                                document.getElementById('lbl1_' + res[i].stepId).innerText == res[i].stepName) {
+                                document.getElementById('lbl1_' + res[i].stepId).style.backgroundColor = "orange";
+
+                            } if (document.getElementById('lbl2_' + res[i].stepId) != undefined &&
+                                document.getElementById('lbl2_' + res[i].stepId).innerText == res[i].stepName) {
+                                document.getElementById('lbl2_' + res[i].stepId).style.backgroundColor = "orange";
+
+                            }
+
+                        }
+                        if (res[i].status == "finished") {
+                            if (document.getElementById('lbl1_' + res[i].stepId) != undefined &&
+                                document.getElementById('lbl1_' + res[i].stepId).innerText == res[i].stepName) {
+                                document.getElementById('lbl1_' + res[i].stepId).style.backgroundColor = "green";
+                                document.getElementById('lbl1_' + res[i].stepId).style.color = "white";
+
+                                console.log(res[i].user);
+                                console.log(res[i]);
+                                document.getElementById('lbl1_' + res[i].stepId).innerText += " -done by:" + res[i].user + " @ " + res[i].date;
+
+                            } if (document.getElementById('lbl2_' + res[i].stepId) != undefined &&
+                                document.getElementById('lbl2_' + res[i].stepId).innerText == res[i].stepName) {
+                                document.getElementById('lbl2_' + res[i].stepId).style.backgroundColor = "green";
+                                document.getElementById('lbl1_' + res[i].stepId).style.color = "white";
+
+                                document.getElementById('lbl2_' + res[i].stepId).innerText += " -done by:" + res[i].user + " @ " + res[i].date;
+
+
+                            }
+
+                        }
+                    }
+                })
+
+
+
+            }
+
         });
     }
 
 
-    fetch('http://localhost:3000/objects?fields=schemaName', {
+    fetch('/objects?fields=schemaName', {
         method: "GET",
         credentials: 'include'
     }).then((prom) => {
@@ -76,7 +149,7 @@ checkme = (processId) => {
 
 
 
-    fetch('http://localhost:3000/forms', {
+    fetch('/forms', {
 
         credentials: 'include'
     }).then((prom) => prom.text()).then((docs) => {
@@ -94,6 +167,9 @@ checkme = (processId) => {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res1) => {
         var options = "";
+        console.log("***");
+        console.log(res1);
+        console.log("***");
         for (var i in JSON.parse(res1)) {
             var newOption = document.createElement('option');
             newOption.value = JSON.parse(res1)[i].roles[0].roleName;
@@ -172,7 +248,7 @@ document.getElementById('myForm').addEventListener('submit', (event) => {
 
     }
 
-    addProcess(t1, t2, step1, step2, '', '', '', '');
+    addProcess(t1, t2, step1, step2, '', '', '', '', '');
     recalcCount();
 
 });
@@ -195,8 +271,13 @@ dragover = (event) => {
     event.preventDefault();
 }
 
-var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2) => {
-    var ts = Math.ceil(new Date().getTime()*Math.random());
+var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId) => {
+    var ts = "";
+    if (stepId.length > 0) {
+        ts = stepId;
+    } else {
+        ts = Math.ceil(new Date().getTime() * Math.random());
+    }
     if (step1.length > 0 && step2.length > 0) {
         var newDiv = document.createElement("DIV");
         //newDiv.draggable = true;
@@ -316,8 +397,8 @@ recalcCount = () => {
     for (var i = 1; i < nodes.length; i++) {
         var count_div = nodes[i].id;
         count_div = String(count_div).replace("div_", "count_");
-        console.log("COUNTING"+count_div);
-        
+        console.log("COUNTING" + count_div);
+
         document.getElementById(count_div).innerHTML = "<h3>" + (i) + "</h3>";
     }
 }
@@ -364,7 +445,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
     var json = '{"formName":"' + document.getElementById('triggeringForm').value + '","processName":"' + document.getElementById('heading').innerText + '","steps":';
     json += "[";
     var err = "";
-    var errEl="";
+    var errEl = "";
     for (var i = 1; i < nodes.length; i++) {
         id = String(nodes[i].id).replace('div_', '');
         step1 = document.getElementById('step1_' + id).innerText;
@@ -378,7 +459,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             frm1.length == 0 ||
             part1.length == 0) {
             err = "problem found, focussing on the problem!";
-            errEl="lbl1_"+id;
+            errEl = "lbl1_" + id;
             break;
         }
         if (document.getElementById('step2_' + id) != null) {
@@ -392,10 +473,10 @@ document.getElementById("save-process").addEventListener('click', (event) => {
                 frm2.length == 0 ||
                 part2.length == 0) {
                 err = "problem found, focussing on the problem!";
-                errEl="lbl2_"+id;
+                errEl = "lbl2_" + id;
                 break;
             }
-    
+
         }
         if (i == nodes.length - 1) {
             json += "}"
@@ -404,12 +485,12 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             json += "},"
         }
     }
-    console.log(err+"##"+err.length);
+    console.log(err + "##" + err.length);
     if (err.length > 0) {
         console.log("GOT IN");
         document.getElementById("pop-up").innerHTML = "";
 
-    
+
         var newDiv = document.createElement("DIV");
         newDiv.style.height = "150px";
         newDiv.style.width = "400px";
@@ -417,23 +498,23 @@ document.getElementById("save-process").addEventListener('click', (event) => {
         document.getElementById('pop-up').style.top = 0;
         document.getElementById('pop-up').style.left = 0;
         newDiv.style.margin = "auto auto";
-    
+
         newDiv.style.marginTop = "10%";
         newDiv.style.backgroundColor = "aqua";
-        var text=document.createElement('H1');
-        text.innerText=err;
+        var text = document.createElement('H1');
+        text.innerText = err;
         newDiv.appendChild(text)
         //    document.getElementById("app").style.display = "none";
         document.getElementById("app").style.opacity = 0.3;
         document.getElementById("pop-up").style.display = "block";
         document.getElementById("pop-up").appendChild(newDiv);
-        setTimeout(()=>{
+        setTimeout(() => {
             document.getElementById("app").style.opacity = 1;
             document.getElementById("pop-up").style.display = "none";
-                
-        },2000)
+
+        }, 2000)
         document.getElementById(errEl).click();
-    
+
     } else {
         var tempArr = []
         json += ']}'
@@ -493,8 +574,11 @@ document.getElementById('toggle-down').addEventListener(('click'), (event) => {
 
 
 if (location.hash != undefined && location.hash.length > 0 && location.hash != "#newpro") {
-    processId = location.hash.substr(4);
-    checkme(location.hash.substr(4));
+    //processId = location.hash.substr(4);
+    checkme(processId);
 } else {
     checkme();
 }
+
+
+

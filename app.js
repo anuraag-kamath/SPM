@@ -36,37 +36,16 @@ var app = express()
 
 
 var url = "";
-console.log(process.env.PORT);
 const port = process.env.PORT || 9099;
 
 var cors = require('cors')
 
 //newImports
-var { employee_v3 } = require('./schemas/employee_v3')
-var { employee_v2 } = require('./schemas/employee_v2')
-var { Questionnaire_v5 } = require('./schemas/Questionnaire_v5')
-var { Questionnaire_v4 } = require('./schemas/Questionnaire_v4')
-var { Questionnaire_v3 } = require('./schemas/Questionnaire_v3')
-var { Questionnaire_v2 } = require('./schemas/Questionnaire_v2')
-var { Questionnaire_v1 } = require('./schemas/Questionnaire_v1')
-var { Questionnaire_v0 } = require('./schemas/Questionnaire_v0')
-var { employee_v1 } = require('./schemas/employee_v1')
+var { sample123_v0 } = require('./schemas/sample123_v0')
 var { employee_v0 } = require('./schemas/employee_v0')
-var { sample_v2 } = require('./schemas/sample_v2')
-var { sample_v1 } = require('./schemas/sample_v1')
-var { sample_v0 } = require('./schemas/sample_v0')
-var { testEl } = require('./schemas/testEl')
-var { particular } = require('./schemas/particular')
+
+var { user } = require('./schemas/user.js')
 var { roles } = require('./schemas/roles')
-var { alpha } = require('./schemas/alpha')
-var { leaves } = require('./schemas/leaves')
-var { employee } = require('./schemas/employee')
-var { user } = require('./schemas/user')
-var { beta } = require('./schemas/beta')
-var { test } = require('./schemas/test')
-
-app.use(cors())
-
 
 app.use(bodyparser.json());
 
@@ -76,34 +55,37 @@ app.use(bodyparser.urlencoded({
 app.use(cookieParser())
 app.use(express.static(__dirname + "/public/login"));
 
+app.use((req, res, next) => {
+    console.log(req.path);
+    console.log(req.method);
+    next();
+})
+
 app.get('/login', (req, res) => {
-    console.log("LOGIN");
+    console.log("**/login entered**");
     res.sendFile(__dirname + '/public/login/login.html')
+    console.log("**/login exited**");
 })
 
 app.post('/login', (req, res) => {
-    console.log(req.body);
-
-    console.log("##REQ");
-    console.log("##REQ");
+    console.log("**/login entered**");
 
     user.find({ "user.username": req.body.username }).then((res1) => {
         if (res1.length > 0) {
             bcrypt.compare(req.body.password, res1[0].user.password).then((res2) => {
-                if (res2 == true) {
-                    console.log(res2);
+                if (res1[0].user.deactivated == true) {
+                    res.send({
+                        deactivated: true,
+                        url: '/login.html'
+                    })
+                } else if (res2 == true) {
                     token = jsonwebtoken.sign({ userId: res1[0]._id }, "alphabetagamma", {
                         expiresIn: '1H'
                     })
-                    console.log(token);
-                    console.log(jsonwebtoken.verify(token, "alphabetagamma"));
                     var sendBackUrl = '/index.html';
                     if (url.length > 0) {
                         sendBackUrl = url;
                     }
-                    console.log('@@');
-                    console.log(sendBackUrl);
-                    console.log('@@');
                     res.cookie('token', token, { httpOnly: true }).send({
                         url: sendBackUrl,
                         token: token
@@ -124,23 +106,68 @@ app.post('/login', (req, res) => {
     })
 
 
+    console.log("**/login exited**");
 
 
 
 })
 
 app.post('/logout', (req, res) => {
+    console.log("**/logout entered**");
+
 
     res.cookie('token', '', { httpOnly: true }).send({
         url: ''
     })
+    console.log("**/logout exited**");
+
 });
 
 
+app.post('/deactivateUser/:id', (req, res) => {
+
+
+
+    var deactivateId = req.params.id;
+    user.findById(deactivateId, (err, res2) => {
+        res2.user.deactivated = true;
+        console.log("####");
+        console.log(res2);
+        console.log(deactivateId);
+
+        console.log("####");
+        user.findByIdAndUpdate(deactivateId, res2).then((res1) => {
+            res.send(res1);
+        })
+    })
+
+
+
+
+})
+
+app.post('/activateUser/:id', (req, res) => {
+    var activateId = req.params.id;
+    user.findById(activateId, (err, res2) => {
+        console.log(activateId)
+        res2.user.deactivated = false;
+        user.findByIdAndUpdate(activateId, res2).then((res1) => {
+            res.send(res1);
+        })
+    })
+})
+
+app.delete('/deleteUser/:id', (req, res) => {
+    var deleteUser = req.params.id;
+
+    user.findByIdAndRemove(deleteUser, (err, res1) => {
+        res.send("OK");
+    })
+})
 
 
 app.post('/register', (req, res) => {
-    console.log(req.body);
+    console.log("**/register entered**");
     var username = req.body.username;
     var password = req.body.password;
 
@@ -149,20 +176,20 @@ app.post('/register', (req, res) => {
             res.send({ error: "Username already exists" });
         }
         else {
+
             bcrypt.hash(password, 10).then((res2) => {
                 var usr = new user({
                     user: {
                         username: username,
                         password: res2,
-                        roles: ["index"]
+                        roles: ["index", "admin"],
+                        deactivated: false
                     }
                 })
                 usr.save().then((res8) => {
                     token = jsonwebtoken.sign({ userId: res8._id }, "alphabetagamma", {
                         expiresIn: '1M'
                     })
-                    console.log(token);
-                    console.log(jsonwebtoken.verify(token, "alphabetagamma"));
                     res.cookie('token', token).send({
                         url: '/index.html',
                         token: token
@@ -173,15 +200,17 @@ app.post('/register', (req, res) => {
     })
 
 
+    console.log("**/register exited**");
+
 
 
 })
 
 
 app.use((req, res, next) => {
-    console.log("##");
-    console.log(req.cookies.token);
+    console.log("**/Checking Auth entered**");
     url = req.url;
+    console.log(req.cookies);
     if (req.cookies.token == undefined) {
         res.sendFile(__dirname + '/public/login/login.html')
 
@@ -210,8 +239,6 @@ app.use((req, res, next) => {
             var vali = true;
 
             user.findById(jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, (err, doc) => {
-                console.log("##222##")
-                console.log(req.path);
                 if (doc.user != undefined) {
                     var roles = doc.user.roles;
                     var keys = Object.keys(wola);
@@ -229,23 +256,23 @@ app.use((req, res, next) => {
                         }
                     }
                     var redirect = false;
-                    console.log(notApplicable);
                     for (var k = 0; k < notApplicable.length; k++) {
                         if (String(notApplicable[k]).indexOf(req.path) != -1) {
                             redirect = true;
-                            console.log("REDIRECTED");
+                            console.log("REDIRECTED TO NOT AUTHORIZED");
                             res.redirect('/notAuthorized.html');
                             break;
                         }
                     }
                     if (redirect == false) {
-                        console.log("REDIRECTED1");
-                        console.log("##333##")
+                        console.log("MOVE ON");
                         next();
 
                     }
                 }
                 else {
+                    console.log("REDIRECTED TO INDEX");
+
                     res.redirect("/index.html")
 
                 }
@@ -255,9 +282,12 @@ app.use((req, res, next) => {
 
         }
         catch (err) {
+            console.log("REDIRECTED TO ERROR BACK TO LOGIN");
+
             res.sendFile(__dirname + '/public/login/login.html')
         }
     }
+    console.log("**/Checking Auth exited**");
 
 })
 
@@ -265,35 +295,37 @@ app.use(express.static(__dirname + '/public/others'))
 
 
 app.get('/whoami', (req, res) => {
+    console.log("**/whoami entered**");
+
 
     user.findById(jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, (err, res1) => {
         res.send('{"user":"' + res1.user.username + '"}')
 
     })
 
+    console.log("**/whoami exited**");
 
 })
 
 app.post('/process', (req, res) => {
-    console.log(req.body);
+    console.log("**/process entered**");
     var process2 = new process1(req.body);
-    console.log(process2)
     process2.save().then((doc) => {
-        console.log("*********");
         var master = new processMaster({ processName: req.body.processName, latestVersionId: doc._id, pastversions: [] });
-        console.log("*********");
         master.save().then((doc1) => {
-            console.log("*********");
 
             res.send(`${doc1}`);
 
         })
     })
+    console.log("**/process exited**");
+
 })
 
 app.post('/objects', (req, res) => {
+    console.log("**/objects entered**");
+
     req.body.schemaName = req.body.schemaName + "_v0"
-    console.log(req.body);
 
     fs.appendFile('./schemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
     })
@@ -304,7 +336,6 @@ app.post('/objects', (req, res) => {
     })
 
     fs.readFile('./app.js', (err, data) => {
-        console.log(data);
 
 
 
@@ -313,34 +344,25 @@ app.post('/objects', (req, res) => {
         data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.post('/" + req.body.schemaName + "', (req, res) => {\n\tconsole.log(req.body);\n\tvar obj1 = new " + req.body.schemaName + "(req.body);\n\tconsole.log(obj1)\n\obj1.save().then((doc) => {\n\t\tres.send(`${doc}`);\n\t})\n})")
         data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "', (req, res) => {\n\t" + req.body.schemaName + ".find({}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
         data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "/:id', (req, res) => {\n\t" + req.body.schemaName + ".find({_id:ObjectId(req.params.id)}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-        console.log(data);
         fs.writeFile('./app.js', data, (err) => {
 
         })
     })
+    console.log("**/objects exited**");
 
 
 })
 
 
 app.put('/objects/:id', (req, res) => {
-    console.log(req.body);
+    console.log("**/objects entered**");
     obj.findByIdAndUpdate(req.params.id, {
         obsolete: "yes"
     }, (err, doc3) => {
-        console.log("####");
-        console.log(doc3);
-        console.log("####");
         var version = "_v" + (Number((String(doc3.schemaName).substr(String(doc3.schemaName).length - 1))) + 1);
         req.body.schemaName = req.body.schemaName + version
-        console.log("#####VV");
-        console.log(req.body);
-        console.log("#####VV");
         var obj1 = new obj((req.body));
-        console.log("TRYING" + obj1);
         obj1.save().then((doc) => {
-            console.log("SAVED!!!!!!!");
-            console.log(doc);
             fs.appendFile('./schemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
             })
 
@@ -365,6 +387,7 @@ app.put('/objects/:id', (req, res) => {
 
 
     });
+    console.log("**/objects exited**");
 
 
 
@@ -372,20 +395,28 @@ app.put('/objects/:id', (req, res) => {
 
 
 app.get('/objects', (req, res) => {
+    console.log("**/objects entered**");
+
     obj.find({}).then((docs) => {
-        console.log(docs);
         res.send(docs);
     });
+    console.log("**/objects exited**");
+
 });
 
 app.get('/objects/:id', (req, res) => {
+    console.log("**/objects entered**");
+
     obj.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
         res.send(docs);
     })
+    console.log("**/objects exited**");
+
 });
 
 app.get('/objects/:id/:name', (req, res) => {
+    console.log("**/objects entered**");
+
     var id = req.params.id;
     var name = req.params.name;
     var mode = req.query.mode;
@@ -397,6 +428,8 @@ app.get('/objects/:id/:name', (req, res) => {
         eval(name + '.findById("' + id + '",(err,docs)=>{console.log("**************");console.log(docs);console.log("**************");res.send(docs)})');
 
     }
+    console.log("**/objects exited**");
+
 
 });
 
@@ -405,92 +438,96 @@ app.get('/objects/:id/:name', (req, res) => {
 
 
 app.get('/process', (req, res) => {
+    console.log("**/process entered**");
+
     var alpha = req.query.process;
     searchQuery = "";
     if (alpha != undefined) {
         searchQuery = "'_id':'" + ObjectID(alpha) + "'"
-        process.find({ "_id": ObjectId(alpha) }).select().then((docs) => {
+        process1.find({ "_id": ObjectId(alpha) }).select().then((docs) => {
             res.send(docs);
         })
     }
     else {
-        process.find({ $and: [{ obsolete: { $ne: 'yes' } }] }, (err, res1) => {
-            console.log("#############");
-            console.log(res1);
-            console.log("#############");
+        process1.find({ $and: [{ obsolete: { $ne: 'yes' } }] }, (err, res1) => {
             res.send(res1);
         });
 
 
     }
+    console.log("**/process exited**");
+
 
 })
 app.delete('/objects/:id', (req, res) => {
+    console.log("**/objects entered**");
+
     _id = req.params.id;
-    console.log(_id);
     obj.deleteOne({ "_id": ObjectId(_id) }).then((doc) => {
-        console.log(doc);
         res.send(doc)
     })
+    console.log("**/objects exited**");
+
 })
 
 app.post('/forms', (req, res) => {
-    console.log(req);
+    console.log("**/forms entered**");
+
     var frm = new form1(req.body);
     frm.save().then((doc) => {
-        console.log(`${doc} is saved!`);
         res.send(doc);
     })
+    console.log("**/forms entered**");
+
 })
 
 app.put('/forms/:id', (req, res) => {
+    console.log("**/forms entered**");
+
     id = req.params.id;
     var frm = new form1(req.body);
-    console.log(req.body.name);
     form1.findByIdAndUpdate(id, req.body, (err, res1) => {
-        console.log(res1);
-        console.log(err);
         res.send(res1);
     })
+    console.log("**/forms exited**");
+
 })
 
 app.get('/forms/:id', (req, res) => {
+    console.log("**/forms entered**");
     id = req.params.id;
-    console.log(id);
     form1.findById(id, (err, res2) => {
-        console.log(res2);
         res.send(res2);
     })
+    console.log("**/forms exited**");
 
 })
 
 app.get('/forms', (req, res) => {
+    console.log("**/forms entered**");
+
     fields = req.query.fields;
-    console.log(fields);
     form1.find({}).select(fields).then((docs) => {
 
         res.send(docs);
     })
+    console.log("**/forms exited**");
+
 })
 
 
 
 app.put('/process/:id', (req, res) => {
+    console.log("**/process entered**");
+
     var alpha = req.params.id;
 
-    console.log("RECIEVED!!!!");
-
-    console.log(req.body);
     var process2 = new process1(req.body);
-    console.log(process2)
     process2.save().then((doc) => {
 
-        process.findByIdAndUpdate(alpha, {
+        process1.findByIdAndUpdate(alpha, {
             obsolete: "yes"
         }).then((doc1) => {
-            console.log("RESPONSE")
-            console.log('latestVersionId: "' + alpha + '"')
-            console.log("RESPONSE")
             var searchParameters = '{ "latestVersionId": "' + alpha + '" }'
             processMaster.find(JSON.parse(searchParameters)).then((doc4) => {
 
@@ -501,9 +538,6 @@ app.put('/process/:id', (req, res) => {
                         pastVersions: alpha
                     }
                 }, (err, doc3) => {
-                    console.log("#############");
-                    console.log(err);
-                    console.log("#############");
                     res.send(doc)
                 })
             })
@@ -518,13 +552,14 @@ app.put('/process/:id', (req, res) => {
     //     console.log("RESPONSE")
     //     res.send(doc);
     // })
+    console.log("**/process exited**");
+
 })
 
 
 app.post('/process', (req, res) => {
-    console.log(req.body);
+    console.log("**/process entered**");
     var process2 = new process1(req.body);
-    console.log(process2)
     process2.save().then((doc) => {
         var master = new processMaster({ processName: req.body.processName, latestVersionId: doc._id, pastversions: [] });
         master.save().then((doc1) => {
@@ -532,45 +567,57 @@ app.post('/process', (req, res) => {
 
         })
     })
+    console.log("**/process exited**");
 })
 
 app.delete('/deleteAll', (req, res) => {
+    console.log("**/deleteAll entered**");
+
     process.deleteMany({}).then((doc) => {
         res.send(doc)
     })
+    console.log("**/deleteAll exited**");
+
 })
 
 app.get('/process/:id', (req, res) => {
+    console.log("**/process entered**");
+
     id = req.params.id;
-    console.log(id);
-    process.findById(id, (err, res1) => {
+    process1.findById(id, (err, res1) => {
         res.send(res1);
     }).select('processName formName');
 
+    console.log("**/process exited**");
 
 })
 
 app.post('/instance', (req, res) => {
+    console.log("**/instance entered**");
     processId = req.body.processId;
-    console.log("##");
-    console.log(req.body);
-    console.log("##");
-    var ins = new instance({ processId })
-    ins.save().then((doc) => {
-        res.send(doc);
+    user.findById(jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, (err, res123) => {
+        var ins = new instance({
+            processId, user: res123.user.username
+            , date: new Date()
+        })
+        ins.save().then((doc) => {
+            res.send(doc);
+        })
+        console.log("**/instance exited**");
     })
+
 })
 
 app.post('/instance/:id', (req, res) => {
+    console.log("**/instance entered**");
     instanceId = req.params.id;
     objects = JSON.parse(req.body.objects);
-    console.log(req.body);
     oldObjects = [];
     addObjects(objects);
     instance.findById(instanceId, (err, data) => {
-        process.findById(data.processId, (err, data2) => {
+        process1.findById(data.processId, (err, data2) => {
             var wi = new workitem({
-                processName: "",
+                processName: data2.processName,
                 processId: data.processId,
                 instanceId: instanceId,
                 status: "scheduled",
@@ -578,7 +625,7 @@ app.post('/instance/:id', (req, res) => {
                 stepType: (data2).steps[0].step1,
                 stepId: (data2).steps[0]._id,
                 formId: (data2).steps[0].frm1,
-                participant: (data2).steps[0].part1
+                participant: (data2).steps[0].part1,
             })
 
 
@@ -587,22 +634,22 @@ app.post('/instance/:id', (req, res) => {
             wi.save().then((doc) => {
                 res.send(doc);
             })
+
         });
     })
 
+    console.log("**/instance exited**");
 
 
 })
 
 var oldObjects = [];
 app.post('/instance/:id/:wid', (req, res) => {
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    console.log("**/instance entered**");
+
     instanceId = req.params.id;
     workitemId = req.params.wid;
     objects = JSON.parse(req.body.objects);
-    console.log("******");
-    console.log(objects);
-    console.log("******");
     instance.findById(instanceId, (err, doc21) => {
         oldObjects = doc21.objects;
         instance.findByIdAndUpdate(instanceId, {
@@ -611,94 +658,89 @@ app.post('/instance/:id/:wid', (req, res) => {
             addObjects(objects);
         })
     })
+    user.findById(jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, (err, res123) => {
+        workitem.findByIdAndUpdate(workitemId, {
+            status: "finished",
+            user: res123.user.username,
+            date: new Date()
+        }).then(
+            (doc) => {
+                workitem.find({ "instanceId": doc.instanceId, "status": "scheduled" }).then((docs) => {
+                    if (docs.length == 0) {
+                        process1.findById(doc.processId, (err, doc1) => {
 
-    workitem.findByIdAndUpdate(workitemId, {
-        status: "finished"
-    }).then(
-        (doc) => {
-            workitem.find({ "instanceId": doc.instanceId, "status": "scheduled" }).then((docs) => {
-                if (docs.length == 0) {
-                    process.findById(doc.processId, (err, doc1) => {
-                        console.log(doc1);
-
-                        for (var i = 0; i < doc1.steps.length; i++) {
-                            console.log("^^^^^");
-                            console.log(doc1.steps[i]._id);
-                            console.log(doc.stepId);
-                            console.log("^^^^^");
-                            if (doc1.steps[i]._id == doc.stepId) {
-                                var status = "";
-                                i = i + 1;
-                                if (i == doc1.steps.length) {
-                                    console.log("FINISHED");
-                                    status = "finished";
-                                }
-                                else {
-                                    console.log("@@");
-                                    status = doc1.steps[i]._id;
-                                    var wi1 = new workitem({
-                                        processName: "",
-                                        processId: doc.processId,
-                                        instanceId: instanceId,
-                                        status: "scheduled",
-                                        stepName: doc1.steps[i].lbl1,
-                                        stepType: (doc1).steps[i].step1,
-                                        stepId: (doc1).steps[i]._id,
-                                        formId: (doc1).steps[i].frm1,
-                                        participant: (doc1).steps[i].part1
-                                    })
-                                    wi1.save().then((doc) => {
-                                        console.log("SAVED1" + doc);
-                                    })
-                                    if (doc1.steps[i].lbl2 != undefined && doc1.steps[i].lbl2.length > 0) {
-                                        var wi2 = new workitem({
-                                            processName: "",
+                            for (var i = 0; i < doc1.steps.length; i++) {
+                                if (doc1.steps[i]._id == doc.stepId) {
+                                    var status = "";
+                                    i = i + 1;
+                                    if (i == doc1.steps.length) {
+                                        status = "finished";
+                                    }
+                                    else {
+                                        status = doc1.steps[i]._id;
+                                        var wi1 = new workitem({
+                                            processName: doc1.processName,
                                             processId: doc.processId,
                                             instanceId: instanceId,
                                             status: "scheduled",
-                                            stepName: doc1.steps[i].lbl2,
-                                            stepType: (doc1).steps[i].step2,
+                                            stepName: doc1.steps[i].lbl1,
+                                            stepType: (doc1).steps[i].step1,
                                             stepId: (doc1).steps[i]._id,
-                                            formId: (doc1).steps[i].frm2,
-                                            participant: (doc1).steps[i].part2
+                                            formId: (doc1).steps[i].frm1,
+                                            participant: (doc1).steps[i].part1
                                         })
-                                        wi2.save().then((doc) => {
-                                            console.log("SAVED2" + doc);
+                                        wi1.save().then((doc) => {
+                                        })
+                                        if (doc1.steps[i].lbl2 != undefined && doc1.steps[i].lbl2.length > 0) {
+                                            var wi2 = new workitem({
+                                                processName: doc1.processName,
+                                                processId: doc.processId,
+                                                instanceId: instanceId,
+                                                status: "scheduled",
+                                                stepName: doc1.steps[i].lbl2,
+                                                stepType: (doc1).steps[i].step2,
+                                                stepId: (doc1).steps[i]._id,
+                                                formId: (doc1).steps[i].frm2,
+                                                participant: (doc1).steps[i].part2
+                                            })
+                                            wi2.save().then((doc) => {
 
+
+                                            })
+
+                                        }
+
+                                        process1.findByIdAndUpdate(doc.processId, {
+                                            status
+                                        }, (err, doc2) => {
 
                                         })
-
                                     }
-
-                                    process.findByIdAndUpdate(doc.processId, {
-                                        status
-                                    }, (err, doc2) => {
-
-                                    })
+                                    break;
                                 }
-                                break;
                             }
-                        }
+                            res.send("OK");
+                        })
+                    } else {
                         res.send("OK");
-                    })
-                } else {
-                    res.send("OK");
-                }
-            })
+                    }
+                })
 
 
-        }
-    )
+            }
+        )
+
+    });
+
+
+
+    console.log("**/instance exited**");
 
 })
 
 function addObjects(objects) {
     var l = 0;
     var length = 0;
-    console.log("***ADDING OBJECTS*****");
-    console.log(objects);
-    console.log("#");
-    console.log(oldObjects);
     var carryForward = [];
     for (var i = 0; i < oldObjects.length; i++) {
         var found = false;
@@ -707,10 +749,6 @@ function addObjects(objects) {
                 found = true;
                 break;
             }
-            console.log("##");
-            console.log();
-            console.log(key);
-            console.log("##");
         }
         if (found == false) {
             carryForward.push({
@@ -719,7 +757,6 @@ function addObjects(objects) {
             });
         }
     }
-    console.log("***ADDING OBJECTS*****");
     for (key in objects) {
         length++;
     }
@@ -771,10 +808,10 @@ function addObjects(objects) {
 }
 
 app.get('/instance/:id', (req, res) => {
+    console.log("**/instance entered**");
 
     instanceId = req.params.id;
     instance.findById(instanceId, (err, doc) => {
-        console.log(doc);
         var res1;
         res.send(doc);
 
@@ -783,6 +820,7 @@ app.get('/instance/:id', (req, res) => {
         //     res.send(res1.objects)
         // })
     }).select('objects processId')
+    console.log("**/instance exited**");
 
 })
 
@@ -790,26 +828,31 @@ app.get('/instance/:id', (req, res) => {
 
 
 app.get('/workitems', (req, res) => {
+    console.log("**/workitems entered**");
+
     var search = '';
 
+    console.log("SEARCH");
+    console.log(req.query.search);
+    var searchStep = req.query.searchStep;
+    console.log("SEARCH");
     var userId = jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId
 
-    console.log("Workitems");
-    console.log(userId);
-    console.log("Workitems");
 
     user.findById(userId, (err, res2) => {
-        console.log(res2.user.roles.length);
         search = '{"$and":[ {"$or":['
         var roles = [];
         for (var t = 0; t < res2.user.roles.length; t++) {
             roles.push('{"participant":"' + res2.user.roles[t] + '"}');
         }
-        console.log("###");
-        console.log(roles);
+        console.log("STEPID LENGTH" + searchStep);
+        if (searchStep != undefined && searchStep.length > 0) {
+            search += roles + ']},{"instanceId":"' + req.query.instanceId + '"},{"stepId": { "$in": [' + searchStep + '] } }]}'
 
-        console.log("###");
-        search += roles + ']},{"status":"scheduled"}]}'
+        } else {
+            search += roles + ']},{"status":"scheduled"}]}'
+
+        }
         console.log(search);
         workitem.find(JSON.parse(search)).then((data) => {
             res.send(data)
@@ -818,18 +861,19 @@ app.get('/workitems', (req, res) => {
     })
 
 
+    console.log("**/workitems exited**");
 
 })
 
 app.get('/workitems/:id', (req, res) => {
+    console.log("**/workitems entered**");
+
 
     var id = req.params.id;
     workitem.findById(id).then((data) => {
-        console.log("@@@@");
-        console.log(data);
-        console.log("@@@@");
         res.send(data)
     });
+    console.log("**/workitems exited**");
 
 })
 
@@ -838,207 +882,23 @@ app.get('/workitems/:id', (req, res) => {
 
 //newSettersGetters
 
-app.get('/employee_v3/:id', (req, res) => {
-    employee_v3.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+app.get('/sample123_v0/:id', (req, res) => {
+    sample123_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
         console.log(docs);
         res.send(docs);
     })
 });
 
-app.get('/employee_v3', (req, res) => {
-    employee_v3.find({}).then((docs) => {
+app.get('/sample123_v0', (req, res) => {
+    sample123_v0.find({}).then((docs) => {
         console.log(docs);
         res.send(docs);
     })
 });
 
-app.post('/employee_v3', (req, res) => {
+app.post('/sample123_v0', (req, res) => {
     console.log(req.body);
-    var obj1 = new employee_v3(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/employee_v2/:id', (req, res) => {
-    employee_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/employee_v2', (req, res) => {
-    employee_v2.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/employee_v2', (req, res) => {
-    console.log(req.body);
-    var obj1 = new employee_v2(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/Questionnaire_v5/:id', (req, res) => {
-    Questionnaire_v5.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/Questionnaire_v5', (req, res) => {
-    Questionnaire_v5.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/Questionnaire_v5', (req, res) => {
-    console.log(req.body);
-    var obj1 = new Questionnaire_v5(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/Questionnaire_v4/:id', (req, res) => {
-    Questionnaire_v4.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/Questionnaire_v4', (req, res) => {
-    Questionnaire_v4.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/Questionnaire_v4', (req, res) => {
-    console.log(req.body);
-    var obj1 = new Questionnaire_v4(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/Questionnaire_v3/:id', (req, res) => {
-    Questionnaire_v3.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/Questionnaire_v3', (req, res) => {
-    Questionnaire_v3.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/Questionnaire_v3', (req, res) => {
-    console.log(req.body);
-    var obj1 = new Questionnaire_v3(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/Questionnaire_v2/:id', (req, res) => {
-    Questionnaire_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/Questionnaire_v2', (req, res) => {
-    Questionnaire_v2.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/Questionnaire_v2', (req, res) => {
-    console.log(req.body);
-    var obj1 = new Questionnaire_v2(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/Questionnaire_v1/:id', (req, res) => {
-    Questionnaire_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/Questionnaire_v1', (req, res) => {
-    Questionnaire_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/Questionnaire_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new Questionnaire_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/Questionnaire_v0/:id', (req, res) => {
-    Questionnaire_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/Questionnaire_v0', (req, res) => {
-    Questionnaire_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/Questionnaire_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new Questionnaire_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/employee_v1/:id', (req, res) => {
-    employee_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/employee_v1', (req, res) => {
-    employee_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/employee_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new employee_v1(req.body);
+    var obj1 = new sample123_v0(req.body);
     console.log(obj1)
     obj1.save().then((doc) => {
         res.send(`${doc}`);
@@ -1068,101 +928,6 @@ app.post('/employee_v0', (req, res) => {
     })
 })
 
-app.get('/sample_v2/:id', (req, res) => {
-    sample_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/sample_v2', (req, res) => {
-    sample_v2.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/sample_v2', (req, res) => {
-    console.log(req.body);
-    var obj1 = new sample_v2(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/sample_v1/:id', (req, res) => {
-    sample_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/sample_v1', (req, res) => {
-    sample_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/sample_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new sample_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-
-
-app.get('/sample_v0/:id', (req, res) => {
-    sample_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/sample_v0', (req, res) => {
-    sample_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/sample_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new sample_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-
-
-app.get('/testEl/:id', (req, res) => {
-    testEl.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/testEl', (req, res) => {
-    testEl.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/testEl', (req, res) => {
-    console.log(req.body);
-    var obj1 = new testEl(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
 
 app.get('/particular/:id', (req, res) => {
     particular.find({ _id: ObjectId(req.params.id) }).then((docs) => {
@@ -1367,7 +1132,6 @@ app.post('/test', (req, res) => {
 
 
 app.use((req, res, next) => {
-    console.log("HERE I AM");
     res.redirect("/index.html")
 })
 

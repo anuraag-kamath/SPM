@@ -22,7 +22,13 @@ var instance = mongoose.model('instance', {
                 type: String
             }
         }
-    ]
+    ],
+    user: {
+        type: String
+    },
+    date: {
+        type: Date
+    }
 })
 
 

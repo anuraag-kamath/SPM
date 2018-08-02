@@ -1,4 +1,4 @@
-fetch('http://localhost:3000/forms', {
+fetch('/forms', {
     method: 'GET',
     headers: {
         'Access-Control-Allow-Origin': '*'

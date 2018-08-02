@@ -1,6 +1,6 @@
 td,th {
-    width: 50px;
     text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 
@@ -9,4 +9,8 @@ td,th {
     margin-top: 50px;
     overflow: hidden;
     width: 300px;
+}
+
+option:checked{
+    font-weight: bold
 }

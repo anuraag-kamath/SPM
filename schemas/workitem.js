@@ -27,6 +27,12 @@ var workitem = mongoose.model('workitem', {
     },
     participant: {
         type: String
+    },
+    user: {
+        type: String
+    },
+    date: {
+        type: Date
     }
 })
 

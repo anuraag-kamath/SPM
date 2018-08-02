@@ -8,9 +8,6 @@ body {
     background-color: grey;
 }
 
-.main-section {
-    overflow:scroll; 
-}
 
 .k1 {
     height: 400px;
@@ -23,9 +20,6 @@ body {
    
 }
 
-#main-section:focus-within   {
-    border:2px solid green;
-}
 
 .right-section {
     background-color: grey;

@@ -48,9 +48,19 @@ loginRegister = (type) => {
         else if (res.token != undefined) {
             localStorage.setItem('spm_token', res.token);
             console.log(document.cookie.token);
-            window.location.reload();
+            if(window.location.href.indexOf('login')==-1){
+                console.log("REFRESHING");
+                window.location.reload();
 
-        } else {
+            }else{
+                window.location.href=res.url;
+            }
+
+        } else if (res.deactivated==true){
+            document.getElementById('mess').innerText = "User deactivated";
+            document.getElementById('mess').style.visibility = "visible"
+            
+        }else {
             document.getElementById('mess').innerText = "Invalid username/password";
             document.getElementById('mess').style.visibility = "visible"
 

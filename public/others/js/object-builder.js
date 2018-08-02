@@ -73,7 +73,7 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
         method = "PUT";
 
     }
-    fetch('http://localhost:3000/objects' + ext, {
+    fetch('/objects' + ext, {
         method: method,
         headers: {
             'content-type': 'application/json'

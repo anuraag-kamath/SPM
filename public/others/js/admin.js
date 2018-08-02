@@ -1,6 +1,6 @@
 
 var selectedUser = "";
-
+var selectedUserAction="";
 loadUsers = () => {
     document.getElementById('users').innerHTML = "";
     fetch('/user', {
@@ -13,8 +13,21 @@ loadUsers = () => {
         }
         for (i in JSON.parse(res)) {
             var newRow = document.createElement("tr");
-            newRow.innerHTML = "<td>" + JSON.parse(res)[i].user.username + "</td><td  id=roles" + JSON.parse(res)[i]._id + ">" + JSON.parse(res)[i].user.roles + "</td><td class='editUsers' id='edit_" + JSON.parse(res)[i]._id + "'>Edit</td>";
+            var deactivate = false;
+            var add = "";
+            if (JSON.parse(res)[i].user.deactivated == true) {
+                deactivate = true;
+                add = "<td> <i  id='activate_" + JSON.parse(res)[i]._id + "' class='fas fa-toggle-off editUsers'></i>                </td>";
+
+            } else {
+                add = "<td> <i id='deactivate_" + JSON.parse(res)[i]._id + "' class='fas fa-toggle-on editUsers'></i>          </td>";
+
+            }
+            newRow.innerHTML = "<td>" + JSON.parse(res)[i].user.username + "</td><td  id=roles" + JSON.parse(res)[i]._id + " data-toggle='tooltip' title=" + JSON.parse(res)[i].user.roles + ">" + JSON.parse(res)[i].user.roles + "</td><td><i  id='edit_" + JSON.parse(res)[i]._id + "' class='fas fa-user-edit editUsers'></i></td>"
+                + add
+                + "<td><i id='delete_" + JSON.parse(res)[i]._id + "' class='fas fa-ban editUsers'></i>                </td>";
             document.getElementById('users').appendChild(newRow);
+
             document.getElementById("edit_" + JSON.parse(res)[i]._id).addEventListener('click', (ev) => {
                 selectedUser = ev.target.id;
 
@@ -24,9 +37,12 @@ loadUsers = () => {
                 newDiv.style.width = "100px";
                 document.getElementById('pop-up').style.position = "absolute";
                 newDiv.style.margin = "auto auto";
-                newDiv.innerHTML = '<select id="roleSelector" class=selectpicker form-control multiple></select><div><button id="editRole" class="btn btn-primary">Edit Roles</button></div>'
+                newDiv.innerHTML = '<select id="roleSelector" class=selectpicker form-control multiple></select><div><button id="editRole" class="btn btn-primary"><i class="fas fa-edit"></i>                </button><button id="cancelRole" style="margin-left:30px" class="btn btn-primary"><i class="fas fa-times"></i>                </button></div>'
                 document.getElementById('pop-up').innerHTML = "";
                 document.getElementById('pop-up').appendChild(newDiv);
+                document.getElementById('cancelRole').addEventListener('click',(ev)=>{
+                    popupClose();
+                })
                 fetch('/roles', {
                     credentials: 'include'
                 }).then((prom) => prom.text()).then((res1) => {
@@ -79,10 +95,55 @@ loadUsers = () => {
                 document.getElementById('pop-up').style.position = "fixed";
                 document.getElementById('pop-up').style.top = 0;
                 document.getElementById('pop-up').style.left = 0;
-        
+
                 document.getElementById('app').style.opacity = "0.3";
                 document.getElementById('pop-up').style.opacity = "1";
 
+
+
+            })
+            console.log(JSON.parse(res)[i].user.deactivated + "#" + deactivate);
+            if (deactivate == true) {
+                document.getElementById("activate_" + JSON.parse(res)[i]._id).addEventListener('click', (ev) => {
+                    selectedUserAction = ev.target.id;
+
+                    popUpConfirmBox("Activate User", "Cancel", "Are you sure you want to activate the user");
+                    activateUser();
+
+                    document.getElementById('rejectButton').addEventListener('click', (ev) => {
+                        popupClose();
+                    })
+
+                })
+
+            }
+            else {
+                document.getElementById("deactivate_" + JSON.parse(res)[i]._id).addEventListener('click', (ev) => {
+                    selectedUserAction = ev.target.id;
+
+                    popUpConfirmBox("Deactivate User", "Cancel", "Are you sure you want to deactivate the user");
+                    deactivateUser();
+
+                    document.getElementById('rejectButton').addEventListener('click', (ev) => {
+                        popupClose();
+                    })
+
+
+                })
+
+            }
+
+
+            document.getElementById("delete_" + JSON.parse(res)[i]._id).addEventListener('click', (ev) => {
+
+                selectedUserAction = ev.target.id;
+
+                popUpConfirmBox("Delete User", "Cancel", "Are you sure you want to delete the user");
+                deleteUser();
+
+                document.getElementById('rejectButton').addEventListener('click', (ev) => {
+                    popupClose();
+                })
 
 
             })
@@ -92,6 +153,48 @@ loadUsers = () => {
     })
 }
 loadUsers();
+
+
+deactivateUser = () => {
+    document.getElementById('confirmButton').addEventListener('click', (ev1) => {
+        fetch('/deactivateUser/' + String(selectedUserAction).replace("deactivate_", ""), {
+            method: "POST",
+            credentials: 'include'
+        }).then((prom) => prom.text()).then((res) => {
+            popupClose();
+
+            loadUsers();
+        })
+
+    })
+}
+
+activateUser = () => {
+    document.getElementById('confirmButton').addEventListener('click', (ev1) => {
+        fetch('/activateUser/' + String(selectedUserAction).replace("activate_", ""), {
+            method: "POST",
+            credentials: 'include'
+        }).then((prom) => prom.text()).then((res) => {
+            popupClose();
+            loadUsers();
+        })
+
+    })
+}
+
+deleteUser = () => {
+    document.getElementById('confirmButton').addEventListener('click', (ev1) => {
+        fetch('/deleteUser/' + String(selectedUserAction).replace("delete_", ""), {
+            method: "DELETE",
+            credentials: 'include'
+        }).then((prom) => prom.text()).then((res) => {
+            popupClose();
+
+            loadUsers();
+        })
+
+    })
+}
 
 document.getElementById('addUser').addEventListener('click', (ev) => {
 
