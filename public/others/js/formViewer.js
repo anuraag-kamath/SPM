@@ -1,13 +1,17 @@
+
 var objs = [];
 
 var cur;
 console.log("LOADING");
 var tempArr = [];
-var instanceId = "";
+var instanceId1 = "";
 var processId = "";
 var formId = "";
+var iaa = "";
 var workitemId = "";
-onLoad = (formId, processId, workitemId, instanceId) => {
+var submitExists = false;
+var rejectExists = false;
+onLoad = (formId, processId, workitemId, instanceId1) => {
 
     fetch('/objects', {
         credentials: 'include'
@@ -34,230 +38,386 @@ onLoad = (formId, processId, workitemId, instanceId) => {
                     credentials: 'include',
                     body: tempJSON
                 }).then((prom) => prom.text()).then((res) => {
-                    instanceId = JSON.parse(res)._id;
-                }).then(() => {
+                    //                    instanceId1 = JSON.parse(res)._id;
+                    instanceId1 = 1234;
+                    iaa = JSON.parse(res)._id;
+                    console.log("Instance ID after loading for first time:-" + instanceId1);
                     loadObjects();
-                })
+
+                }).then(() => {
+                    console.log("instanceId1 is set:-" + instanceId1);
+
+                }).then(() => {
+                    console.log("Random1" + instanceId1);
+
+                    loadContents(res);
+                });
+            } else {
+                console.log("Random2" + instanceId1);
+
+                loadContents(res);
             }
 
-            tempArr = (JSON.parse(res).structure)
-            document.getElementById('main-section').innerHTML = "";
 
-            for (var i = 1; i < tempArr.length; i++) {
-                var beta = document.createElement(tempArr[i].tagName);
-                beta.id = tempArr[i].id;
-                beta.name = tempArr[i].name;
-
-                beta.className = tempArr[i].class;
-                if (tempArr[i].tagName != "DIV" && tempArr[i].tagName != "FORM" && tempArr[i].tagName != "TABLE") beta.innerText = tempArr[i].text;
-                beta.style.display = tempArr[i].display;
-                beta.style.backgroundColor = tempArr[i].bgc;
-                beta.style.height = tempArr[i].height;
-                beta.style.width = tempArr[i].width;
-                beta.style.overflow = tempArr[i].overflow;
-                beta.style.textAlign = tempArr[i].align;
-                beta.style.padding = tempArr[i].padding;
-                beta.style.margin = tempArr[i].margin;
-                beta.setAttribute('placeholder', tempArr[i].holder);
-                beta.setAttribute('bind', tempArr[i].binding);
-                beta.setAttribute('src', tempArr[i].src);
-                beta.style.background = tempArr[i].background;
-                beta.style.opacity = tempArr[i].opacity;
-                beta.style.position = tempArr[i].position;
-                beta.style.border = tempArr[i].border;
-                beta.style.float = tempArr[i].float; 
-                beta.style.color = tempArr[i].color;
-
-                document.getElementById(tempArr[i].parentId).appendChild(beta);
-                if (beta.name == "Submit") {
-
-                    document.getElementById(beta.id).addEventListener('click', (ev) => {
-                        ev.preventDefault();
-                        var tempCount = 0;
-                        var jsonBody = "{";
-                        for (var i = 0; i < tempArr.length; i++) {
-                            if (tempArr[i].tagName == "FORM") {
-                                if (tempCount != 0) {
-                                    jsonBody += ",";
-                                }
-                                tempCount++;
-                                var bind_element = tempArr[i].binding;
-                                jsonBody += '"' + bind_element + '":{';
-
-                                for (var j = 0; j < objs.length; j++) {
-
-                                    if (bind_element == objs[j].schemaName) {
-                                        var schema = objs[j].schemaStructure;
-                                        var le = 0;
-                                        for (key in schema) {
-                                            le++;
-                                            if (schema[key].control == "radio") {
-
-                                                var ts = schema[key].options
-                                                var checkedEl = "";
-                                                for (k in ts[0]) {
-                                                    if (document.getElementById(tempArr[i].id + "_" + key + "_" + k).checked) {
-                                                        checkedEl = k;
-                                                    }
-                                                }
-                                                jsonBody += '"' + key + '":"' + checkedEl + '"'
-
-
-
-                                            } else {
-
-                                                jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
-
-                                            }
-                                            if (le != (Object.keys(schema).length)) {
-                                                jsonBody += ",";
-                                            }
-                                        }
-                                    }
-
-
-                                }
-                                jsonBody += "}";
-
-                            } else if (tempArr[i].tagName == "TABLE") {
-                                if (tempCount != 0) {
-                                    jsonBody += ",";
-                                }
-                                tempCount++;
-
-                                tbodyC = document.getElementById("tbody" + tempArr[i].id).childNodes;
-                                jsonBody += '"' + tempArr[i].binding + '":[';
-
-
-                                for (var l = 0; l < tbodyC.length; l++) {
-                                    var tempJson = "{";
-                                    for (var m = 0; m < tbodyC[l].childNodes.length; m++) {
-                                        tempJson += '"' + tbodyC[l].childNodes[m].getAttribute('value') + '":"' + tbodyC[l].childNodes[m].innerText + '"';
-                                        if (m != tbodyC[l].childNodes.length - 1) {
-                                            tempJson += ",";
-                                        }
-                                    }
-                                    tempJson += "}"
-                                    if (l != (tbodyC.length - 1)) {
-                                        tempJson += ","
-
-                                    }
-                                    jsonBody += tempJson;
-
-                                }
-                                jsonBody += "]"
-
-
-                            }
-
-                        }
-                        jsonBody += "}"
-                        var wi = "";
-                        if (workitemId.length > 0) {
-                            wi = "/" + workitemId;
-                        }
-                        var sendJson = {
-                            "processId": processId,
-                            "instanceId": instanceId,
-                            "objects": jsonBody
-                        };
-                        fetch('/instance/' + instanceId + wi, {
-                            method: "POST",
-                            headers: {
-                                'content-type': 'application/json'
-
-                            },
-                            credentials: 'include',
-                            body: JSON.stringify(sendJson)
-                        }).then((prom) => {
-                            return prom.text()
-                        }).then((res) => {
-                            window.location.hash = "workitems"
-                        })
-                    });
-                }
-
-                if (String(beta.id).indexOf("bt") != -1) {
-
-                    document.getElementById(beta.id).addEventListener('click', (ev) => {
-
-                        cur = String(ev.target.id).replace("bt", "");
-
-                        for (var i = 0; i < objs.length; i++) {
-
-                            if (document.getElementById(String(ev.target.id).replace("bt", "")).getAttribute('bind') == objs[i].schemaName) {
-
-                                schemaStructure = objs[i].schemaStructure;
-                            }
-                        }
-
-
-
-                        //            document.getElementById('megaCheck').style.height = "100%"
-                        //            document.getElementById('megaCheck').style.width = "100%"
-                        console.log(document.getElementById('megaCheck'));
-                        document.getElementById('megaCheck').style.display = "block"
-                        document.getElementById('contentModal1').innerHTML = "";
-                        //   document.getElementById('main-section').style.display="none"
-                        //            document.getElementById('megaCheck').style.backgroundColor = "grey"
-                        //            document.getElementById('megaCheck').style.position = "absolute"
-                        //            document.getElementById('megaCheck').style.zIndex = "1"
-                        //            document.getElementById('megaCheck').style.opacity = "0.7"
-                        var test = document.createElement("FORM");
-                        test.id = "formModal";
-                        var tis = new Date().getTime();
-                        for (key in schemaStructure) {
-
-                            test.innerHTML += "<input type='input' id=" + key + tis + " class='form-control' placeholder='" + key + "'>";
-
-                        }
-                        var newButton = document.createElement('BUTTON');
-                        newButton.innerText = "Add";
-                        newButton.style.margin = "auto";
-                        newButton.id = "modalAdd" + tis
-                        newButton.className = "btn btn-primary"
-                        test.appendChild(newButton);
-
-                        document.getElementById('contentModal1').appendChild(test);
-
-                        document.getElementById('modalAdd' + tis).addEventListener('click', (ev) => {
-                            ev.preventDefault();
-                            var tempRow = "<tr>";
-                            for (key in schemaStructure) {
-                                var temp = String(ev.target.id).replace("modalAdd", key)
-                                tempRow += "<td value='" + key + "'>" + document.getElementById(temp).value + "</td>"
-                            }
-
-                            tempRow += "</tr>"
-                            document.getElementById('megaCheck').style.display = "none";
-
-
-
-                            document.getElementById("tbody" + cur).innerHTML += (tempRow);
-                        })
-
-
-
-                    });
-                }
-
-                if (tempArr[i].tagName == "FORM" || tempArr[i].tagName == "TABLE") {
-                    bindObject(beta.getAttribute('bind'), beta.id)
-                }
-
-
-            }
 
         }).then(() => {
 
-            if (instanceId.length > 0) {
+            if (typeof (instanceId1) !== 'undefined' && instanceId1.length > 0) {
                 loadObjects();
             }
+            removeLoadBar();
+
         });
 
 
+        removeLoadBar();
 
 
+    });
+}
+
+loadContents = (res) => {
+    tempArr = (JSON.parse(res).structure)
+    document.getElementById('main-section').innerHTML = "";
+    console.log("AM I LOADING>");
+    console.log(tempArr);
+    for (var i = 1; i < tempArr.length; i++) {
+        var beta = document.createElement(tempArr[i].tagName);
+        beta.id = tempArr[i].id;
+        beta.name = tempArr[i].name;
+
+        beta.className = tempArr[i].class;
+        if (tempArr[i].tagName != "DIV" && tempArr[i].tagName != "FORM" && tempArr[i].tagName != "TABLE") beta.innerText = tempArr[i].text;
+        beta.style.display = tempArr[i].display;
+        beta.style.backgroundColor = tempArr[i].bgc;
+        beta.style.height = tempArr[i].height;
+        beta.style.width = tempArr[i].width;
+        beta.style.overflow = tempArr[i].overflow;
+        beta.style.textAlign = tempArr[i].align;
+        beta.style.padding = tempArr[i].padding;
+        beta.style.margin = tempArr[i].margin;
+        beta.setAttribute('placeholder', tempArr[i].holder);
+        beta.setAttribute('bind', tempArr[i].binding);
+        beta.setAttribute('src', tempArr[i].src);
+        beta.style.background = tempArr[i].background;
+        beta.style.opacity = tempArr[i].opacity;
+        beta.style.position = tempArr[i].position;
+        beta.style.border = tempArr[i].border;
+        beta.style.float = tempArr[i].float;
+        beta.style.color = tempArr[i].color;
+
+        document.getElementById(tempArr[i].parentId).appendChild(beta);
+        if (beta.name == "Submit") {
+            submitExists = true;
+
+            eventPage("submit", beta.id)
+        }
+
+        if (beta.name == "Reject") {
+            rejectExists = true;
+
+            document.getElementById(beta.id).addEventListener('click', (ev) => {
+                ev.preventDefault();
+                var tempCount = 0;
+                var jsonBody = "{";
+                for (var i = 0; i < tempArr.length; i++) {
+                    if (tempArr[i].tagName == "FORM") {
+                        if (tempCount != 0) {
+                            jsonBody += ",";
+                        }
+                        tempCount++;
+                        var bind_element = tempArr[i].binding;
+                        jsonBody += '"' + bind_element + '":{';
+
+                        for (var j = 0; j < objs.length; j++) {
+
+                            if (bind_element == objs[j].schemaName) {
+                                var schema = objs[j].schemaStructure;
+                                var le = 0;
+                                for (key in schema) {
+                                    le++;
+                                    if (schema[key].control == "radio") {
+
+                                        var ts = schema[key].options
+                                        var checkedEl = "";
+                                        for (k in ts[0]) {
+                                            if (document.getElementById(tempArr[i].id + "_" + key + "_" + k).checked) {
+                                                checkedEl = k;
+                                            }
+                                        }
+                                        jsonBody += '"' + key + '":"' + checkedEl + '"'
+
+
+
+                                    } else {
+
+                                        jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
+
+                                    }
+                                    if (le != (Object.keys(schema).length)) {
+                                        jsonBody += ",";
+                                    }
+                                }
+                            }
+
+
+                        }
+                        jsonBody += "}";
+
+                    } else if (tempArr[i].tagName == "TABLE") {
+                        if (tempCount != 0) {
+                            jsonBody += ",";
+                        }
+                        tempCount++;
+
+                        tbodyC = document.getElementById("tbody" + tempArr[i].id).childNodes;
+                        jsonBody += '"' + tempArr[i].binding + '":[';
+
+
+                        for (var l = 0; l < tbodyC.length; l++) {
+                            var tempJson = "{";
+                            for (var m = 0; m < tbodyC[l].childNodes.length; m++) {
+                                tempJson += '"' + tbodyC[l].childNodes[m].getAttribute('value') + '":"' + tbodyC[l].childNodes[m].innerText + '"';
+                                if (m != tbodyC[l].childNodes.length - 1) {
+                                    tempJson += ",";
+                                }
+                            }
+                            tempJson += "}"
+                            if (l != (tbodyC.length - 1)) {
+                                tempJson += ","
+
+                            }
+                            jsonBody += tempJson;
+
+                        }
+                        jsonBody += "]"
+
+
+                    }
+
+                }
+                jsonBody += "}"
+                var wi = "";
+                if (workitemId.length > 0) {
+                    wi = "/" + workitemId;
+                }
+                var sendJson = {
+                    "processId": processId,
+                    "instanceId1": instanceId1,
+                    "objects": jsonBody
+                };
+                fetch('/instance/' + instanceId1 + wi, {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json'
+
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(sendJson)
+                }).then((prom) => {
+                    return prom.text()
+                }).then((res) => {
+                    window.location.hash = "workitems"
+                })
+            });
+        }
+
+        if (String(beta.id).indexOf("bt") != -1) {
+
+            document.getElementById(beta.id).addEventListener('click', (ev) => {
+
+                cur = String(ev.target.id).replace("bt", "");
+
+                for (var i = 0; i < objs.length; i++) {
+
+                    if (document.getElementById(String(ev.target.id).replace("bt", "")).getAttribute('bind') == objs[i].schemaName) {
+
+                        schemaStructure = objs[i].schemaStructure;
+                    }
+                }
+
+
+
+                //            document.getElementById('megaCheck').style.height = "100%"
+                //            document.getElementById('megaCheck').style.width = "100%"
+                console.log(document.getElementById('megaCheck'));
+                document.getElementById('megaCheck').style.display = "block"
+                document.getElementById('contentModal1').innerHTML = "";
+                //   document.getElementById('main-section').style.display="none"
+                //            document.getElementById('megaCheck').style.backgroundColor = "grey"
+                //            document.getElementById('megaCheck').style.position = "absolute"
+                //            document.getElementById('megaCheck').style.zIndex = "1"
+                //            document.getElementById('megaCheck').style.opacity = "0.7"
+                var test = document.createElement("FORM");
+                test.id = "formModal";
+                var tis = new Date().getTime();
+                for (key in schemaStructure) {
+
+                    test.innerHTML += "<input type='input' id=" + key + tis + " class='form-control' placeholder='" + key + "'>";
+
+                }
+                var newButton = document.createElement('BUTTON');
+                newButton.innerText = "Add";
+                newButton.style.margin = "auto";
+                newButton.id = "modalAdd" + tis
+                newButton.className = "btn btn-primary"
+                test.appendChild(newButton);
+
+                document.getElementById('contentModal1').appendChild(test);
+
+                document.getElementById('modalAdd' + tis).addEventListener('click', (ev) => {
+                    ev.preventDefault();
+                    var tempRow = "<tr>";
+                    for (key in schemaStructure) {
+                        var temp = String(ev.target.id).replace("modalAdd", key)
+                        tempRow += "<td value='" + key + "'>" + document.getElementById(temp).value + "</td>"
+                    }
+
+                    tempRow += "</tr>"
+                    document.getElementById('megaCheck').style.display = "none";
+
+
+
+                    document.getElementById("tbody" + cur).innerHTML += (tempRow);
+                })
+
+
+
+            });
+        }
+
+        if (tempArr[i].tagName == "FORM" || tempArr[i].tagName == "TABLE") {
+            bindObject(beta.getAttribute('bind'), beta.id)
+        }
+
+
+    }
+
+
+    putMe(document.getElementById('app'));
+}
+
+eventPage = (type, id) => {
+    document.getElementById(id).addEventListener('click', (ev) => {
+        ev.preventDefault();
+        var tempCount = 0;
+        var jsonBody = "{";
+        var problemField = "";
+
+        for (var i = 0; i < tempArr.length; i++) {
+            if (tempArr[i].tagName == "FORM") {
+                if (tempCount != 0) {
+                    jsonBody += ",";
+                }
+                tempCount++;
+                var bind_element = tempArr[i].binding;
+                jsonBody += '"' + bind_element + '":{';
+
+                for (var j = 0; j < objs.length; j++) {
+
+                    if (bind_element == objs[j].schemaName) {
+                        var schema = objs[j].schemaStructure;
+                        var le = 0;
+                        for (key in schema) {
+                            le++;
+                            if (schema[key].control == "radio") {
+
+                                var ts = schema[key].options.split(",")
+                                var checkedEl = "";
+                                for (k in ts) {
+                                    console.log(tempArr[i].id + "_" + key + "_" + k);
+                                    if (document.getElementById(tempArr[i].id + "_" + key + "_" + k).checked) {
+                                        checkedEl = k;
+                                    }
+                                }
+                                jsonBody += '"' + key + '":"' + checkedEl + '"'
+
+
+
+                            } else {
+
+                                if (document.getElementById(tempArr[i].id + "_" + key).checkValidity() == false) {
+                                    alert("Focussing on the problematic field");
+                                    problemField = tempArr[i].id + "_" + key;
+                                    break;
+
+                                }
+
+                                jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
+
+                            }
+                            if (le != (Object.keys(schema).length)) {
+                                jsonBody += ",";
+                            }
+                        }
+                    }
+
+
+                }
+                jsonBody += "}";
+
+            } else if (tempArr[i].tagName == "TABLE") {
+                if (tempCount != 0) {
+                    jsonBody += ",";
+                }
+                tempCount++;
+
+                tbodyC = document.getElementById("tbody" + tempArr[i].id).childNodes;
+                jsonBody += '"' + tempArr[i].binding + '":[';
+
+
+                for (var l = 0; l < tbodyC.length; l++) {
+                    var tempJson = "{";
+                    for (var m = 0; m < tbodyC[l].childNodes.length; m++) {
+                        tempJson += '"' + tbodyC[l].childNodes[m].getAttribute('value') + '":"' + tbodyC[l].childNodes[m].innerText + '"';
+                        if (m != tbodyC[l].childNodes.length - 1) {
+                            tempJson += ",";
+                        }
+                    }
+                    tempJson += "}"
+                    if (l != (tbodyC.length - 1)) {
+                        tempJson += ","
+
+                    }
+                    jsonBody += tempJson;
+
+                }
+                jsonBody += "]"
+
+
+            }
+
+        }
+        if (problemField.length > 0) {
+            console.log(problemField);
+            document.getElementById(problemField).focus();
+        } else {
+            jsonBody += "}"
+            var wi = "";
+            if (workitemId.length > 0) {
+                wi = "/" + workitemId;
+            }
+            var sendJson = {
+                "processId": processId,
+                "instanceId1": instanceId1,
+                "objects": jsonBody
+            };
+            //alert(instanceId1);
+            fetch('/instance/' + instanceId1 + wi, {
+                method: "POST",
+                headers: {
+                    'content-type': 'application/json'
+
+                },
+                credentials: 'include',
+                body: JSON.stringify(sendJson)
+            }).then((prom) => {
+                return prom.text()
+            }).then((res) => {
+                window.location.hash = "workitems"
+            })
+
+        }
     });
 }
 
@@ -269,14 +429,19 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
     onLoad(formId, processId, workitemId)
 } else {
     var search = '{"_id":"' + location.hash.substr(1) + '"}'
-    fetch('/workitems/'+location.hash.substr(1), {
+    fetch('/workitems/' + location.hash.substr(1), {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
-        res=JSON.parse(res);
+        console.log("HERE1" + location.hash.substr(1));
+        res = JSON.parse(res);
+        console.log(res);
         formId = res.formId;
         processId = res.processId;
         workitemId = res._id;
-        instanceId = res.instanceId;
+        instanceId1 = res.instanceId;
+
+        console.log("Instance ID after loading existing process:-" + instanceId1);
+        //alert(instanceId1);
         onLoad(formId, processId, workitemId, res.instanceId);
 
     })
@@ -286,8 +451,14 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
 loadObjects = () => {
     console.log("***************");
     console.log("INSTANCE LOAD");
-    if (instanceId.length > 0) {
-        fetch('/instance/' + instanceId, {
+    if (iaa.length > 0) {
+        instanceId1 = iaa;
+
+    }
+    console.log(instanceId1);
+    console.log(iaa);
+    if (instanceId1.length > 0) {
+        fetch('/instance/' + instanceId1, {
             credentials: 'include'
         }).then((prom) => {
             console.log("###########################################");
@@ -326,7 +497,14 @@ loadObjects = () => {
 
                                     for (key in res2[j]) {
                                         if (key != "_id") {
-                                            document.getElementById(tempArr[i].id + "_" + key).value = res2[j][key];
+                                            console.log(tempArr[i].id + "_" + key);
+                                            console.log(res2[j]);
+                                            if (document.getElementById(tempArr[i].id + "_" + key+"_"+res2[j][key])!=undefined && document.getElementById(tempArr[i].id + "_" + key+"_"+res2[j][key]).type=="radio") {
+                                                document.getElementById(tempArr[i].id + "_" + key+"_"+res2[j][key]).checked=true;
+                                            }else{
+                                                console.log(new Date(res2[j][key]));
+                                                document.getElementById(tempArr[i].id + "_" + key).value = res2[j][key];
+                                            }
                                         }
                                     }
 
@@ -370,18 +548,40 @@ bindObject = (bindObjName, currentEl) => {
                     if (schema[key].control == "text") {
                         var newEl = document.createElement("INPUT");
                         newEl.className = "form-control";
-                        newEl.type = "text";
+                        if (schema[key].type == "String") {
+                            newEl.type = "text";
+
+                        } else if (schema[key].type == "Number") {
+                            newEl.type = "number";
+
+                        } else if (schema[key].type == "Date") {
+                            newEl.type = "datetime-local";
+
+                        } else if (schema[key].type == "DateTime") {
+                            newEl.type = "datetime-local";
+
+                        } else if (schema[key].type == "Email") {
+                            newEl.type = "email";
+
+                        }
+                        if (typeof (schema[key].pattern) !== 'undefined' && schema[key].pattern.length>0) {
+                            newEl.pattern = decodeURI(schema[key].pattern);
+                        }
+                        if (typeof (schema[key].required) !== 'undefined' && schema[key].required=="true") {
+                            newEl.required = true;
+                        }
+
                         newEl.setAttribute("placeholder", key);
                         newEl.id = document.getElementById(currentEl).id + "_" + key;
                         //document.getElementById(cur).appendChild(newEl);
                         doc.appendChild(newEl);
 
                     } else if (schema[key].control == "radio") {
-                        var ts = schema[key].options
-                        console.log(ts[0]);
+                        var ts = schema[key].options.split(",")
+                        console.log(ts);
                         var alpha = document.createElement("DIV");
 
-                        for (k in ts[0]) {
+                        for (k in ts) {
                             var newDiv = document.createElement("LABEL");
                             newDiv.className = "radio-inline";
                             var newEl = document.createElement("INPUT");
@@ -389,16 +589,22 @@ bindObject = (bindObjName, currentEl) => {
                             newEl.type = "radio";
                             newEl.name = key;
                             newEl.value = k;
-                            newEl.id = document.getElementById(currentEl).id + "_" + key + "_" + k;
+                            newEl.id=document.getElementById(currentEl).id + "_" + key + "_" + k;
+
                             newDiv.appendChild(newEl);
 
-                            newDiv.innerHTML += ts[0][k]
+
+                            newDiv.innerHTML += ts[k]
+                            console.log("########################");
+                            console.log(newDiv);
+                            console.log("########################");
                             alpha.appendChild(newDiv);
 
 
                         }
 
                         doc.appendChild(alpha);
+
 
 
                     } else if (schema[key].control == "select") {
@@ -451,3 +657,54 @@ bindObject = (bindObjName, currentEl) => {
 document.getElementById('closeModal').addEventListener('click', (ev) => {
     document.getElementById('megaCheck').style.display = "none";
 });
+
+putMe = (node) => {
+    // if (node.lastElementChild != undefined) {
+    //     putMe(node.lastElementChild)
+    // } else {
+    //     console.log(node.getBoundingClientRect());
+    //     var but1 = document.createElement('BUTTON');
+    //     var but2 = document.createElement('BUTTON');
+    //     but1.id = "Submit";
+    //     but2.id = "Reject";
+    //     but1.innerText = "Submit";
+    //     but2.innerText = "Reject";
+    //     but1.className = "btn btn-primary";
+    //     but2.className = "btn btn-primary";
+    //     if (submitExists == false) {
+    //         document.getElementById('app').appendChild(but1);
+
+    //     }
+    //     if (rejectExists == false) {
+    //         document.getElementById('app').appendChild(but2);
+
+    //     }
+    // }
+
+    var but1 = document.createElement('BUTTON');
+    var but2 = document.createElement('BUTTON');
+    but1.id = "Submit" + new Date().getTime();
+    but2.id = "Reject";
+    but1.innerText = "Submit";
+    but2.innerText = "Reject";
+    but1.className = "btn btn-primary";
+    but2.className = "btn btn-primary";
+    but1.style.position = "fixed";
+    but1.style.bottom = "0";
+    but2.style.position = "fixed";
+    but2.style.bottom = "0";
+    but2.style.left = "200"
+    if (submitExists == false) {
+        document.getElementById('app').appendChild(but1);
+        eventPage("submit", but1.id)
+
+    }
+    if (rejectExists == false) {
+        //document.getElementById('app').appendChild(but2);
+
+    }
+
+
+
+
+}

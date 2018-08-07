@@ -1,0 +1,3 @@
+var mongoose=require('mongoose');
+var emp123_v0=mongoose.model("emp123_v0",{"emp123_v0":[{"name":{"type":"String","control":"text","options":"","pattern":"","required":"true"},"age":{"type":"Number","control":"text","options":"","pattern":"","required":"true"},"dob":{"type":"Date","control":"text","options":"","pattern":"","required":"true"},"gender":{"type":"String","control":"radio","options":"male,female","pattern":"","required":"true"}}],"instanceId":{"type":"String"}});
+module.exports={emp123_v0}

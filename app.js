@@ -41,6 +41,22 @@ const port = process.env.PORT || 9099;
 var cors = require('cors')
 
 //newImports
+var { emp123_v0 } = require('./schemas/emp123_v0')
+var { empNew_v10 } = require('./schemas/empNew_v10')
+var { empNew_v9 } = require('./schemas/empNew_v9')
+var { empNew_v8 } = require('./schemas/empNew_v8')
+var { empNew_v7 } = require('./schemas/empNew_v7')
+var { empNew_v6 } = require('./schemas/empNew_v6')
+var { empNew_v5 } = require('./schemas/empNew_v5')
+var { empNew_v4 } = require('./schemas/empNew_v4')
+var { empNew_v3 } = require('./schemas/empNew_v3')
+var { empNew_v2 } = require('./schemas/empNew_v2')
+var { empNew_v1 } = require('./schemas/empNew_v1')
+var { empNew_v0 } = require('./schemas/empNew_v0')
+var { emp_v3 } = require('./schemas/emp_v3')
+var { emp_v2 } = require('./schemas/emp_v2')
+var { emp_v1 } = require('./schemas/emp_v1')
+var { emp_v0 } = require('./schemas/emp_v0')
 var { sample123_v0 } = require('./schemas/sample123_v0')
 var { employee_v0 } = require('./schemas/employee_v0')
 
@@ -355,6 +371,7 @@ app.post('/objects', (req, res) => {
 
 
 app.put('/objects/:id', (req, res) => {
+    console.log(req.body);
     console.log("**/objects entered**");
     obj.findByIdAndUpdate(req.params.id, {
         obsolete: "yes"
@@ -598,7 +615,8 @@ app.post('/instance', (req, res) => {
     user.findById(jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, (err, res123) => {
         var ins = new instance({
             processId, user: res123.user.username
-            , date: new Date()
+            , date: new Date(),
+            status: "initiated"
         })
         ins.save().then((doc) => {
             res.send(doc);
@@ -632,6 +650,8 @@ app.post('/instance/:id', (req, res) => {
 
 
             wi.save().then((doc) => {
+                console.log("WORKITEM SAVED");
+                console.log(doc);
                 res.send(doc);
             })
 
@@ -675,6 +695,13 @@ app.post('/instance/:id/:wid', (req, res) => {
                                     i = i + 1;
                                     if (i == doc1.steps.length) {
                                         status = "finished";
+
+                                        instance.findByIdAndUpdate(instanceId, {
+                                            status
+                                        }, (err, doc21) => {
+
+                                        });
+
                                     }
                                     else {
                                         status = doc1.steps[i]._id;
@@ -807,6 +834,15 @@ function addObjects(objects) {
 
 }
 
+app.get('/instance', (req, res) => {
+    var searchProcessId = req.query.processId;
+    var searchStatus = req.query.status;
+    instance.count({ status: searchStatus, processId: searchProcessId }).then((doc) => {
+        res.send({ count: doc });
+    })
+})
+
+
 app.get('/instance/:id', (req, res) => {
     console.log("**/instance entered**");
 
@@ -882,6 +918,377 @@ app.get('/workitems/:id', (req, res) => {
 
 //newSettersGetters
 
+app.get('/emp123_v0/:id', (req, res) => {
+    emp123_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/emp123_v0', (req, res) => {
+    emp123_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/emp123_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new emp123_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+
+app.get('/empNew_v10/:id', (req, res) => {
+    empNew_v10.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v10', (req, res) => {
+    empNew_v10.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v10', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v10(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v9/:id', (req, res) => {
+    empNew_v9.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v9', (req, res) => {
+    empNew_v9.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v9', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v9(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v8/:id', (req, res) => {
+    empNew_v8.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v8', (req, res) => {
+    empNew_v8.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v8', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v8(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v7/:id', (req, res) => {
+    empNew_v7.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v7', (req, res) => {
+    empNew_v7.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v7', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v7(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v6/:id', (req, res) => {
+    empNew_v6.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v6', (req, res) => {
+    empNew_v6.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v6', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v6(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v5/:id', (req, res) => {
+    empNew_v5.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v5', (req, res) => {
+    empNew_v5.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v5', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v5(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v4/:id', (req, res) => {
+    empNew_v4.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v4', (req, res) => {
+    empNew_v4.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v4', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v4(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v3/:id', (req, res) => {
+    empNew_v3.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v3', (req, res) => {
+    empNew_v3.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v3', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v3(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v2/:id', (req, res) => {
+    empNew_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v2', (req, res) => {
+    empNew_v2.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v2', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v2(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/empNew_v1/:id', (req, res) => {
+    empNew_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v1', (req, res) => {
+    empNew_v1.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v1', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v1(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+
+
+app.get('/empNew_v0/:id', (req, res) => {
+    empNew_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/empNew_v0', (req, res) => {
+    empNew_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/empNew_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new empNew_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/emp_v3/:id', (req, res) => {
+    emp_v3.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/emp_v3', (req, res) => {
+    emp_v3.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/emp_v3', (req, res) => {
+    console.log(req.body);
+    var obj1 = new emp_v3(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/emp_v2/:id', (req, res) => {
+    emp_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/emp_v2', (req, res) => {
+    emp_v2.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/emp_v2', (req, res) => {
+    console.log(req.body);
+    var obj1 = new emp_v2(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/emp_v1/:id', (req, res) => {
+    emp_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/emp_v1', (req, res) => {
+    emp_v1.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/emp_v1', (req, res) => {
+    console.log(req.body);
+    var obj1 = new emp_v1(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/emp_v0/:id', (req, res) => {
+    emp_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/emp_v0', (req, res) => {
+    emp_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/emp_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new emp_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
 app.get('/sample123_v0/:id', (req, res) => {
     sample123_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
         console.log(docs);
@@ -953,6 +1360,7 @@ app.post('/particular', (req, res) => {
 })
 
 app.get('/roles/:id', (req, res) => {
+
     roles.find({ _id: ObjectId(req.params.id) }).then((docs) => {
         console.log(docs);
         res.send(docs);
@@ -961,7 +1369,14 @@ app.get('/roles/:id', (req, res) => {
 
 app.get('/roles', (req, res) => {
     var ids = req.query.ids;
-    if (ids != undefined && ids != "undefined" && ids.length > 0) {
+    var mode = req.query.mode;
+    if (mode != undefined && mode.length > 0) {
+        roles.find({"roles.mode":"participant"}).then((docs) => {
+            console.log(docs);
+            res.send(docs);
+        })
+    }
+    else if (ids != undefined && ids != "undefined" && ids.length > 0) {
         var search = '{"$or": [';
         oneAdded = false;
         var noNeed = [];

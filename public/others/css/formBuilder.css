@@ -63,6 +63,8 @@ body {
 .test-c {
     margin: auto;
     height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 #megaCheck{

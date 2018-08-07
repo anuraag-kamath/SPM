@@ -1,26 +1,12 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-
-</head>
-
-<body></body>
 <div class="container-fluid" id="main-container">
-    <header class="header" id="header">
-        <h1 id="back" class="noclick">
-            <h1 id="heading">New Process</h1>
-            <input type="text" id="heading-text">
-            <h4 id="heading">Triggering Form
-                <select id="triggeringForm"></select>
-            </h4>
+    <header class="header also" id="header">
+        <h1 id="heading">New Process</h1>
+        <input type="text" id="heading-text">
+        <h4 id="heading">Triggering Form
+            <select id="triggeringForm"></select>
+        </h4>
 
 
-            <!-- <div class="col-6">
-
-                            <h4 id="heading">Objects</h4><select id="objects" multiple></select>
-
-                        </div> -->
 
     </header>
     <div class="row mid-section">
@@ -40,7 +26,9 @@
 
                         </div>
                         <div class="col-1">
-                            <h4 id="newStep"><i class="fas fa-plus"></i></h4>
+                            <h4 id="newStep">
+                                <i class="fas fa-plus"></i>
+                            </h4>
                         </div>
                     </div>
                     <div class="row" id="addStep-row">
@@ -70,7 +58,7 @@
                         <input id="name" type='text'>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" id="form_div">
                     <div class="col-4" style="text-align:left;padding-left: 4em;">
                         form:
                     </div>
@@ -104,7 +92,7 @@
                     </div>
 
                 </div> -->
-                <div class="row">
+                <div class="row" id="participant_div">
                     <div class="col-2" style="text-align:left;padding-left: 4em;">
                         Participant:
                     </div>
@@ -113,60 +101,57 @@
                     </div>
                     <div class="col-5"></div>
                 </div>
-                <!-- <div class="row">
-                    <div class="col-2" style="text-align:left;padding-left: 4em;">
-                        URL:
-                    </div>
-                    <div class="col-10">
-                        <input id="name" type='text'>
+                <div id="st_act">
+
+                    <div class="row">
+
+
+                        <div class="col-2">
+                            <select class="form-control">
+                                <option></option>
+                                <option>GET</option>
+                                <option>POST</option>
+                                <option>PUT</option>
+                                <option>DELETE</option>
+                            </select>
+
+                        </div>
+                        <div class="col-10">
+                            <input type="text" class="form-control">
+                        </div>
                     </div>
 
+                    <div class="row">
+
+
+                        <div class="col-4">
+
+                            <div class="col-12">
+                                <button id="addHeader">Header+</button>
+                                <div class="row" id="headers">
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <button id="addQueryParam">Query+</button>
+                            <div class="row" id="queryParams">
+
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <textarea placeholder="JSON BODY"></textarea>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-2" style="text-align:left;padding-left: 4em;">
-                        Input:
-                    </div>
-                    <div class="col-2">
-                        <select id="inputObjs" multiple>
-
-                        </select>
-                    </div>
-                    <div class="col-3">
-                        <input id="inputRoot" type='text'>
-                    </div>
-                    <div class="col-2">
-                        <select id="outputObjs" multiple>
-
-                        </select>
-                    </div>
-                    <div class="col-3">
-                        <input id="outputRoot" type='text'>
-                    </div>
-
-                </div>
-                <div class="row">
-                    <div class="col-6" style="text-align:left;padding-left: 4em;" id="sampleInput">
-
-                    </div>
-                    <div class="col-2" style="text-align:left;padding-left: 4em;">
-                        Sample Output:
-                    </div>
-                    <div class="col-4">
-                        <textarea id="outputSample" type='textarea'></textarea>
-                    </div>
-
-                </div> -->
             </div>
+
+            <!-- <div class="col-1">
+                <h5 class="down" id="toggle-down">\/</h5>
+            </div> -->
         </div>
 
-        <div class="col-1">
-            <h5 class="down" id="toggle-down">\/</h5>
-        </div>
-</div>
-
-</footer>
+    </footer>
 
 </div>
-</body>
-
-</html>

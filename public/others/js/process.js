@@ -6,6 +6,29 @@ var objects = [];
 //     }
 // })
 
+// if (typeof (calledFrom) === "undefined" || calledFrom != "workitem") {
+//     document.getElementById('title').innerText = "";
+//     var h4 = document.createElement("P");
+//     var inputName = document.createElement("INPUT");
+//     h4.id = "heading";
+//     inputName.id = "heading-text";
+
+
+
+
+//     document.getElementById("title").appendChild(h4);
+//     document.getElementById("title").appendChild(inputName);
+//     var trigSel = document.createElement("SELECT");
+//     h4Trig.id = "h4Trig";
+//     trigSel.id = "triggeringForm";
+    
+//     document.getElementById("heading").appendChild(trigSel);
+
+//     // document.getElementById("title").appendChild(h4Trig);
+//     // document.getElementById("title").appendChild(trigSel);
+
+// }
+
 var steps = [];
 
 checkme = (processId) => {
@@ -57,7 +80,7 @@ checkme = (processId) => {
 
             });
 
-            if (calledFrom == "workitem") {
+            if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") {
                 document.getElementById('left-menu-div').style.display = "none";
                 document.getElementById('header').style.display = "none";
                 document.getElementById('saveDiv').style.display = "none";
@@ -127,8 +150,10 @@ checkme = (processId) => {
 
 
             }
+            removeLoadBar();
 
         });
+
     }
 
 
@@ -163,7 +188,7 @@ checkme = (processId) => {
     })
 
 
-    fetch('/roles', {
+    fetch('/roles?mode=participants', {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res1) => {
         var options = "";
@@ -356,11 +381,24 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId) => {
         console.log('APPLIED EVENT FOR lbl1_' + ts);
 
         //selectRejection(document.getElementById(String(event.target.id).replace("lbl1_", "count_")).innerText);
+        tempText = document.getElementById(String(event.target.id).replace("lbl1_", "step1_")).innerText;
+        console.log(String(tempText).indexOf("Human Task"));
+        console.log(tempText == "Human Task");
+        if (String(tempText).indexOf("Human Task") != -1) {
+            document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
+            document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+            document.getElementById('participant_div').style.display = "initial";
+            document.getElementById('form_div').style.display = "initial";
+            document.getElementById('st_act').style.display = "none";
+
+        } else {
+            document.getElementById('participant_div').style.display = "none";
+            document.getElementById('form_div').style.display = "none";
+            document.getElementById('st_act').style.display = "initial";
 
 
+        }
 
-        document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
-        document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
 
         if (currentElement != "") {
             document.getElementById(currentElement).style.border = "2px solid black";
@@ -519,7 +557,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
         var tempArr = []
         json += ']}'
         console.log(json);
-        if (processId != undefined && processId.length > 0) {
+        if (typeof (processId) !== 'undefined' && processId != undefined && processId.length > 0) {
             fetch('/process/' + processId, {
                 method: "PUT",
                 headers: {
@@ -555,9 +593,6 @@ document.getElementById("save-process").addEventListener('click', (event) => {
 
 });
 
-document.getElementById('back').addEventListener('click', (ev) => {
-    window.history.back();
-})
 
 
 document.getElementById('name').addEventListener(('focusout'), (event) => {
@@ -565,20 +600,86 @@ document.getElementById('name').addEventListener(('focusout'), (event) => {
     document.getElementById(currentElement).innerText = event.target.value;
 });
 
-document.getElementById('toggle-down').addEventListener(('click'), (event) => {
-    document.getElementsByTagName('footer')[0].style.display = "none";
-    document.getElementsByClassName('mid-section')[0].style.height = "80vh";
-});
+// document.getElementById('toggle-down').addEventListener(('click'), (event) => {
+//     document.getElementsByTagName('footer')[0].style.display = "none";
+//     document.getElementsByClassName('mid-section')[0].style.height = "80vh";
+// });
 
 
 
 
 if (location.hash != undefined && location.hash.length > 0 && location.hash != "#newpro") {
     //processId = location.hash.substr(4);
-    checkme(processId);
+    if (typeof (processId) !== 'undefined' && processId != null && processId.length > 0) {
+
+        checkme(processId);
+    } else {
+        processId = location.hash.substr(4);
+        checkme(processId);
+
+
+    }
 } else {
     checkme();
+    removeLoadBar();
+
 }
 
 
+document.getElementById('addHeader').addEventListener('click', (ev) => {
+    ts = Math.ceil(new Date().getTime() * Math.random());
 
+    var div = document.createElement("DIV");
+    div.id = "div_" + ts;
+    var inpLeft = document.createElement("INPUT");
+    inpLeft.id = "inpLeft_" + ts;
+    inpLeft.style.width = "40%";
+    var inpRight = document.createElement("INPUT");
+    inpRight.id = "inpRight_" + ts;
+    inpRight.style.width = "40%";
+    var button = document.createElement("BUTTON");
+    button.id = "btn_" + ts;
+    button.innerText = "X";
+    div.appendChild(inpLeft);
+    div.appendChild(inpRight);
+    div.appendChild(button);
+    document.getElementById("headers").appendChild(div);
+    document.getElementById(inpLeft.id).focus();
+
+
+    document.getElementById('btn_' + ts).addEventListener('click', (ev) => {
+        document.getElementById(String(ev.target.id).replace('btn', 'div')).parentNode.removeChild(document.getElementById(String(ev.target.id).replace('btn', 'div')));
+    })
+
+
+});
+
+document.getElementById('addQueryParam').addEventListener('click', (ev) => {
+    ts = Math.ceil(new Date().getTime() * Math.random());
+
+    var div = document.createElement("DIV");
+    div.id = "div_" + ts;
+    var inpLeft = document.createElement("INPUT");
+    inpLeft.id = "inpLeft_" + ts;
+    inpLeft.style.width = "40%";
+    var inpRight = document.createElement("INPUT");
+    inpRight.id = "inpRight_" + ts;
+    inpRight.style.width = "40%";
+    var button = document.createElement("BUTTON");
+    button.id = "btn_" + ts;
+    button.innerText = "X";
+    div.appendChild(inpLeft);
+    div.appendChild(inpRight);
+    div.appendChild(button);
+    document.getElementById("queryParams").appendChild(div);
+    document.getElementById(inpLeft.id).focus();
+
+    document.getElementById('btn_' + ts).addEventListener('click', (ev) => {
+        document.getElementById(String(ev.target.id).replace('btn', 'div')).parentNode.removeChild(document.getElementById(String(ev.target.id).replace('btn', 'div')));
+    })
+
+
+});
+
+
+document.getElementById("");

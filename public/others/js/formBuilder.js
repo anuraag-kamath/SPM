@@ -1,3 +1,4 @@
+
 var objs = [];
 var formId = "";
 
@@ -19,10 +20,15 @@ onLoad = () => {
     }).then(() => {
         var alpha = window.location.href.substr(window.location.href.indexOf("?") + 1, window.location.href.length)
 
-
         formId = window.location.hash.substr(7);
         if (formId != undefined && formId != "undefined" && formId.length > 0) {
+            console.log("ABCD");
+
             ////console.log(formId);
+        }
+        else {
+            removeLoadBar();
+
         }
         if (formId != undefined && formId != "undefined" && formId.length > 0) {
             fetch('/forms/' + formId, {
@@ -40,6 +46,8 @@ onLoad = () => {
 
                 //document.getElementById('main-section').appendChild(alpha);
                 ////console.log(tempArr);
+                console.log("contents of a form");
+                console.log(tempArr);
                 for (var i = 1; i < tempArr.length; i++) {
                     var beta = document.createElement(tempArr[i].tagName);
                     beta.id = tempArr[i].id;
@@ -150,6 +158,8 @@ onLoad = () => {
                 checkForMe('main-section', 1, "none");
                 console.log(testArr);
                 // ////console.log("*******************");
+                removeLoadBar();
+
                 for (var it in testArr) {
                     //console.log("display" + it + "#@");
                     for (var it1 in testArr[it]) {
@@ -374,7 +384,7 @@ drop2 = (event) => {
     button2.style.display = "block"
     button3.style.display = "block"
     var newDiv = document.createElement("DIV");
-    newDiv.style.height = "150px";
+    newDiv.style.height = "200px";
     newDiv.style.width = "200px";
     document.getElementById('pop-up').style.position = "fixed";
     document.getElementById('pop-up').style.top = 0;
@@ -747,7 +757,7 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     if ((String(expId).indexOf("exp") != -1)) {
         //console.log("@@@@");
         //console.log(testArr[cur]);
-        
+
         if (testArr[cur] != undefined && testArr[cur] != "undefined") {
             for (var te = 0; te < testArr[cur].length; te++) {
                 //console.log(document.getElementById(cur));
@@ -898,6 +908,7 @@ document.getElementById('ctr-bind').addEventListener('focusout', (ev) => {
 var testArr = [];
 
 bindObject = (bindObjName, currentEl) => {
+    document.getElementById(currentEl).innerHTML = "";
     for (var i = 0; i < objs.length; i++) {
         if (bindObjName == objs[i].schemaName) {
 
@@ -914,18 +925,48 @@ bindObject = (bindObjName, currentEl) => {
                     if (schema[key].control == "text") {
                         var newEl = document.createElement("INPUT");
                         newEl.className = "form-control";
-                        newEl.type = "text";
+                        console.log(schema[key].type);
+                        console.log("####");
+                        console.log(schema[key].type == "String");
+                        console.log("####");
+                        if (schema[key].type == "String") {
+                            newEl.type = "text";
+
+                        } else if (schema[key].type == "Number") {
+                            newEl.type = "number";
+
+                        } else if (schema[key].type == "Date") {
+                            newEl.type = "datetime-local";
+
+                        } else if (schema[key].type == "DateTime") {
+                            newEl.type = "datetime-local";
+
+                        } else if (schema[key].type == "Email") {
+                            newEl.type = "email";
+
+                        }
+                        if (typeof (schema[key].pattern) !== 'undefined' && schema[key].pattern.length > 0) {
+                            newEl.pattern = decodeURI(schema[key].pattern);
+                        }
+
+                        if (typeof (schema[key].required) !== 'undefined'  && schema[key].required=="true") {
+                            newEl.required = true;
+                        }
+
+
                         newEl.setAttribute("placeholder", key);
+                        console.log("NEWEL:-");
+                        console.log(newEl);
                         //document.getElementById(cur).appendChild(newEl);
                         doc.appendChild(newEl);
 
                     }
                     else if (schema[key].control == "radio") {
-                        var ts = schema[key].options
-                        ////console.log(ts[0]);
+                        var ts = schema[key].options.split(",")
+                        console.log(ts);
                         var alpha = document.createElement("DIV");
 
-                        for (k in ts[0]) {
+                        for (k in ts) {
                             var newDiv = document.createElement("LABEL");
                             newDiv.className = "radio-inline";
                             var newEl = document.createElement("INPUT");
@@ -936,7 +977,11 @@ bindObject = (bindObjName, currentEl) => {
 
                             newDiv.appendChild(newEl);
 
-                            newDiv.innerHTML += ts[0][k]
+
+                            newDiv.innerHTML += ts[k]
+                            console.log("########################");
+                            console.log(newDiv);
+                            console.log("########################");
                             alpha.appendChild(newDiv);
 
 
@@ -1078,13 +1123,13 @@ checkForMe = (mainNode, count, parent) => {
         else {
             testArr[parent] = [];
         }
-        if (parent != "main-section" && parent!="none") {
+        if (parent != "main-section" && parent != "none") {
             // temp.style.display = "none";
             console.log("**");
             console.log(parent);
             console.log(document.getElementById(mainNode).name);
-            
-            var tempMargin = String(document.getElementById("display"+parent).style.marginLeft).substr(0, String(document.getElementById("display"+parent).style.marginLeft).indexOf("px"));
+
+            var tempMargin = String(document.getElementById("display" + parent).style.marginLeft).substr(0, String(document.getElementById("display" + parent).style.marginLeft).indexOf("px"));
             console.log(tempMargin);
             console.log("**");
 
@@ -1167,9 +1212,9 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
     //    ////console.log(jsonBody);
     //
     if (jsonBody.indexOf("Submit") == -1) {
-        alert("Need a button called Submit in the form!");
+        alert("Submit button will be added by the system since the user has not added! And if reject is applicable, the same will also be added by the system");
     }
-    else if (formId != undefined && formId.length > 0) {
+    if (formId != undefined && formId.length > 0) {
         fetch('/forms/' + formId, {
             method: 'PUT',
             headers: {
@@ -1355,24 +1400,42 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
 // })
 
 
-document.getElementById('toggle').addEventListener('click', (ev) => {
-    if (document.getElementsByClassName("left-section")[0].className.indexOf("col-2") != -1) {
-        document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-2", "col-xs-1");
-        document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-8", "col-10");
-        document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-2", "col-1");
-        document.getElementById('left-section').style.cursor = "pointer";
-        document.getElementById('left-hide-section').style.display = "none";
-    }
+// document.getElementById('toggle').addEventListener('click', (ev) => {
+//     console.log(document.getElementsByClassName("left-section")[0].className);
+//     if (document.getElementsByClassName("left-section")[0].className.indexOf("col-2") != -1) {
+//         document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-2", "col-1");
+//         document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-8", "col-9");
+//         document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-2", "col-2");
+//         document.getElementById('left-section').style.cursor = "pointer";
+//         document.getElementById('left-hide-section').style.display = "none";
+//     }
 
-})
+// })
 
 document.getElementById('left-section').addEventListener('click', (ev) => {
-    if (document.getElementsByClassName("left-section")[0].className.indexOf("col-xs-1") != -1 && ev.target.id != "toggle") {
+    console.log(document.getElementsByClassName("left-section")[0].className.indexOf("col-1"));
+    console.log(ev.target.id);
+    if (document.getElementsByClassName("left-section")[0].className.indexOf("col-xs-1") != -1 && ev.target.id == "toggle") {
+        console.log("IN 1");
         document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-xs-1", "col-2");
-        document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-10", "col-8");
-        document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-1", "col-2");
+        document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-xs-9", "col-8");
+        document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-xs-2", "col-2");
+        document.getElementById('test-c').className = String(document.getElementById('test-c').className).replace("col-12", "col-2");
+        document.getElementById('toggle').innerText = "<";
         document.getElementById('left-hide-section').style.display = "block";
         document.getElementById('left-section').style.cursor = "";
+
+    }
+    else if (document.getElementsByClassName("left-section")[0].className.indexOf("col-2") != -1 && ev.target.id == "toggle") {
+        console.log("IN 2");
+        document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-2", "col-xs-1");
+        document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-8", "col-xs-9");
+        document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-2", "col-xs-2");
+        document.getElementById('test-c').className = String(document.getElementById('test-c').className).replace("col-2", "col-12");
+        document.getElementById('toggle').innerText = ">";
+        document.getElementById('left-section').style.cursor = "pointer";
+        document.getElementById('left-hide-section').style.display = "none";
+
 
     }
 })

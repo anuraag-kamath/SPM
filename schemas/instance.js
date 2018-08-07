@@ -28,6 +28,9 @@ var instance = mongoose.model('instance', {
     },
     date: {
         type: Date
+    },
+    status: {
+        type: String
     }
 })
 

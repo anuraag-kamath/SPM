@@ -15,7 +15,7 @@
 #listForms,
 strong{
     cursor: pointer;
-
+ 
 }
 
 header {
@@ -25,6 +25,12 @@ header {
     padding: 5px;
     height: 5vh;
     
+}
+
+#loading {
+    background-color: blue;
+    height: 1vh;
+    opacity: 1;
 }
 
 #app{

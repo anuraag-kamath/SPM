@@ -1,4 +1,45 @@
+
+
+loadBar = () => {
+    loadIt=true
+    var elem = document.getElementById("loading");
+    document.getElementById("loading").style.visibility="visible"
+    var width = 1;
+    var id = setInterval(frame, 10);
+    function frame() {
+        if(loadIt==false){
+            clearInterval(id);
+        }
+        if (width >= 100) {
+            width=1;
+        } else {
+            width++;
+
+            elem.style.width = (width) + '%';
+        }
+    }
+}
+
+removeLoadBar = ()=>{
+    loadIt=false;
+    document.getElementById("loading").style.visibility="hidden";
+}
+
+
 loadPage = (page, message, popUp) => {
+    loadBar();
+
+    // render = (i) => {
+    //     document.getElementById('loading').style.width = i + '%';
+
+    // }
+
+    // for (var i = 1; i <= 100; i++) {
+    //     render(i);
+    //     console.log(document.getElementById('loading').style.width);
+
+
+    // }
     fetch('/' + page + '.html', {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {

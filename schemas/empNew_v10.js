@@ -1,0 +1,3 @@
+var mongoose=require('mongoose');
+var empNew_v10=mongoose.model("empNew_v10",{"empNew_v10":[{"name":{"type":"String","control":"radio","options":"1,2,3","pattern":"","required":"true"},"age":{"type":"Number","control":"text","options":"","pattern":"","required":"false"},"dOB":{"type":"Date","control":"text","options":"","pattern":"","required":"false"},"Email":{"type":"String","control":"text","options":"","pattern":"(?:%5Ba-z0-9!#$%25&'*+/=?%5E_%60%7B%7C%7D~-%5D+(?:%5C.%5Ba-z0-9!#$%25&'*+/=?%5E_%60%7B%7C%7D~-%5D+)*%7C","required":"true"}}],"instanceId":{"type":"String"}});
+module.exports={empNew_v10}

@@ -1,14 +1,17 @@
-header {
+/* header {
     text-align: center;
     width: 100%;
     background-color: aquamarine;
-}
+} */
 
 #back {
     float:left;
     cursor: pointer;
 }
 
+.also{
+    background-color: white
+}
 
 
 .lbl {
@@ -19,8 +22,8 @@ header {
     display: none;
 }
 
-.header {
-    height: 10vh;
+.also {
+    height: 12vh;
 }
 
 h6 {
@@ -30,6 +33,11 @@ h6 {
 .row {
     padding-top: 10px;
     padding-bottom: 20px;
+}
+
+footer .row{
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 .save button {
@@ -42,11 +50,11 @@ footer input {
 }
 
 .save {
-    height: 10vh;
+    height: 5vh;
 }
 
 .mid-section {
-    height: 80vh;
+    height: 65vh;
 }
 
 #process-section {

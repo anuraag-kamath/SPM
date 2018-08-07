@@ -1,0 +1,43 @@
+<html>
+<input type='text' id="ord">
+
+<input type='date'>
+<input type='datetime-local'>
+
+<h2>An Unordered HTML List</h2>
+
+<ul id="alpha">
+    <li>Coffee</li>
+    <li>Tea</li>
+    <li>Milk</li>
+</ul>
+
+<h2>An Ordered HTML List</h2>
+
+<ol>
+    <li>Coffee</li>
+    <li>Tea</li>
+    <li>Milk</li>
+</ol>
+<script>
+    document.getElementById('ord').addEventListener('focusout', (ev) => {
+        var li=document.createElement("LI");
+        var button=document.createElement("BUTTON");
+        button.innerText="X";
+        button.id="XX";
+        li.id="123"
+
+        li.innerText=document.getElementById(ev.target.id).value;
+        li.appendChild(button)
+        document.getElementById('alpha').appendChild(li);
+        document.getElementById("XX").addEventListener("click",(ev)=>{
+            document.getElementById("123").parentNode.removeChild(document.getElementById("123"))
+        })
+    })
+
+
+</script>
+
+<h4>ABCD<select></select></h4>
+
+</html>

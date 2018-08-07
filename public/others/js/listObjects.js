@@ -11,7 +11,7 @@ fetch('/objects?mode=show', {
     }
 ).then(
     function (res) {
-        ts = new Date().getTime();
+        ts = new Date().getTime();     
         if (JSON.parse(res).length > 0) {
             document.getElementById('noObjects').style.display = "none";
             document.getElementById('objects').style.display = "table";
@@ -19,7 +19,7 @@ fetch('/objects?mode=show', {
             for (var i = 0; i < alpha.length; i++) {
                 var row = document.createElement("tr");
 
-                row.innerHTML = "<td>" + (i + 1) + "</td><td>" + alpha[i].schemaName + "</td><td>" + "N/A" + "</td><td id=show_" + alpha[i]._id + ">Show</td><td class='edit' id=edit_" + alpha[i]._id + ">Edit</td><td class='delete' id=delete_" + alpha[i]._id + ">Delete</td>"
+                row.innerHTML = "<td>" + (i + 1) + "</td><td>" + alpha[i].schemaName + "</td><td>" + "N/A" + "</td><td><i  id=show_" + alpha[i]._id + " class='far fa-eye'></i></td><td><i id=edit_" + alpha[i]._id + " class='edit fas fa-edit'></i></td><td class='delete'><i id=delete_" + alpha[i]._id + " class='fas fa-ban editUsers'></td>"
                 document.getElementById('objects-body').appendChild(row);
                 document.getElementById("show_" + alpha[i]._id).addEventListener('click', (event) => {
                     window.location.hash = "#obj" + String(event.target.id).replace("show_", "");
@@ -36,5 +36,11 @@ fetch('/objects?mode=show', {
                 });
             }
         }
+        else{
+            document.getElementById('noObjects').style.display = "block";
+            document.getElementById('objects').style.display = "none";
+
+        }
+        removeLoadBar();
     })
 

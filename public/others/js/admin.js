@@ -8,8 +8,10 @@ loadUsers = () => {
     }).then((prom) => prom.text()).then((res) => {
         if (JSON.parse(res).length > 0) {
             document.getElementById("noUsers").style.display = "none";
+            document.getElementById("userTable").style.display = "block"; 
         } else {
-            document.getElementById("userTable").style.display = "none";
+            document.getElementById("noUsers").style.display = "block";
+            document.getElementById("userTable").style.display = "none"; 
         }
         for (i in JSON.parse(res)) {
             var newRow = document.createElement("tr");
@@ -148,6 +150,7 @@ loadUsers = () => {
 
             })
         }
+        removeLoadBar();
         //    document.getElementById('users')
 
     })

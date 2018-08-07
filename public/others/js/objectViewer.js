@@ -15,9 +15,15 @@ fetch('/objects/' + objectId, {
         }
         document.getElementById('objectContent').innerHTML += "<thead>" + tableHeader + "</thead>"
         tableBody = "";
+        console.log(res2);
         if (JSON.parse(res2).length > 0) {
             document.getElementById('objectContent').style.display = "block";
             document.getElementById('noObjects').style.display = "none";
+        }
+        else{
+            document.getElementById('objectContent').style.display = "none";
+            document.getElementById('noObjects').style.display = "block";
+
         }
         for (var i = 0; i < JSON.parse(res2).length; i++) {
             var inds = JSON.parse(res2)[i][objName];
@@ -33,6 +39,7 @@ fetch('/objects/' + objectId, {
 
             }
         }
+        removeLoadBar();
         document.getElementById('objectContent').innerHTML += "<tbody>" + tableBody + "</tbody>"
 
     })
