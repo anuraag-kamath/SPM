@@ -41,6 +41,8 @@ const port = process.env.PORT || 9099;
 var cors = require('cors')
 
 //newImports
+var {s2_v0}=require('./schemas/s2_v0')
+var {s1_v0}=require('./schemas/s1_v0')
 var { emp123_v0 } = require('./schemas/emp123_v0')
 var { empNew_v10 } = require('./schemas/empNew_v10')
 var { empNew_v9 } = require('./schemas/empNew_v9')
@@ -918,6 +920,52 @@ app.get('/workitems/:id', (req, res) => {
 
 //newSettersGetters
 
+app.get('/s2_v0/:id', (req, res) => {
+	s2_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/s2_v0', (req, res) => {
+	s2_v0.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/s2_v0', (req, res) => {
+	console.log(req.body);
+	var obj1 = new s2_v0(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+app.get('/s1_v0/:id', (req, res) => {
+	s1_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/s1_v0', (req, res) => {
+	s1_v0.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/s1_v0', (req, res) => {
+	console.log(req.body);
+	var obj1 = new s1_v0(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
 app.get('/emp123_v0/:id', (req, res) => {
     emp123_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
         console.log(docs);
@@ -1371,7 +1419,7 @@ app.get('/roles', (req, res) => {
     var ids = req.query.ids;
     var mode = req.query.mode;
     if (mode != undefined && mode.length > 0) {
-        roles.find({"roles.mode":"participant"}).then((docs) => {
+        roles.find({"roles.type":"participant"}).then((docs) => {
             console.log(docs);
             res.send(docs);
         })
@@ -1380,13 +1428,21 @@ app.get('/roles', (req, res) => {
         var search = '{"$or": [';
         oneAdded = false;
         var noNeed = [];
+        console.log("@###");
+        console.log(String(ids).split(','));
+        console.log(String(ids).split(',').length);
         for (var e = 0; e < String(ids).split(',').length; e++) {
+            console.log("REACHED");
             try {
-                ObjectId(String(ids).split(",")[e]);
+                console.log("&&&");
+                //ObjectId(String(ids).split(",")[e]);
                 if (e != 0 && oneAdded == true) {
                     search += ",";
                 }
-                search += '{"_id":"' + String(ids).split(",")[e] + '"}'
+                console.log("****************");
+                search += '{"roles.roleName":"' + String(ids).split(",")[e] + '"}'
+                console.log(search);
+                console.log("****************");
                 oneAdded = true;
 
             }
@@ -1401,6 +1457,7 @@ app.get('/roles', (req, res) => {
         console.log("IDS");
         console.log(search);
         roles.find(JSON.parse(search)).then((docs) => {
+            console.log("SEARCHED!");
             var roleName = "";
             for (var e1 = 0; e1 < docs.length; e1++) {
                 roleName += docs[e1].roles[0].roleName + " ";
@@ -1410,7 +1467,7 @@ app.get('/roles', (req, res) => {
             console.log(roleName);
             console.log(noNeed);
             console.log("#$#$#$$#$");
-            res.send(roleName);
+            res.send(docs[0].roles[0].mode);
         })
     } else {
         roles.find({}).then((docs) => {

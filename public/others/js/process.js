@@ -21,7 +21,7 @@ var objects = [];
 //     var trigSel = document.createElement("SELECT");
 //     h4Trig.id = "h4Trig";
 //     trigSel.id = "triggeringForm";
-    
+
 //     document.getElementById("heading").appendChild(trigSel);
 
 //     // document.getElementById("title").appendChild(h4Trig);
@@ -272,8 +272,15 @@ document.getElementById('myForm').addEventListener('submit', (event) => {
         t2 = document.getElementById('type-task2').value;
 
     }
+    console.log(t1 + "#" + t2 + "#" + step1 + "#" + step2);
+    if (String(t1).indexOf("Service") != -1 || String(t2).indexOf("Service") != -1) {
+        alert("Kindly delete System task, it is currently under progress!!:)");
+    } else {
+        addProcess(t1, t2, step1, step2, '', '', '', '', '');
 
-    addProcess(t1, t2, step1, step2, '', '', '', '', '');
+
+    }
+
     recalcCount();
 
 });
@@ -387,14 +394,14 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId) => {
         if (String(tempText).indexOf("Human Task") != -1) {
             document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
             document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
-            document.getElementById('participant_div').style.display = "initial";
-            document.getElementById('form_div').style.display = "initial";
+            document.getElementById('participant_div').style.display = "flex";
+            document.getElementById('form_div').style.display = "flex";
             document.getElementById('st_act').style.display = "none";
 
         } else {
             document.getElementById('participant_div').style.display = "none";
             document.getElementById('form_div').style.display = "none";
-            document.getElementById('st_act').style.display = "initial";
+            document.getElementById('st_act').style.display = "flex";
 
 
         }
@@ -530,8 +537,8 @@ document.getElementById("save-process").addEventListener('click', (event) => {
 
 
         var newDiv = document.createElement("DIV");
-        newDiv.style.height = "150px";
-        newDiv.style.width = "400px";
+        newDiv.style.height = "200px";
+        newDiv.style.width = "500px";
         document.getElementById('pop-up').style.position = "fixed";
         document.getElementById('pop-up').style.top = 0;
         document.getElementById('pop-up').style.left = 0;

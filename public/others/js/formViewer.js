@@ -11,7 +11,7 @@ var iaa = "";
 var workitemId = "";
 var submitExists = false;
 var rejectExists = false;
-onLoad = (formId, processId, workitemId, instanceId1) => {
+onLoad = (formId, processId, workitemId, instanceId1, role) => {
 
     fetch('/objects', {
         credentials: 'include'
@@ -50,18 +50,20 @@ onLoad = (formId, processId, workitemId, instanceId1) => {
                 }).then(() => {
                     console.log("Random1" + instanceId1);
 
-                    loadContents(res);
+                    loadContents(res,role);
                 });
             } else {
                 console.log("Random2" + instanceId1);
 
-                loadContents(res);
+                loadContents(res,role);
             }
 
 
 
         }).then(() => {
-
+            console.log("###############");
+            console.log(instanceId1);
+            console.log("###############");
             if (typeof (instanceId1) !== 'undefined' && instanceId1.length > 0) {
                 loadObjects();
             }
@@ -76,11 +78,15 @@ onLoad = (formId, processId, workitemId, instanceId1) => {
     });
 }
 
-loadContents = (res) => {
+loadContents = (res,role) => {
     tempArr = (JSON.parse(res).structure)
     document.getElementById('main-section').innerHTML = "";
     console.log("AM I LOADING>");
     console.log(tempArr);
+    var readOnly="";
+    if(role=="view"){
+        readOnly="readOnly";
+    }
     for (var i = 1; i < tempArr.length; i++) {
         var beta = document.createElement(tempArr[i].tagName);
         beta.id = tempArr[i].id;
@@ -105,6 +111,8 @@ loadContents = (res) => {
         beta.style.border = tempArr[i].border;
         beta.style.float = tempArr[i].float;
         beta.style.color = tempArr[i].color;
+
+
 
         document.getElementById(tempArr[i].parentId).appendChild(beta);
         if (beta.name == "Submit") {
@@ -221,8 +229,10 @@ loadContents = (res) => {
                 })
             });
         }
-
-        if (String(beta.id).indexOf("bt") != -1) {
+        if(readOnly=="readOnly" && String(beta.id).indexOf("bt") != -1){
+            document.getElementById(beta.id).style.visibility="hidden";
+        }
+        else if (String(beta.id).indexOf("bt") != -1) {
 
             document.getElementById(beta.id).addEventListener('click', (ev) => {
 
@@ -287,7 +297,7 @@ loadContents = (res) => {
         }
 
         if (tempArr[i].tagName == "FORM" || tempArr[i].tagName == "TABLE") {
-            bindObject(beta.getAttribute('bind'), beta.id)
+            bindObject(beta.getAttribute('bind'), beta.id,role)
         }
 
 
@@ -426,7 +436,7 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
     processId = location.hash.substr(4).split("$")[0];
     workitemId = "";
 
-    onLoad(formId, processId, workitemId)
+    onLoad(formId, processId, workitemId, "", "")
 } else {
     var search = '{"_id":"' + location.hash.substr(1) + '"}'
     fetch('/workitems/' + location.hash.substr(1), {
@@ -440,9 +450,19 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
         workitemId = res._id;
         instanceId1 = res.instanceId;
 
+        role = res.participant;
+
         console.log("Instance ID after loading existing process:-" + instanceId1);
         //alert(instanceId1);
-        onLoad(formId, processId, workitemId, res.instanceId);
+
+        fetch('/roles?ids=' + role, {
+            credentials: 'include'
+        }).then((prom) => prom.text()).then((res123) => {
+            console.log(res);
+            console.log(res.instanceId+"!!@@");
+            instanceId1=res.instanceId;
+            onLoad(formId, processId, workitemId, res.instanceId, res123);
+        })
 
     })
 
@@ -499,9 +519,9 @@ loadObjects = () => {
                                         if (key != "_id") {
                                             console.log(tempArr[i].id + "_" + key);
                                             console.log(res2[j]);
-                                            if (document.getElementById(tempArr[i].id + "_" + key+"_"+res2[j][key])!=undefined && document.getElementById(tempArr[i].id + "_" + key+"_"+res2[j][key]).type=="radio") {
-                                                document.getElementById(tempArr[i].id + "_" + key+"_"+res2[j][key]).checked=true;
-                                            }else{
+                                            if (document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]) != undefined && document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]).type == "radio") {
+                                                document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]).checked = true;
+                                            } else {
                                                 console.log(new Date(res2[j][key]));
                                                 document.getElementById(tempArr[i].id + "_" + key).value = res2[j][key];
                                             }
@@ -533,7 +553,11 @@ loadObjects = () => {
 
 
 
-bindObject = (bindObjName, currentEl) => {
+bindObject = (bindObjName, currentEl,role) => {
+    var readOnly="";
+    if(role=="view"){
+        readOnly="readonly";
+    }
     for (var i = 0; i < objs.length; i++) {
         if (bindObjName == objs[i].schemaName) {
 
@@ -564,11 +588,14 @@ bindObject = (bindObjName, currentEl) => {
                             newEl.type = "email";
 
                         }
-                        if (typeof (schema[key].pattern) !== 'undefined' && schema[key].pattern.length>0) {
+                        if (typeof (schema[key].pattern) !== 'undefined' && schema[key].pattern.length > 0) {
                             newEl.pattern = decodeURI(schema[key].pattern);
                         }
-                        if (typeof (schema[key].required) !== 'undefined' && schema[key].required=="true") {
+                        if (typeof (schema[key].required) !== 'undefined' && schema[key].required == "true") {
                             newEl.required = true;
+                        }
+                        if(readOnly=="readonly"){
+                            newEl.readOnly=true;
                         }
 
                         newEl.setAttribute("placeholder", key);
@@ -589,7 +616,11 @@ bindObject = (bindObjName, currentEl) => {
                             newEl.type = "radio";
                             newEl.name = key;
                             newEl.value = k;
-                            newEl.id=document.getElementById(currentEl).id + "_" + key + "_" + k;
+                            newEl.id = document.getElementById(currentEl).id + "_" + key + "_" + k;
+                            if(readOnly=="readonly"){
+                                newEl.readOnly=true;
+                            }
+    
 
                             newDiv.appendChild(newEl);
 
@@ -611,6 +642,10 @@ bindObject = (bindObjName, currentEl) => {
                         var ts = schema[key].options
                         console.log(ts[0]);
                         var alpha = document.createElement("SELECT");
+                        if(readOnly=="readonly"){
+                            alpha.readOnly=true;
+                        }
+
                         alpha.className = "form-control";
                         alpha.id = document.getElementById(currentEl).id + "_" + key;
                         for (k in ts[0]) {

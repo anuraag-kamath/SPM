@@ -1142,18 +1142,19 @@ checkForMe = (mainNode, count, parent) => {
         //        temp.appendChild(h3);
         //        temp.innerHTML += '<p id="exp"'+mainNode+'><strong><i class="fas fa-plus"></i></strong> '+document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name+"</p> <br>" + par + mainNode + "<hr>";
         //temp.innerHTML += '<p id="exp' + mainNode + '"><div><strong id="exp"'+mainNode+'><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "</p><hr></div>";
-        temp.innerHTML += '<strong id="exp' + mainNode + '"><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
+        //temp.innerHTML += '<strong id="exp' + mainNode + '"><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
+        temp.innerHTML += document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
         document.getElementById('right-section').appendChild(temp);
-        document.getElementById('exp' + mainNode).addEventListener('click', (ev) => {
-            if (document.getElementById(ev.target.id).innerText == "+") {
-                //console.log("PLUS EXISTS");
-                document.getElementById(ev.target.id).innerText = "-"
-            } else {
-                document.getElementById(ev.target.id).innerText = "+"
-                //console.log("MINUS EXISTS");
+        // document.getElementById('exp' + mainNode).addEventListener('click', (ev) => {
+        //     if (document.getElementById(ev.target.id).innerText == "+") {
+        //         //console.log("PLUS EXISTS");
+        //         document.getElementById(ev.target.id).innerText = "-"
+        //     } else {
+        //         document.getElementById(ev.target.id).innerText = "+"
+        //         //console.log("MINUS EXISTS");
 
-            }
-        })
+        //     }
+        // })
         mainNode = document.getElementById(mainNode);
         var nodes = mainNode.childNodes;
         var i = 0;
