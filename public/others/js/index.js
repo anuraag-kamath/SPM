@@ -1,17 +1,17 @@
 
 
 loadBar = () => {
-    loadIt=true
+    loadIt = true
     var elem = document.getElementById("loading");
-    document.getElementById("loading").style.visibility="visible"
+    document.getElementById("loading").style.visibility = "visible"
     var width = 1;
     var id = setInterval(frame, 10);
     function frame() {
-        if(loadIt==false){
+        if (loadIt == false) {
             clearInterval(id);
         }
         if (width >= 100) {
-            width=1;
+            width = 1;
         } else {
             width++;
 
@@ -20,9 +20,9 @@ loadBar = () => {
     }
 }
 
-removeLoadBar = ()=>{
-    loadIt=false;
-    document.getElementById("loading").style.visibility="hidden";
+removeLoadBar = () => {
+    loadIt = false;
+    document.getElementById("loading").style.visibility = "hidden";
 }
 
 
@@ -226,3 +226,26 @@ popupClose = () => {
     document.getElementById('pop-up').style.display = "none";
 
 }
+
+
+document.getElementById('loggedinUser').addEventListener('mouseover', (ev) => {
+    var div = document.createElement("DIV");
+    console.log(document.getElementById(ev.target.id).getBoundingClientRect());
+    div.style.height = "30px";
+    div.style.width = document.getElementById(ev.target.id).getBoundingClientRect().width * 2;
+    div.style.backgroundColor = "pink";
+    div.style.position = "fixed";
+    
+    div.id = "userOverlay";
+
+    div.style.top = document.getElementById(ev.target.id).getBoundingClientRect().y + document.getElementById(ev.target.id).getBoundingClientRect().height;
+
+    div.style.left = document.getElementById(ev.target.id).getBoundingClientRect().x - document.getElementById(ev.target.id).getBoundingClientRect().width / 2;
+    document.getElementsByTagName("body")[0].appendChild(div);
+});
+
+document.getElementById('loggedinUser').addEventListener('mouseout', (ev) => {
+    console.log(ev);
+    document.getElementById("userOverlay").parentNode.removeChild(document.getElementById("userOverlay"));
+});
+
