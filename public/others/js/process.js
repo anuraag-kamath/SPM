@@ -33,6 +33,8 @@ var steps = [];
 
 checkme = (processId) => {
 
+    console.log(processId)
+
     if (processId != undefined) {
 
         fetch('/process?process=' + processId, {
@@ -80,10 +82,14 @@ checkme = (processId) => {
 
             });
 
+            console.log(calledFrom);
+
             if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") {
                 document.getElementById('left-menu-div').style.display = "none";
                 document.getElementById('header').style.display = "none";
                 document.getElementById('saveDiv').style.display = "none";
+
+                console.log("AAA");
 
                 var deletes = document.getElementsByName("delete1");
                 console.log(deletes);
@@ -627,7 +633,12 @@ if (location.hash != undefined && location.hash.length > 0 && location.hash != "
 
     }
 } else {
-    checkme();
+    if (typeof (processId) !== 'undefined' && processId != null && processId.length > 0) {
+        checkme(processId);
+    }else{
+
+        checkme();
+    }
     removeLoadBar();
 
 }
