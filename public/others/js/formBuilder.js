@@ -74,6 +74,9 @@ onLoad = () => {
                     ////console.log(tempArr[i]);
 
                     document.getElementById(tempArr[i].parentId).appendChild(beta);
+                    if(beta.tagName=="MYDMS"){
+                        createDms();
+                    }
 
                     if (String(beta.id).indexOf("bt") != -1) {
 
@@ -678,6 +681,18 @@ drop = (event) => {
             noClick = "Y";
             alert("Input text can be applied only to a form");
         }
+    } else if (sourceElement == "dms") {
+        var newDMS = document.createElement("mydms");
+        newDMS.id = id;
+        newDMS.setAttribute("uniqueIdentifier","AKBK");
+        ////console.log("HR ADDED");
+        //newContainer.style.margin="20px";
+        if (mode == "parent") {
+            finalNode.appendChild(newDMS);
+        } else {
+            finalNode.insertBefore(newDMS, nextNode);
+        }
+        createDms("builder");
     }
 
     //    document.createElement();
@@ -1203,7 +1218,6 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
 
 
     var jsonBody = '{"name":"' + document.getElementById('formName').value + '","structure":' + JSON.stringify(tempArr) + '}';
-
     ////console.log(jsonBody);
 
     //    body = '<html><head><link rel="stylesheet" href="css/bootstrap-4.0.0-dist/css/bootstrap.min.css">    <link rel="stylesheet" href="css/main.css"> </head><body>' + document.getElementById('main-section').innerHTML + '</body > '

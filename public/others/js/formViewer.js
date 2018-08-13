@@ -50,12 +50,12 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
                 }).then(() => {
                     console.log("Random1" + instanceId1);
 
-                    loadContents(res,role);
+                    loadContents(res, role);
                 });
             } else {
                 console.log("Random2" + instanceId1);
 
-                loadContents(res,role);
+                loadContents(res, role);
             }
 
 
@@ -78,14 +78,14 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
     });
 }
 
-loadContents = (res,role) => {
+loadContents = (res, role) => {
     tempArr = (JSON.parse(res).structure)
     document.getElementById('main-section').innerHTML = "";
     console.log("AM I LOADING>");
     console.log(tempArr);
-    var readOnly="";
-    if(role=="view"){
-        readOnly="readOnly";
+    var readOnly = "";
+    if (role == "view") {
+        readOnly = "readOnly";
     }
     for (var i = 1; i < tempArr.length; i++) {
         var beta = document.createElement(tempArr[i].tagName);
@@ -115,6 +115,16 @@ loadContents = (res,role) => {
 
 
         document.getElementById(tempArr[i].parentId).appendChild(beta);
+
+        if (beta.tagName == "MYDMS") {
+            beta.innerText="";
+            beta.setAttribute("uniqueIdentifier",instanceId1);
+            createDms();
+        }
+
+
+
+
         if (beta.name == "Submit") {
             submitExists = true;
 
@@ -229,8 +239,8 @@ loadContents = (res,role) => {
                 })
             });
         }
-        if(readOnly=="readOnly" && String(beta.id).indexOf("bt") != -1){
-            document.getElementById(beta.id).style.visibility="hidden";
+        if (readOnly == "readOnly" && String(beta.id).indexOf("bt") != -1) {
+            document.getElementById(beta.id).style.visibility = "hidden";
         }
         else if (String(beta.id).indexOf("bt") != -1) {
 
@@ -297,7 +307,7 @@ loadContents = (res,role) => {
         }
 
         if (tempArr[i].tagName == "FORM" || tempArr[i].tagName == "TABLE") {
-            bindObject(beta.getAttribute('bind'), beta.id,role)
+            bindObject(beta.getAttribute('bind'), beta.id, role)
         }
 
 
@@ -459,8 +469,8 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
             credentials: 'include'
         }).then((prom) => prom.text()).then((res123) => {
             console.log(res);
-            console.log(res.instanceId+"!!@@");
-            instanceId1=res.instanceId;
+            console.log(res.instanceId + "!!@@");
+            instanceId1 = res.instanceId;
             onLoad(formId, processId, workitemId, res.instanceId, res123);
         })
 
@@ -553,10 +563,10 @@ loadObjects = () => {
 
 
 
-bindObject = (bindObjName, currentEl,role) => {
-    var readOnly="";
-    if(role=="view"){
-        readOnly="readonly";
+bindObject = (bindObjName, currentEl, role) => {
+    var readOnly = "";
+    if (role == "view") {
+        readOnly = "readonly";
     }
     for (var i = 0; i < objs.length; i++) {
         if (bindObjName == objs[i].schemaName) {
@@ -594,8 +604,8 @@ bindObject = (bindObjName, currentEl,role) => {
                         if (typeof (schema[key].required) !== 'undefined' && schema[key].required == "true") {
                             newEl.required = true;
                         }
-                        if(readOnly=="readonly"){
-                            newEl.readOnly=true;
+                        if (readOnly == "readonly") {
+                            newEl.readOnly = true;
                         }
 
                         newEl.setAttribute("placeholder", key);
@@ -617,10 +627,10 @@ bindObject = (bindObjName, currentEl,role) => {
                             newEl.name = key;
                             newEl.value = k;
                             newEl.id = document.getElementById(currentEl).id + "_" + key + "_" + k;
-                            if(readOnly=="readonly"){
-                                newEl.readOnly=true;
+                            if (readOnly == "readonly") {
+                                newEl.readOnly = true;
                             }
-    
+
 
                             newDiv.appendChild(newEl);
 
@@ -642,8 +652,8 @@ bindObject = (bindObjName, currentEl,role) => {
                         var ts = schema[key].options
                         console.log(ts[0]);
                         var alpha = document.createElement("SELECT");
-                        if(readOnly=="readonly"){
-                            alpha.readOnly=true;
+                        if (readOnly == "readonly") {
+                            alpha.readOnly = true;
                         }
 
                         alpha.className = "form-control";
