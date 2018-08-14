@@ -38,5 +38,6 @@
     "heroku",
     "express"
   ],
+  "author": "Anuraag Kamath",
   "license": "MIT"
 }

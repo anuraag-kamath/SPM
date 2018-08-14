@@ -1,4 +1,5 @@
-var dms_server_url = "http://localhost:4000";
+//var dms_server_url = "http://localhost:4000";
+var dms_server_url="https://damp-woodland-10129.herokuapp.com"
 
 var dms_tag_id = "";
 
