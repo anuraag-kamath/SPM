@@ -684,7 +684,7 @@ drop = (event) => {
     } else if (sourceElement == "dms") {
         var newDMS = document.createElement("mydms");
         newDMS.id = id;
-        newDMS.setAttribute("uniqueIdentifier","AKBK");
+        newDMS.setAttribute("uniqueIdentifier",new Date().getTime());
         ////console.log("HR ADDED");
         //newContainer.style.margin="20px";
         if (mode == "parent") {
