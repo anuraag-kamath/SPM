@@ -17,6 +17,9 @@ var { form1 } = require('./schemas/form');
 var { instance } = require('./schemas/instance');
 
 var { workitem } = require('./schemas/workitem');
+var { userActivity } = require('./schemas/userActivity');
+
+var { comments } = require('./schemas/comments');
 
 var bcrypt = require('bcrypt');
 var jsonwebtoken = require('jsonwebtoken');
@@ -41,8 +44,8 @@ const port = process.env.PORT || 9099;
 var cors = require('cors')
 
 //newImports
-var {s2_v0}=require('./schemas/s2_v0')
-var {s1_v0}=require('./schemas/s1_v0')
+var { s2_v0 } = require('./schemas/s2_v0')
+var { s1_v0 } = require('./schemas/s1_v0')
 var { emp123_v0 } = require('./schemas/emp123_v0')
 var { empNew_v10 } = require('./schemas/empNew_v10')
 var { empNew_v9 } = require('./schemas/empNew_v9')
@@ -67,6 +70,13 @@ var { roles } = require('./schemas/roles')
 
 app.use(bodyparser.json());
 
+logger = (activity, subActivity, activityId, status,userId,ipAddress) => {
+    console.log(activity);
+    act = new userActivity({
+        activity, subActivity, activityId, status,userId,ipAddress});
+    act.save();
+}
+
 app.use(bodyparser.urlencoded({
     extended: true
 }))
@@ -80,6 +90,8 @@ app.use((req, res, next) => {
 })
 
 app.get('/login', (req, res) => {
+    logger("page","login","","success","",req.connection.remoteAddress);
+    console.log(req.connection.remoteAddress);
     console.log("**/login entered**");
     res.sendFile(__dirname + '/public/login/login.html')
     console.log("**/login exited**");
@@ -117,6 +129,8 @@ app.post('/login', (req, res) => {
                 }
             })
         } else {
+            logger("page","login.html","","failure","");
+
             res.send({
                 url: '/login.html'
             })
@@ -128,6 +142,34 @@ app.post('/login', (req, res) => {
 
 
 
+})
+
+app.get('/comments/:instanceId', (req, res) => {
+    comments.find({ instanceId: req.params.instanceId }).then((docs) => {
+        res.send(docs);
+    })
+})
+
+app.post('/comments/:instanceId', (req, res) => {
+    var com = new comments({
+        comment: req.body.comment,
+        user: jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId,
+        commentDate: new Date(),
+        instanceId: req.params.instanceId,
+        deleted: false
+
+    })
+    com.save().then(
+        (res1) => {
+            res.send();
+        }
+    );
+})
+
+app.delete('/comments/:id', (req, res) => {
+    comments.findByIdAndUpdate(req.params.id, {
+        deleted: true
+    })
 })
 
 app.post('/logout', (req, res) => {
@@ -921,49 +963,49 @@ app.get('/workitems/:id', (req, res) => {
 //newSettersGetters
 
 app.get('/s2_v0/:id', (req, res) => {
-	s2_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    s2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/s2_v0', (req, res) => {
-	s2_v0.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    s2_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/s2_v0', (req, res) => {
-	console.log(req.body);
-	var obj1 = new s2_v0(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new s2_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/s1_v0/:id', (req, res) => {
-	s1_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    s1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/s1_v0', (req, res) => {
-	s1_v0.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    s1_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/s1_v0', (req, res) => {
-	console.log(req.body);
-	var obj1 = new s1_v0(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new s1_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/emp123_v0/:id', (req, res) => {
@@ -1419,7 +1461,7 @@ app.get('/roles', (req, res) => {
     var ids = req.query.ids;
     var mode = req.query.mode;
     if (mode != undefined && mode.length > 0) {
-        roles.find({"roles.type":"participant"}).then((docs) => {
+        roles.find({ "roles.type": "participant" }).then((docs) => {
             console.log(docs);
             res.send(docs);
         })
@@ -1545,6 +1587,14 @@ app.get('/user', (req, res) => {
     user.find({}).then((docs) => {
         console.log(docs);
         res.send(docs);
+    })
+});
+
+app.get('/user/:id', (req, res) => {
+    user.findById(req.params.id, (err, docs) => {
+        res.send({
+            user: docs.user.username
+        })
     })
 });
 

@@ -81,6 +81,100 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
 loadContents = (res, role) => {
     tempArr = (JSON.parse(res).structure)
     document.getElementById('main-section').innerHTML = "";
+    var button = document.createElement("BUTTON");
+    button.id = "comments_button"
+    button.innerHTML='COMMENTS'
+    button.style.position = "fixed";
+    button.style.top = "6vh";
+    button.style.marginRight = "15px";
+    button.style.right = "0";
+    button.style.zIndex="1";
+
+    document.getElementById('main-section').appendChild(button);
+
+    var commentsDiv = document.createElement("DIV");
+    commentsDiv.id = "commentsDiv"
+    commentsDiv.style.height = "100%";
+    commentsDiv.style.width = "10%";
+    commentsDiv.style.position = "fixed";
+    commentsDiv.style.top = "9vh";
+    commentsDiv.style.marginRight = "15px";
+    commentsDiv.style.right = "0";
+    commentsDiv.style.backgroundColor = "red"
+    commentsDiv.style.zIndex = "1";
+
+    commentsDiv.style.overflow = "scroll";
+    commentsDiv.className = "commentsDiv"
+    var commentsList = document.createElement("DIV");
+    commentsList.className = "commentsDiv"
+    commentsList.id = "commentsList"
+
+
+
+
+    document.getElementById('main-section').appendChild(commentsDiv);
+    var newRow = document.createElement("DIV");
+    newRow.className = "commentsDiv"
+    newRow.id = "addNewCommentRow"
+
+    newRow.className = "row";
+    var newCol1 = document.createElement("DIV");
+    newCol1.id = "inputCommentCol";
+    newCol1.className = "col-9 commentsDiv";
+    newCol1.style.width = "100%"
+    newCol1.style.margin = "0"
+    newCol1.style.padding = "0"
+
+
+    var newComment = document.createElement("INPUT");
+    newComment.id = "inputComment";
+    newComment.className = "commentsDiv"
+
+    newComment.id = "newComment";
+    newCol1.appendChild(newComment);
+    var newCol3 = document.createElement("DIV");
+    newCol3.id = "inputCommentButtonDiv";
+
+    newCol3.style.padding = "0";
+    newCol3.className = "col-2 commentsDiv";
+    var newCommentButton = document.createElement("BUTTON");
+    newCommentButton.id = "inputCommentButton";
+
+    newCommentButton.className = "commentsDiv"
+
+    newCommentButton.innerText = "+";
+    newCol3.style.margin = "0"
+    newCol3.style.padding = "0"
+    newCommentButton.id = "newCommentsButton_" + instanceId1;
+    newCol3.appendChild(newCommentButton);
+
+    newRow.appendChild(newCol1);
+    newRow.appendChild(newCol3);
+    newRow.style.marginRight = "15px"
+    document.getElementById('commentsDiv').appendChild(newRow);
+    document.getElementById('commentsDiv').appendChild(commentsList);
+    loadComments();
+
+
+
+
+    document.getElementById('newCommentsButton_' + instanceId1).addEventListener('click', (ev) => {
+        jsonBody = '{"comment": "' + document.getElementById('newComment').value + '"}';
+        console.log(jsonBody);
+        fetch('/comments/' + instanceId1, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: jsonBody
+        }).then((prom) => prom.text()).then((res) => {
+            loadComments();
+            document.getElementById('newComment').value = "";
+        })
+    });
+
+
+
     console.log("AM I LOADING>");
     console.log(tempArr);
     var readOnly = "";
@@ -117,8 +211,8 @@ loadContents = (res, role) => {
         document.getElementById(tempArr[i].parentId).appendChild(beta);
 
         if (beta.tagName == "MYDMS") {
-            beta.innerText="";
-            beta.setAttribute("uniqueIdentifier",instanceId1);
+            beta.innerText = "";
+            beta.setAttribute("uniqueIdentifier", instanceId1);
             createDms();
         }
 
@@ -316,6 +410,68 @@ loadContents = (res, role) => {
 
     putMe(document.getElementById('app'));
 }
+
+loadComments = () => {
+    document.getElementById('commentsList').innerText = "";
+    fetch('/comments/' + instanceId1, {
+        credentials: "include"
+    }).then((prom) => prom.json()).then((res) => {
+        for (var i = 0; i < res.length; i++) {
+            var newRow1 = document.createElement("DIV");
+            newRow1.className = "commentsDiv"
+            newRow1.id = "commentsDiv1" + i;
+
+
+            // newRow1.className = "row";
+            newRow1.innerText = res[i].comment;
+            newRow1.style.marginRight = "15px"
+            document.getElementById('commentsList').appendChild(newRow1);
+            var newRow2 = document.createElement("DIV");
+            newRow2.id = "commentsDiv2" + i;
+
+            newRow2.className = "commentsDiv"
+
+            // newRow2.className = "row";
+            var dt = String(res[i].commentDate);
+
+            newRow2.innerHTML = dt.substr(0, dt.indexOf("T")) + "-<strong class='commentsDiv' id='" + i + "_" + res[i].user + "'>" + res[i].user + "</strong>"
+            newRow2.style.marginRight = "15px"
+            document.getElementById('commentsList').appendChild(newRow2);
+            var hr = document.createElement("HR");
+            hr.id = "hr" + i;
+
+            hr.className = "commentsDiv"
+
+            document.getElementById('commentsList').appendChild(hr);
+
+            userName(i + "_" + res[i].user)
+
+        }
+    })
+}
+
+userName = (userId) => {
+    fetch('/user/' + (userId).substr(2), {
+        credentials: 'include'
+    }).then((prom) => prom.text()).then((doc) => {
+        console.log("*****");
+        console.log(doc);
+        console.log(userId);
+        console.log("*****");
+        document.getElementById(userId).innerText = JSON.parse(doc).user;
+    })
+}
+
+document.addEventListener('click', (ev) => {
+    console.log(ev.target.id);
+    if (String(document.getElementById(ev.target.id).className).indexOf("commentsDiv") == -1 && 
+    String(ev.target.id).indexOf("comments_button") == -1) {
+        document.getElementById("commentsDiv").style.display = "none";
+    };
+    if(String(ev.target.id).indexOf("comments_button") != -1){
+        document.getElementById("commentsDiv").style.display = "block";
+    }
+});
 
 eventPage = (type, id) => {
     document.getElementById(id).addEventListener('click', (ev) => {
