@@ -24,7 +24,7 @@ fetch('/instance?mode=listAll', {
         }
         for (var i = 0; i < res.length; i++) {
             var alpha = "<tr>"
-            alpha += '<td>' + (i + 1) + '</td><td class="editUsers" id=' + res[i]._id + '>' + res[i]._id + '</td><td>' + res[i].processId + '</td><td  id=' + i + "_" + res[i].processId + '></td><td>' + res[i].status + '</td><td>'+res[i].user+'</td><td></td>'
+            alpha += '<td>' + (i + 1) + '</td><td class="editUsers" id=' + res[i]._id + '>' + res[i]._id + '</td><td>' + res[i].processId + '</td><td  id=' + i + "_" + res[i].processId + '></td><td>' + res[i].status + '</td><td>' + res[i].user + '</td><td></td>'
             alpha += "</tr>"
 
             document.getElementById('instances-body').innerHTML += alpha;

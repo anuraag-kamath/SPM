@@ -69,23 +69,44 @@ addChild = (name, type, control, pattern, required, options) => {
     ts = Math.ceil(new Date().getTime() * Math.random());
     newNode.className = "row"
     newNode.id = "div_" + ts;
-    
-    newNode.innerHTML = '<div class="col-1"><h3>-></h3></div><div class="col-3"><input id="ele_' + ts + '" name="root " class="form-control" placeholder="element name" required value="' + name + '"></div><div class="col-1" ><select id="type_' + ts + '" class="form-control"><option ' + StringSelected + '>String</option><option ' + NumberSelected + '>Number</option><option ' + DateSelected + '>Date</option></select></div><div class="col-1"><select id="control_' + ts + '" class="form-control"><option value="text" ' + TextSelected + '>Text</option><option value="radio" ' + RadioSelected + '>Radio</option></select></div><div class="col-2"><input type="text" id="listAdd_' + ts + '" style="width:80%"><button id="listAddButton_' + ts + '">+</button><ul id="list_' + ts + '"></ul></div><div class="col-3"><input type="text" id="pattern_' + ts + '" class="form-control"  value="' + decodeURI(pattern) + '"></div><div class="col-1 checkbox"><label>req: <input type="checkbox" id="required_' + ts + '" ' + required + '></label></div>'
+
+    newNode.innerHTML = '<div class="col-1"><h3>-></h3></div><div class="col-3"><input id="ele_' + ts + '" name="root " class="form-control" placeholder="element name" required value="' + name + '"></div><div class="col-1" ><select id="type_' + ts + '" class="form-control"><option ' + StringSelected + '>String</option><option ' + NumberSelected + '>Number</option><option ' + DateSelected + '>Date</option></select></div><div class="col-1"><select id="control_' + ts + '" class="form-control"><option value="text" ' + TextSelected + '>Text</option><option value="radio" ' + RadioSelected + '>Radio</option></select></div><div class="col-2"><input type="text" id="listAdd_' + ts + '" style="width:80%;height:calc(2.25rem + 2px)" placeholder="option" ><button id="listAddButton_' + ts + '">+</button><ul id="list_' + ts + '"></ul></div><div class="col-3"><input type="text" id="pattern_' + ts + '" class="form-control"  value="' + decodeURI(pattern) + '"  placeholder="regex"></div><div class="col-1 checkbox"><label>req: <input type="checkbox" id="required_' + ts + '" ' + required + '></label></div>'
     document.getElementById('myFormDiv').appendChild(newNode);
-    if(control=="radio"){
-        for(var i=0;i<options.length;i++){
-            addOptions('listAddButton_' + ts,options[i])
+    document.getElementById('control_' + ts).addEventListener('change', (ev) => {
+        console.log("#####");
+        console.log(ev.target.value);
+        console.log("#####");
+        if (ev.target.value == "text") {
+            document.getElementById(String(ev.target.id).replace("control", "listAdd")).disabled = true;
+            document.getElementById(String(ev.target.id).replace("control", "listAddButton")).style.visibility = false;
+            document.getElementById(String(ev.target.id).replace("control", "pattern")).disabled = false;
+        } else {
+            document.getElementById(String(ev.target.id).replace("control", "listAddButton")).style.visibility = true;
+            document.getElementById(String(ev.target.id).replace("control", "listAdd")).disabled = false;
+            document.getElementById(String(ev.target.id).replace("control", "pattern")).disabled = true;
+
+        }
+    });
+    if (control == "radio") {
+        for (var i = 0; i < options.length; i++) {
+            addOptions('listAddButton_' + ts, options[i])
         }
     }
     document.getElementById('listAddButton_' + ts).addEventListener('click', (ev) => {
         ev.preventDefault();
-        tid=ev.target.id;
-        addOptions(tid,document.getElementById(String(tid).replace("listAddButton", "listAdd")).value);
+        tid = ev.target.id;
+        if (document.getElementById(String(tid).replace("listAddButton", "listAdd")).value.length > 0) {
+            addOptions(tid, document.getElementById(String(tid).replace("listAddButton", "listAdd")).value);
+        } else {
+            alert("Add value to option!");
+        }
+        document.getElementById(String(tid).replace("listAddButton", "listAdd")).value = "";
+
 
     })
 }
 
-addOptions = (tid,optionValue) => {
+addOptions = (tid, optionValue) => {
     var ts = Math.ceil(new Date().getTime() * Math.random());
     var li_ts = "li_" + ts;
     var button_ts = "btn_" + ts;
@@ -131,7 +152,7 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
             }
 
             console.log(options);
-            var temp= '"' + document.getElementById(elName).value + '":{"type":"' + document.getElementById(elType).value + '","control":"' + document.getElementById(elControl).value + '","options":"'+options.toString()+'","pattern":"' + encodeURI(document.getElementById(elPattern).value) + '","required":"' + encodeURI(document.getElementById(elRequired).checked) + '"}';
+            var temp = '"' + document.getElementById(elName).value + '":{"type":"' + document.getElementById(elType).value + '","control":"' + document.getElementById(elControl).value + '","options":"' + options.toString() + '","pattern":"' + encodeURI(document.getElementById(elPattern).value) + '","required":"' + encodeURI(document.getElementById(elRequired).checked) + '"}';
             json += temp;
             if (i != nodes.length - 1) {
                 json += ","

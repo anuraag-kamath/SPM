@@ -44,6 +44,9 @@ const port = process.env.PORT || 9099;
 var cors = require('cors')
 
 //newImports
+var { obj2_v0 } = require('./schemas/obj2_v0')
+var { obj1_v1 } = require('./schemas/obj1_v1')
+var { obj1_v0 } = require('./schemas/obj1_v0')
 var { r_v1 } = require('./schemas/r_v1')
 var { r_v0 } = require('./schemas/r_v0')
 var { b_v1 } = require('./schemas/b_v1')
@@ -822,6 +825,16 @@ app.post('/instance/:id', (req, res) => {
 
 })
 
+
+app.get('/searchObjects/:id', (req, res) => {
+    var instanceId = req.params.id;
+    instance.findById(instanceId, (err, res1) => {
+        console.log(res1.objects.length);
+
+        res.send(res1.objects);
+    })
+})
+
 var oldObjects = [];
 
 //PENDING
@@ -1095,6 +1108,76 @@ app.get('/workitems/:id', (req, res) => {
 
 
 //newSettersGetters
+
+
+app.get('/obj2_v0/:id', (req, res) => {
+    obj2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/obj2_v0', (req, res) => {
+    obj2_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/obj2_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new obj2_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/obj1_v1/:id', (req, res) => {
+    obj1_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/obj1_v1', (req, res) => {
+    obj1_v1.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/obj1_v1', (req, res) => {
+    console.log(req.body);
+    var obj1 = new obj1_v1(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/obj1_v0/:id', (req, res) => {
+    obj1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/obj1_v0', (req, res) => {
+    obj1_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/obj1_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new obj1_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
 
 app.get('/r_v1/:id', (req, res) => {
     r_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {

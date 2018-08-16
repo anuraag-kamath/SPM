@@ -22,7 +22,7 @@ fetch('/workitems?search={"status":"scheduled"}', {
             alpha = JSON.parse(res);
             for (var i = 0; i < alpha.length; i++) {
                 var row = document.createElement("tr");
-                row.innerHTML = "<td>" + (i + 1) + "</td><td id=" + (i + 1) + "_" + alpha[i].processId + " instanceId=" + alpha[i].instanceId + ">" + alpha[i]._id + "</td><td  class='editUsers'  id='"+alpha[i].instanceId+"'>" + alpha[i].instanceId + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
+                row.innerHTML = "<td>" + (i + 1) + "</td><td class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + ">" + alpha[i]._id + "</td><td  class='editUsers'  id='" + alpha[i].instanceId + "'>" + alpha[i].instanceId + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
 
                 // {
 
@@ -61,7 +61,27 @@ fetch('/workitems?search={"status":"scheduled"}', {
                 //}
                 document.getElementById('workitems-body').appendChild(row);
                 //instanceIdLoader((i + 1) + "_" + alpha[i].processId);
-                instanceIdLoader(alpha[i].instanceId,"workitem");
+                instanceIdLoader(alpha[i].instanceId, "workitem");
+                document.getElementById(alpha[i]._id).addEventListener('click', (ev) => {
+                    document.getElementById('workitemsDiv').style.height = "70%";
+                    document.getElementById('workitemsDiv').style.overflow = "scroll";
+
+                    document.getElementById('objectWorkitemDiv').style.height = "30%";
+                    document.getElementById('objectWorkitemDiv').style.backgroundColor = "yellow";
+                    document.getElementById('objectWorkitemDiv').style.overflow = "scroll";
+
+                    fetch('/searchObjects/' + document.getElementById(ev.target.id).getAttribute('instanceId'), { credentials: "include" }).then((prom) => prom.text()).then((res) => {
+                        document.getElementById("objectWorkitemDiv").innerHTML = "";
+                        res = JSON.parse(res);
+                        console.log(res);
+                        for (var i = 0; i < res.length; i++) {
+                            document.getElementById("objectWorkitemDiv").innerHTML += "<h3>"+res[i].name+"</h3><table class='table' id='obj_" + i + "'></table>";
+                        }
+                        for (var i = 0; i < res.length; i++) {
+                            addTable(res[i].name, res[i].id, i);
+                        }
+                    })
+                });
             }
             removeLoadBar();
         } else {
@@ -71,3 +91,36 @@ fetch('/workitems?search={"status":"scheduled"}', {
 
         }
     })
+
+
+addTable = (name, id, tid) => {
+    console.log("/" + name + "/" + id);
+    fetch("/" + name + "/" + id, {
+        credentials: "include"
+    }).then((prom) => prom.text()).then((res3) => {
+        res3 = JSON.parse(res3);
+        console.log("#####");
+        console.log(name);
+        console.log(res3);
+        var headers = Object.keys((res3[0][name][0]));
+        console.log(headers)
+        for (var k = 0; k < headers.length; k++) {
+            var th = document.createElement("TH");
+            th.innerText = headers[k];
+            console.log(th);
+            document.getElementById("obj_" + tid).appendChild(th)
+        }
+        console.log(res3[0][name].length);
+        for (var m = 0; m < res3[0][name].length; m++) {
+            var tr=document.createElement("TR");
+            for(var n=0;n<headers.length;n++){
+                var td=document.createElement("TD");
+                td.innerText=res3[0][name][m][headers[n]];
+                tr.appendChild(td)
+
+            }    
+            document.getElementById("obj_" + tid).appendChild(tr);
+        }
+        console.log("#####");
+    })
+}

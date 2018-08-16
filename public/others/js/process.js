@@ -623,7 +623,6 @@ document.getElementById('name').addEventListener(('focusout'), (event) => {
 
 
 if (location.hash != undefined && location.hash.length > 0 && location.hash != "#newpro") {
-    console.log("###"+calledFrom);
     //processId = location.hash.substr(4);
     if (typeof (processId) !== 'undefined' && processId != null && processId.length > 0) {
 
@@ -635,7 +634,6 @@ if (location.hash != undefined && location.hash.length > 0 && location.hash != "
 
     }
 } else {
-    console.log("###"+calledFrom);
 
     if (typeof (processId) !== 'undefined' && processId != null && processId.length > 0) {
         checkme(processId);
