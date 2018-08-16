@@ -8,6 +8,9 @@ var userActivity = mongoose.model('userActivity', {
     subActivity: {
         type: String
     },
+    subsubActivity: {
+        type: String
+    },
     activityId: {
         type: String
     },
@@ -18,8 +21,17 @@ var userActivity = mongoose.model('userActivity', {
     userId: {
         type: String
     },
+    user: {
+        type: String
+    },
     ipAddress: {
         type: String
+    },
+    method: {
+        type: String
+    },
+    logDate:{
+        type: Date
     }
 })
 

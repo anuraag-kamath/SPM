@@ -22,7 +22,7 @@ fetch('/workitems?search={"status":"scheduled"}', {
             alpha = JSON.parse(res);
             for (var i = 0; i < alpha.length; i++) {
                 var row = document.createElement("tr");
-                row.innerHTML = "<td>" + (i + 1) + "</td><td class='editUsers' id="+(i+1)+"_" + alpha[i].processId + " instanceId="+alpha[i].instanceId+">" + alpha[i]._id + "</td><td>" + alpha[i].instanceId + "</td><td>"+alpha[i].processName+"</td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
+                row.innerHTML = "<td>" + (i + 1) + "</td><td id=" + (i + 1) + "_" + alpha[i].processId + " instanceId=" + alpha[i].instanceId + ">" + alpha[i]._id + "</td><td  class='editUsers'  id='"+alpha[i].instanceId+"'>" + alpha[i].instanceId + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
 
                 // {
 
@@ -60,18 +60,11 @@ fetch('/workitems?search={"status":"scheduled"}', {
                 //     }
                 //}
                 document.getElementById('workitems-body').appendChild(row);
-                document.getElementById((i+1)+"_"+alpha[i].processId).addEventListener('click', (ev) => {
-                    instanceId=document.getElementById(ev.target.id).getAttribute("instanceId");
-                    console.log("I set"+instanceId);
-                    processId=String(ev.target.id).substr(String(ev.target.id).indexOf("_")+1);
-                    
-                    calledFrom="workitem";
-                   loadPage("process", "Process Definition", "Y")
-                })
-
+                //instanceIdLoader((i + 1) + "_" + alpha[i].processId);
+                instanceIdLoader(alpha[i].instanceId,"workitem");
             }
             removeLoadBar();
-        }else{
+        } else {
             document.getElementById('noWorkitems').style.display = "block";
             document.getElementById('workitems').style.display = "none";
             removeLoadBar();

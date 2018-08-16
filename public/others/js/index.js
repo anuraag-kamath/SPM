@@ -1,5 +1,4 @@
 
-
 loadBar = () => {
     loadIt = true
     var elem = document.getElementById("loading");
@@ -152,6 +151,8 @@ hashCheck = () => {
         loadPage("listObjects", "List of Objects", "N")
     } else if (location.hash.indexOf("pro") != -1) {
         loadPage("process", "Process Definition", "N")
+    } else if (location.hash.indexOf("listInstances") != -1) {
+        loadPage("listInstances", "List of Instances", "N")
     } else {
 
         loadPage("formViewer", "Form Viewer", "N");
@@ -235,7 +236,7 @@ document.getElementById('loggedinUser').addEventListener('mouseover', (ev) => {
     div.style.width = document.getElementById(ev.target.id).getBoundingClientRect().width * 2;
     div.style.backgroundColor = "pink";
     div.style.position = "fixed";
-    
+
     div.id = "userOverlay";
 
     div.style.top = document.getElementById(ev.target.id).getBoundingClientRect().y + document.getElementById(ev.target.id).getBoundingClientRect().height;
@@ -249,3 +250,30 @@ document.getElementById('loggedinUser').addEventListener('mouseout', (ev) => {
     document.getElementById("userOverlay").parentNode.removeChild(document.getElementById("userOverlay"));
 });
 
+
+
+instanceIdLoader = (bindingId, calledFrom1) => {
+    console.log("EVENT REGISTERED" + bindingId);
+    console.log(document.getElementById(bindingId));
+    document.getElementById(bindingId).addEventListener('click', (ev) => {
+        console.log("CLICK");
+        instanceId = ev.target.id;
+        if (String(ev.target.id).indexOf("_") != -1) {
+            instanceId = String(ev.target.id).substr(String(ev.target.id).indexOf("_") + 1)
+        }
+        console.log("I set" + instanceId);
+        fetch('/instance/' + instanceId, {
+            credentials: "include"
+        }).then((prom) => prom.text()).then((proc) => {
+            console.log(JSON.parse(proc).processId + "#" + calledFrom1);
+            processId = JSON.parse(proc).processId;
+
+            calledFrom = calledFrom1;
+            console.log("****");
+            console.log(calledFrom);
+            console.log("****");
+            loadPage("process", "Process Definition", "Y")
+
+        })
+    })
+}

@@ -10,7 +10,7 @@ var objects = [];
 //     document.getElementById('title').innerText = "";
 //     var h4 = document.createElement("P");
 //     var inputName = document.createElement("INPUT");
-//     h4.id = "heading";
+//     h4.id = "heading"; 
 //     inputName.id = "heading-text";
 
 
@@ -81,9 +81,10 @@ checkme = (processId) => {
 
 
             });
+            console.log(processId);
 
             console.log(calledFrom);
-
+ 
             if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") {
                 document.getElementById('left-menu-div').style.display = "none";
                 document.getElementById('header').style.display = "none";
@@ -622,6 +623,7 @@ document.getElementById('name').addEventListener(('focusout'), (event) => {
 
 
 if (location.hash != undefined && location.hash.length > 0 && location.hash != "#newpro") {
+    console.log("###"+calledFrom);
     //processId = location.hash.substr(4);
     if (typeof (processId) !== 'undefined' && processId != null && processId.length > 0) {
 
@@ -633,6 +635,8 @@ if (location.hash != undefined && location.hash.length > 0 && location.hash != "
 
     }
 } else {
+    console.log("###"+calledFrom);
+
     if (typeof (processId) !== 'undefined' && processId != null && processId.length > 0) {
         checkme(processId);
     }else{
