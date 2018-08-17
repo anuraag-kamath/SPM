@@ -54,7 +54,14 @@ checkme = (processId) => {
                 frm2 = steps[i].frm2 || "";
                 part1 = steps[i].part1 || "";
                 part2 = steps[i].part2 || "";
-                addProcess(step1, step2, lbl1, lbl2, frm1, frm2, part1, part2, steps[i]._id)
+                console.log(steps[i]);
+                days1 = steps[i].days1 || 0;
+                days2 = steps[i].days2 || 0;
+                minutes1 = steps[i].minutes1 || 0;
+                minutes2 = steps[i].minutes2 || 0;
+                hours1 = steps[i].hours1 || 0;
+                hours2 = steps[i].hours2 || 0;
+                addProcess(step1, step2, lbl1, lbl2, frm1, frm2, part1, part2, steps[i]._id, days1, hours1, minutes1, days2, hours2, minutes2)
 
             }
             recalcCount();
@@ -83,8 +90,7 @@ checkme = (processId) => {
             });
             console.log(processId);
 
-            console.log(calledFrom);
- 
+
             if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") {
                 document.getElementById('left-menu-div').style.display = "none";
                 document.getElementById('header').style.display = "none";
@@ -248,6 +254,31 @@ document.getElementById('participant').addEventListener('focusout', (event) => {
 
 });
 
+document.getElementById('escalation-days').addEventListener('focusout', (event) => {
+    console.log(currentElement);
+    console.log(event.target.value)
+    var esc = document.getElementById('escalation-days').value + "#" + document.getElementById('escalation-hours').value + "#" + document.getElementById('escalation-minutes').value
+    document.getElementById(currentElement).setAttribute('esc', esc);
+
+
+});
+document.getElementById('escalation-minutes').addEventListener('focusout', (event) => {
+    console.log(currentElement);
+    console.log(event.target.value)
+    var esc = document.getElementById('escalation-days').value + "#" + document.getElementById('escalation-hours').value + "#" + document.getElementById('escalation-minutes').value
+    document.getElementById(currentElement).setAttribute('esc', esc);
+
+
+});
+document.getElementById('escalation-hours').addEventListener('focusout', (event) => {
+    console.log(currentElement);
+    console.log(event.target.value)
+    var esc = document.getElementById('escalation-days').value + "#" + document.getElementById('escalation-hours').value + "#" + document.getElementById('escalation-minutes').value
+    document.getElementById(currentElement).setAttribute('esc', esc);
+
+
+});
+
 
 document.getElementById('heading').addEventListener('click', (event) => {
     if (event.target.tagName != "FORM") {
@@ -283,7 +314,7 @@ document.getElementById('myForm').addEventListener('submit', (event) => {
     if (String(t1).indexOf("Service") != -1 || String(t2).indexOf("Service") != -1) {
         alert("Kindly delete System task, it is currently under progress!!:)");
     } else {
-        addProcess(t1, t2, step1, step2, '', '', '', '', '');
+        addProcess(t1, t2, step1, step2, '', '', '', '', '', 0, 0, 0, 0, 0, 0);
 
 
     }
@@ -310,7 +341,15 @@ dragover = (event) => {
     event.preventDefault();
 }
 
-var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId) => {
+var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1, hours1, minutes1, days2, hours2, minutes2) => {
+    console.log("@@@@@@"); 
+    console.log(days1); 
+    console.log(hours1); 
+    console.log(minutes1); 
+    console.log(days2); 
+    console.log(hours2); 
+    console.log(minutes2); 
+    console.log("@@@@@@"); 
     var ts = "";
     if (stepId.length > 0) {
         ts = stepId;
@@ -330,10 +369,14 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId) => {
         //countDiv.innerHTML = "<h3 id='count'>2</h3>"
         var leftDiv = document.createElement("DIV");
         leftDiv.className = "col-5"
-        leftDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "' participant='" + part1 + "' id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
+        console.log(days1 + "#" + hours1 + "#" + minutes1);
+        console.log(days2 + "#" + hours2 + "#" + minutes2);
+        var esc1=days1 + "#" + hours1 + "#" + minutes1;
+        leftDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "' participant='" + part1 + "' esc=" + esc1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
         var rightDiv = document.createElement("DIV");
         rightDiv.className = "col-5";
-        rightDiv.innerHTML = "<h6 id='step2_" + ts + "' >" + step2 + "</h6><label formName='" + frm2 + "' participant='" + part2 + "' id='lbl2_" + ts + "' class='lbl noclick'>" + t2 + "</label>"
+        var esc2=days2 + "#" + hours2 + "#" + minutes2;
+        rightDiv.innerHTML = "<h6 id='step2_" + ts + "' >" + step2 + "</h6><label formName='" + frm2 + "' participant='" + part2 + "' esc=" + esc2 + " id='lbl2_" + ts + "' class='lbl noclick'>" + t2 + "</label>"
         var cancelDiv = document.createElement("DIV");
         cancelDiv.className = "col-1 ctr"
         cancelDiv.innerHTML = '<h4 class="noclick" id="delete1_' + ts + '" name="delete1">X</h4>';
@@ -348,6 +391,10 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId) => {
 
             document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
             document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+            var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
+            document.getElementById('escalation-days').value = esc[0];
+            document.getElementById('escalation-hours').value = esc[1];
+            document.getElementById('escalation-minutes').value = esc[2];
 
             if (currentElement != "") {
                 document.getElementById(currentElement).style.border = "2px solid black";
@@ -378,7 +425,8 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId) => {
         rightDiv.className = "col-2"
         var midDiv = document.createElement("DIV");
         midDiv.className = "col-6";
-        midDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "'  participant='" + part1 + "' id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
+        var esc1=days1 + "#" + hours1 + "#" + minutes1; 
+        midDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "'  participant='" + part1 + "' esc=" + esc1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
         var cancelDiv = document.createElement("DIV");
         cancelDiv.className = "col-1 ctr"
         cancelDiv.innerHTML = '<h4 class="noclick" id="delete1_' + ts + '" name="delete1">X</h4>';
@@ -401,6 +449,11 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId) => {
         if (String(tempText).indexOf("Human Task") != -1) {
             document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
             document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+            var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
+            document.getElementById('escalation-days').value = esc[0];
+            document.getElementById('escalation-hours').value = esc[1];
+            document.getElementById('escalation-minutes').value = esc[2];
+
             document.getElementById('participant_div').style.display = "flex";
             document.getElementById('form_div').style.display = "flex";
             document.getElementById('st_act').style.display = "none";
@@ -504,8 +557,11 @@ document.getElementById("save-process").addEventListener('click', (event) => {
         lbl1 = document.getElementById('lbl1_' + id).innerText;
         frm1 = document.getElementById('lbl1_' + id).getAttribute('formName');
         part1 = document.getElementById('lbl1_' + id).getAttribute('participant');
+        days1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[0];
+        hours1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[1];
+        minutes1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[2];
         step2 = "";
-        json += '{"step1":"' + step1 + '","lbl1":"' + lbl1 + '","frm1":"' + frm1 + '","part1":"' + part1 + '"';
+        json += '{"step1":"' + step1 + '","lbl1":"' + lbl1 + '","frm1":"' + frm1 + '","part1":"' + part1 + '"' + ',"days1":' + days1 + ',"hours1":' + hours1 + ',"minutes1":' + minutes1;
         if (step1.length == 0 ||
             lbl1.length == 0 ||
             frm1.length == 0 ||
@@ -519,7 +575,10 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             lbl2 = document.getElementById('lbl2_' + id).innerText;
             frm2 = document.getElementById('lbl2_' + id).getAttribute('formName');
             part2 = document.getElementById('lbl2_' + id).getAttribute('participant');
-            json += ',"step2":"' + step2 + '","lbl2":"' + lbl2 + '","frm2":"' + frm2 + '","part2":"' + part2 + '"';
+            days2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[0];
+            hours2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[1];
+            minutes2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[2];
+            json += ',"step2":"' + step2 + '","lbl2":"' + lbl2 + '","frm2":"' + frm2 + '","part2":"' + part2 + '"' + ',"days2":' + days2 + ',"hours2":' + hours2 + ',"minutes2":' + minutes2;
             if (step2.length == 0 ||
                 lbl2.length == 0 ||
                 frm2.length == 0 ||
@@ -637,7 +696,7 @@ if (location.hash != undefined && location.hash.length > 0 && location.hash != "
 
     if (typeof (processId) !== 'undefined' && processId != null && processId.length > 0) {
         checkme(processId);
-    }else{
+    } else {
 
         checkme();
     }

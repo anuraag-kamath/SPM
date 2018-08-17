@@ -27,6 +27,15 @@ var process1 = mongoose.model('process',
                 part1: {
                     type: String
                 },
+                days1: {
+                    type: Number
+                },
+                hours1: {
+                    type: Number
+                },
+                minutes1: {
+                    type: Number
+                },
                 step2: {
                     type: String
                 },
@@ -38,6 +47,15 @@ var process1 = mongoose.model('process',
                 },
                 part2: {
                     type: String
+                },
+                days2: {
+                    type: Number
+                },
+                hours2: {
+                    type: Number
+                },
+                minutes2: {
+                    type: Number
                 }
             }
         ]

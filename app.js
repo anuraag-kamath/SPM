@@ -312,35 +312,9 @@ app.post('/register', (req, res) => {
 
                     console.log(res8.user.email);
 
-                    var transporter = nodemailer.createTransport({
-                        // host: 'smtp.gmail.email',
-                        // port: 587,
-                        service: 'gmail',
-                        secure: false,
-                        auth: {
-                            user: 'projectilespm@gmail.com',
-                            pass: 'sokbbfmkxhixqcic'
-                        },
-                        tls: {
-                            rejectUnauthorized: false
-                        }
-                    });
+                    sendMail(es8.user.email, 'Account Activation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
 
-                    var mailOptions = {
-                        from: 'projectilespm@gmail.com',
-                        to: res8.user.email,
-                        subject: 'Account Activation',
-                        html: "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>"
-                    };
 
-                    transporter.sendMail(mailOptions, function (error, info) {
-                        if (error) {
-                            console.log("Could not send email!");
-                            console.log(error);
-                        } else {
-                            console.log('Email sent: ' + info.response);
-                        }
-                    });
 
                     logger("API", "login", "", "", "success", res8._id, req.connection.remoteAddress, "POST");
 
@@ -356,6 +330,39 @@ app.post('/register', (req, res) => {
 
 
 })
+
+sendMail = (senderMailId, subject, html) => {
+    var transporter = nodemailer.createTransport({
+        // host: 'smtp.gmail.email',
+        // port: 587,
+        service: 'gmail',
+        secure: false,
+        auth: {
+            user: 'projectilespm@gmail.com',
+            pass: 'sokbbfmkxhixqcic'
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
+    var mailOptions = {
+        from: 'projectilespm@gmail.com',
+        to: senderMailId,
+        subject: subject,
+        html: html
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log("Could not send email!");
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
 
 app.get('/activate/:activationId/:userId', (req, res) => {
     activationId = req.params.activationId;
@@ -859,6 +866,29 @@ app.post('/instance/:id', (req, res) => {
     addObjects(objects, req.params.id);
     instance.findById(instanceId, (err, data) => {
         process1.findById(data.processId, (err, data2) => {
+            var date = new Date();
+            var escalationDate = date;
+            var escalationTriggered = false;
+            var escalationApplicable = false;
+            console.log("###");
+            console.log(escalationDate);
+            console.log("###");
+            if ((data2).steps[0].days1 > 0) {
+                escalationApplicable = true;
+                escalationDate.setDate(escalationDate.getDate() + (data2).steps[0].days1)
+            }
+            if ((data2).steps[0].hours1 > 0) {
+                escalationApplicable = true;
+                escalationDate.setHours(escalationDate.getHours() + (data2).steps[0].hours1)
+            }
+            if ((data2).steps[0].minutes1 > 0) {
+                escalationApplicable = true;
+                escalationDate.setMinutes(escalationDate.getMinutes() + (data2).steps[0].minutes1)
+
+            }
+            console.log("###");
+            console.log(escalationDate);
+            console.log("###");
             var wi = new workitem({
                 processName: data2.processName,
                 processId: data.processId,
@@ -869,6 +899,11 @@ app.post('/instance/:id', (req, res) => {
                 stepId: (data2).steps[0]._id,
                 formId: (data2).steps[0].frm1,
                 participant: (data2).steps[0].part1,
+                escalationDate,
+                escalationTriggered,
+                escalationApplicable,
+                escalationStatus: 'notTriggered',
+                date: new Date()
             })
 
 
@@ -944,6 +979,23 @@ app.post('/instance/:id/:wid', (req, res) => {
                                     }
                                     else {
                                         status = doc1.steps[i]._id;
+                                        var date = new Date();
+                                        var escalationDate = date;
+                                        var escalationTriggered = false;
+                                        var escalationApplicable = false;
+                                        if (doc1.steps[i].days1 > 0) {
+                                            escalationApplicable = true;
+                                            escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days1)
+                                        }
+                                        if (doc1.steps[i].hours1 > 0) {
+                                            escalationApplicable = true;
+                                            escalationDate.setHours(escalationDate.getHours() + doc1.steps[i].hours1)
+                                        }
+                                        if (doc1.steps[i].minutes1 > 0) {
+                                            escalationApplicable = true;
+                                            escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes1)
+
+                                        }
                                         var wi1 = new workitem({
                                             processName: doc1.processName,
                                             processId: doc.processId,
@@ -953,11 +1005,34 @@ app.post('/instance/:id/:wid', (req, res) => {
                                             stepType: (doc1).steps[i].step1,
                                             stepId: (doc1).steps[i]._id,
                                             formId: (doc1).steps[i].frm1,
-                                            participant: (doc1).steps[i].part1
+                                            participant: (doc1).steps[i].part1,
+                                            escalationDate,
+                                            escalationTriggered,
+                                            escalationApplicable,
+                                            escalationStatus: 'notTriggered',
+                                            date: new Date()
                                         })
                                         wi1.save().then((doc) => {
                                         })
                                         if (doc1.steps[i].lbl2 != undefined && doc1.steps[i].lbl2.length > 0) {
+
+                                            var date = new Date();
+                                            var escalationDate = date;
+                                            var escalationTriggered = false;
+                                            var escalationApplicable = false;
+                                            if (doc1.steps[i].days2 > 0) {
+                                                escalationApplicable = true;
+                                                escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days2)
+                                            }
+                                            if (doc1.steps[i].hours2 > 0) {
+                                                escalationApplicable = true;
+                                                escalationDate.setHours(escalationDate.getHours() + doc1.steps[i].hours2)
+                                            }
+                                            if (doc1.steps[i].minutes2 > 0) {
+                                                escalationApplicable = true;
+                                                escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes2)
+
+                                            }
                                             var wi2 = new workitem({
                                                 processName: doc1.processName,
                                                 processId: doc.processId,
@@ -967,7 +1042,12 @@ app.post('/instance/:id/:wid', (req, res) => {
                                                 stepType: (doc1).steps[i].step2,
                                                 stepId: (doc1).steps[i]._id,
                                                 formId: (doc1).steps[i].frm2,
-                                                participant: (doc1).steps[i].part2
+                                                participant: (doc1).steps[i].part2,
+                                                escalationDate,
+                                                escalationTriggered,
+                                                escalationApplicable,
+                                                escalationStatus: 'notTriggered',
+                                                date: new Date()
                                             })
                                             wi2.save().then((doc) => {
 
@@ -1113,7 +1193,42 @@ app.get('/instance/:id', (req, res) => {
 })
 
 
+//TIMER WORKITEMS
+setInterval(() => {
+    workitem.find({ "status": "scheduled", "escalationApplicable": true, "escalationTriggered": false, "escalationStatus": "notTriggered" }).then((docs) => {
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$");
+        for (var i = 0; i < docs.length; i++) {
+            var currentDate = new Date().getTime();
+            var wiescalation = docs[i].escalationDate.getTime();
+            console.log(docs[i].escalationDate.getTime());
+            console.log(currentDate);
 
+            console.log((wiescalation - currentDate));
+            if ((wiescalation - currentDate) < (300000 / 5)) {
+                waitForTrigger(docs[i]._id, currentDate, wiescalation, docs[i].escalationDate, docs[i].date, docs[i].instanceId);
+            }
+        }
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$");
+    })
+}, 60000)
+
+
+waitForTrigger = (triggerId, curr, esc, escDate, schDate, instanceId) => {
+    workitem.findByIdAndUpdate(triggerId, {
+        escalationStatus: "initiated"
+    }, (err, res2) => {
+        setTimeout(() => {
+            sendMail("anuraag.kamath@gmail.com", "Escalation for InstanceId:-" + instanceId, "<h3>Dear Anuraag,</h3><br><br>Instance Id:-" + instanceId + " Workitem Id:-" + triggerId + " scheduled on:-" + schDate + " escalated on " + escDate + "<hr> Kindly take attention!<hr><hr>Shortcut for the same is here:-<a href='https://dry-depths-41802.herokuapp.com#" + triggerId + "'><h3>Click me!</h3></a>");
+            workitem.findByIdAndUpdate(triggerId, { escalationStatus: "done", escalationTriggered: true }, (err, res2) => {
+
+            })
+        }, esc - curr)
+
+
+    })
+}
+
+//TIMER WORKITEMS
 
 app.get('/workitems', (req, res) => {
     console.log("**/workitems entered**");

@@ -20,9 +20,17 @@ fetch('/workitems?search={"status":"scheduled"}', {
             document.getElementById('noWorkitems').style.display = "none";
             document.getElementById('workitems').style.display = "table";
             alpha = JSON.parse(res);
+
             for (var i = 0; i < alpha.length; i++) {
                 var row = document.createElement("tr");
-                row.innerHTML = "<td>" + (i + 1) + "</td><td class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + ">" + alpha[i]._id + "</td><td  class='editUsers'  id='" + alpha[i].instanceId + "'>" + alpha[i].instanceId + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
+                if(alpha[i].escalationStatus=="done"){
+                    row.style.backgroundColor="red"
+                    row.style.color="white";
+                }
+
+                row.title="Escalated on "+alpha[i].escalationDate
+    
+                row.innerHTML = "<td>" + (i + 1) + "</td><td class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + ">" + alpha[i]._id + "</td><td  class='editUsers'  id='" + alpha[i].instanceId + "'>" + alpha[i].instanceId + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td>" + alpha[i].date + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
 
                 // {
 
@@ -73,7 +81,6 @@ fetch('/workitems?search={"status":"scheduled"}', {
                     fetch('/searchObjects/' + document.getElementById(ev.target.id).getAttribute('instanceId'), { credentials: "include" }).then((prom) => prom.text()).then((res) => {
                         document.getElementById("objectWorkitemDiv").innerHTML = "";
                         res = JSON.parse(res);
-                        console.log(res);
                         if (res.length > 0) {
                             for (var i = 0; i < res.length; i++) {
                                 document.getElementById("objectWorkitemDiv").innerHTML += "<h3>" + res[i].name + "</h3><table class='table' id='obj_" + i + "'></table>";
@@ -105,18 +112,12 @@ addTable = (name, id, tid) => {
         credentials: "include"
     }).then((prom) => prom.text()).then((res3) => {
         res3 = JSON.parse(res3);
-        console.log("#####");
-        console.log(name);
-        console.log(res3);
         var headers = Object.keys((res3[0][name][0]));
-        console.log(headers)
         for (var k = 0; k < headers.length; k++) {
             var th = document.createElement("TH");
             th.innerText = headers[k];
-            console.log(th);
             document.getElementById("obj_" + tid).appendChild(th)
         }
-        console.log(res3[0][name].length);
         for (var m = 0; m < res3[0][name].length; m++) {
             var tr = document.createElement("TR");
             for (var n = 0; n < headers.length; n++) {
@@ -127,6 +128,5 @@ addTable = (name, id, tid) => {
             }
             document.getElementById("obj_" + tid).appendChild(tr);
         }
-        console.log("#####");
     })
 }

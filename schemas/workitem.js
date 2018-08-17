@@ -33,6 +33,21 @@ var workitem = mongoose.model('workitem', {
     },
     date: {
         type: Date
+    },
+    escalationDate: {
+        type: Date
+    },
+    escalationTriggered: {
+        type: Boolean
+    },
+    escalationApplicable: {
+        type: Boolean
+    },
+    escalationStatus: {
+        type: String
+    },
+    status: {
+        type: String
     }
 })
 

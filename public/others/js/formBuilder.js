@@ -331,9 +331,9 @@ onDragOver = (event) => {
                 ////console.log("APPENDED 1");
             } else {
                 var div = document.createElement('DIV');
-                div.style.height = "100px";
+                div.style.height = "100%";
                 div.id = "tempDiv1"
-                div.style.widows = "100px";
+                div.style.widows = "100%";
                 div.style.backgroundColor = "blue";
                 div.className = "col-1";
 
