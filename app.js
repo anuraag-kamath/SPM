@@ -361,9 +361,8 @@ app.get('/activate/:activationId/:userId', (req, res) => {
     activationId = req.params.activationId;
     user.findById(req.params.userId, (err, res1) => {
         if (res1.user.activationId == activationId) {
-            user.findByIdAndUpdate(req.params.userId, {
-                activated: true
-            }, (err, res2) => {
+            res1.user.activated = true;
+            user.findByIdAndUpdate(req.params.userId, res1, (err, res2) => {
                 res.writeHeader(200, { "Content-Type": "text/html" });
                 res.write("Activated! <a href='/login'>Click here to login!</a>");
                 res.end();
