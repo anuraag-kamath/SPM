@@ -7,7 +7,7 @@ document.getElementById('login').addEventListener('click', (ev) => {
 
 document.getElementById('register').addEventListener('click', (ev) => {
     ev.preventDefault();
-    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198206993').value.length > 0 && document.getElementById('reg-email').value.length > 0 ) {
+    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198206993').value.length > 0 && document.getElementById('reg_email').value.length > 0 ) {
         loginRegister("register");
 
     }
@@ -23,7 +23,7 @@ loginRegister = (type) => {
     jsonBody = {
         username: document.getElementById('1531198206993').value,
         password: document.getElementById('1531198220280').value,
-        email: document.getElementById('reg-email').value
+        email: document.getElementById('reg_email').value
     }
     console.log(JSON.stringify(jsonBody));
     fetch('/' + type, {
@@ -42,7 +42,7 @@ loginRegister = (type) => {
         console.log(res);
         console.log("********");
         if (res.error != undefined && res.error != "undefined" && res.error.length > 0) {
-            document.getElementById('mess').innerText = "Username already exists";
+            document.getElementById('mess').innerText = res.error;
             document.getElementById('mess').style.visibility = "visible"
 
         }
