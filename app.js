@@ -312,7 +312,7 @@ app.post('/register', (req, res) => {
 
                     console.log(res8.user.email);
 
-                    sendMail(es8.user.email, 'Account Activation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
+                    sendMail(res8.user.email, 'Account Activation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
 
 
 
@@ -1218,7 +1218,14 @@ waitForTrigger = (triggerId, curr, esc, escDate, schDate, instanceId) => {
         escalationStatus: "initiated"
     }, (err, res2) => {
         setTimeout(() => {
-            sendMail("anuraag.kamath@gmail.com", "Escalation for InstanceId:-" + instanceId, "<h3>Dear Anuraag,</h3><br><br>Instance Id:-" + instanceId + " Workitem Id:-" + triggerId + " scheduled on:-" + schDate + " escalated on " + escDate + "<hr> Kindly take attention!<hr><hr>Shortcut for the same is here:-<a href='https://dry-depths-41802.herokuapp.com#" + triggerId + "'><h3>Click me!</h3></a>");
+            user.find({}).then((users) => {
+                for (var j = 0; j < users.length; j++) {
+                    if (users[j].user.email!=undefined && users[j].user.email !== "undefined" && users[j].user.email.length > 0) {
+                        sendMail(users[j].user.email, "Escalation for InstanceId:-" + instanceId, "<h3>Dear "+users[j].user.username+",</h3><br><br>Instance Id:-" + instanceId + " Workitem Id:-" + triggerId + " scheduled on:-" + schDate + " escalated on " + escDate + "<hr> Kindly take attention!<hr><hr>Shortcut for the same is here:-<a href='https://dry-depths-41802.herokuapp.com#" + triggerId + "'><h3>Click me!</h3></a>");
+
+                    }
+                }
+            })
             workitem.findByIdAndUpdate(triggerId, { escalationStatus: "done", escalationTriggered: true }, (err, res2) => {
 
             })
