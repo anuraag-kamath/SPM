@@ -134,6 +134,13 @@ app.post('/login', (req, res) => {
                         deactivated: true,
                         url: '/login.html'
                     })
+                }else if (res1[0].user.activated == false) {
+                    logger("API", "login", "", "", "notactivated", res1[0]._id, req.connection.remoteAddress, "POST");
+
+                    res.send({
+                        notactivated: true,
+                        url: '/login.html'
+                    })
                 } else if (res2 == true) {
                     logger("API", "login", "", "", "success", res1[0]._id, req.connection.remoteAddress, "POST");
 

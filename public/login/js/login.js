@@ -61,6 +61,10 @@ loginRegister = (type) => {
             document.getElementById('mess').innerText = "User deactivated";
             document.getElementById('mess').style.visibility = "visible"
             
+        } else if (res.notactivated==true){
+            document.getElementById('mess').innerText = "User not yet activated!";
+            document.getElementById('mess').style.visibility = "visible"
+            
         }else if(res.registeredButNotActivated == true){
             document.getElementById('mess').innerText = "Check your inbox for the activation link!";
             document.getElementById('mess').style.visibility = "visible"
