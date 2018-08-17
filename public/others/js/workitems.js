@@ -74,11 +74,17 @@ fetch('/workitems?search={"status":"scheduled"}', {
                         document.getElementById("objectWorkitemDiv").innerHTML = "";
                         res = JSON.parse(res);
                         console.log(res);
-                        for (var i = 0; i < res.length; i++) {
-                            document.getElementById("objectWorkitemDiv").innerHTML += "<h3>"+res[i].name+"</h3><table class='table' id='obj_" + i + "'></table>";
+                        if (res.length > 0) {
+                            for (var i = 0; i < res.length; i++) {
+                                document.getElementById("objectWorkitemDiv").innerHTML += "<h3>" + res[i].name + "</h3><table class='table' id='obj_" + i + "'></table>";
+                            }
+                            for (var i = 0; i < res.length; i++) {
+                                addTable(res[i].name, res[i].id, i);
+                            }
                         }
-                        for (var i = 0; i < res.length; i++) {
-                            addTable(res[i].name, res[i].id, i);
+                        else {
+                            document.getElementById("objectWorkitemDiv").innerHTML ="<h3>No Objects associated with this instance</h3>";
+
                         }
                     })
                 });
@@ -112,13 +118,13 @@ addTable = (name, id, tid) => {
         }
         console.log(res3[0][name].length);
         for (var m = 0; m < res3[0][name].length; m++) {
-            var tr=document.createElement("TR");
-            for(var n=0;n<headers.length;n++){
-                var td=document.createElement("TD");
-                td.innerText=res3[0][name][m][headers[n]];
+            var tr = document.createElement("TR");
+            for (var n = 0; n < headers.length; n++) {
+                var td = document.createElement("TD");
+                td.innerText = res3[0][name][m][headers[n]];
                 tr.appendChild(td)
 
-            }    
+            }
             document.getElementById("obj_" + tid).appendChild(tr);
         }
         console.log("#####");

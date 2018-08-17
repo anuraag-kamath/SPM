@@ -7,7 +7,7 @@ document.getElementById('login').addEventListener('click', (ev) => {
 
 document.getElementById('register').addEventListener('click', (ev) => {
     ev.preventDefault();
-    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198206993').value.length > 0) {
+    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198206993').value.length > 0 && document.getElementById('reg-email').value.length > 0 ) {
         loginRegister("register");
 
     }
@@ -22,7 +22,8 @@ loginRegister = (type) => {
     console.log("###");
     jsonBody = {
         username: document.getElementById('1531198206993').value,
-        password: document.getElementById('1531198220280').value
+        password: document.getElementById('1531198220280').value,
+        email: document.getElementById('reg-email').value
     }
     console.log(JSON.stringify(jsonBody));
     fetch('/' + type, {
@@ -60,6 +61,9 @@ loginRegister = (type) => {
             document.getElementById('mess').innerText = "User deactivated";
             document.getElementById('mess').style.visibility = "visible"
             
+        }else if(res.registeredButNotActivated == true){
+            document.getElementById('mess').innerText = "Check your inbox for the activation link!";
+            document.getElementById('mess').style.visibility = "visible"
         }else {
             document.getElementById('mess').innerText = "Invalid username/password";
             document.getElementById('mess').style.visibility = "visible"

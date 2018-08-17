@@ -26,7 +26,6 @@ var jsonwebtoken = require('jsonwebtoken');
 var cookieParser = require('cookie-parser');
 
 
-
 var Promise = require('promise')
 
 const bodyparser = require('body-parser');
@@ -272,12 +271,19 @@ app.post('/register', (req, res) => {
     console.log("**/register entered**");
     var username = req.body.username;
     var password = req.body.password;
+    var email = req.body.email;
 
     user.find({ "user.username": username }).then((doc) => {
         if (doc.length > 0) {
+            if (doc[0].user.activated !== 'undefined' && doc[0].user.activated == false) {
+                res.send({ error: "User not yet activated" });
+
+            } else {
+                res.send({ error: "Username already exists" });
+
+            }
             logger("API", "register", "", doc[0].user.username, "failure", "", req.connection.remoteAddress, "POST");
 
-            res.send({ error: "Username already exists" });
         }
         else {
             logger("API", "register", "", doc[0].user.username, "success", "", req.connection.remoteAddress, "POST");
@@ -289,19 +295,39 @@ app.post('/register', (req, res) => {
                         username: username,
                         password: res2,
                         roles: ["index", "admin"],
-                        deactivated: false
+                        deactivated: false,
+                        activated: false,
+                        activationId: Math.random() * (new Date().getTime())
                     }
                 })
                 usr.save().then((res8) => {
+
+                    var transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'projectilespm@gmail.com',
+                            pass: 'Anuraag123!'
+                        }
+                    });
+
+                    var mailOptions = {
+                        from: 'projectilespm@gmail.com',
+                        to: res8.user.email,
+                        subject: 'Account Activation',
+                        text: "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>"
+                    };
+
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                    });
+
                     logger("API", "login", "", "", "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
 
-                    token = jsonwebtoken.sign({ userId: res8._id }, "alphabetagamma", {
-                        expiresIn: '1M'
-                    })
-                    res.cookie('token', token).send({
-                        url: '/index.html',
-                        token: token
-                    })
+                    res.send({ error: "Check your mail to verify the email address!" })
                 });
             })
         }
@@ -312,6 +338,19 @@ app.post('/register', (req, res) => {
 
 
 
+})
+
+app.get('/activate/:activationId/:userId', (req, res) => {
+    activationId = req.params.activationId;
+    user.findById(req.params.userId, (err, res1) => {
+        if (res1.user.activationId == activationId) {
+            res.send({ "message": "Activated! <a href='//login'>Click here to login!</a>", "status": "success" })
+
+        } else {
+            res.send({ "message": "Invalid page! <a href='//login'>Click here to login!</a>", "status": "success" })
+
+        }
+    })
 })
 
 
