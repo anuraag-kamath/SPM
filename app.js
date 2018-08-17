@@ -134,7 +134,7 @@ app.post('/login', (req, res) => {
                         deactivated: true,
                         url: '/login.html'
                     })
-                }else if (res1[0].user.activated == false) {
+                } else if (res1[0].user.activated == false) {
                     logger("API", "login", "", "", "notactivated", res1[0]._id, req.connection.remoteAddress, "POST");
 
                     res.send({
@@ -361,12 +361,15 @@ app.get('/activate/:activationId/:userId', (req, res) => {
     activationId = req.params.activationId;
     user.findById(req.params.userId, (err, res1) => {
         if (res1.user.activationId == activationId) {
-            res.writeHeader(200, {"Content-Type": "text/html"});  
-            res.write("Activated! <a href='/login'>Click here to login!</a>");  
-            res.end(); 
+            res.writeHeader(200, { "Content-Type": "text/html" });
+            res.write("Activated! <a href='/login'>Click here to login!</a>");
+            res.end();
 
         } else {
-            res.send({ "message": "Invalid page! <a href='//login'>Click here to login!</a>", "status": "success" })
+            res.writeHeader(200, { "Content-Type": "text/html" });
+            res.write("Invalid Content! <a href='/login'>Click here to login!</a>");
+            res.end();
+
 
         }
     })
