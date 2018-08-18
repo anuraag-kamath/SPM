@@ -55,7 +55,7 @@ onLoad = () => {
                     beta.className = tempArr[i].class;
                     if (tempArr[i].tagName != "DIV" && tempArr[i].tagName != "FORM" && tempArr[i].tagName != "TABLE") beta.innerText = tempArr[i].text;
                     beta.style.display = tempArr[i].display;
-                    beta.style.backgroundColor = tempArr[i].bgc;
+                    //                    beta.style.backgroundColor = tempArr[i].bgc;
                     beta.style.height = tempArr[i].height;
                     beta.style.width = tempArr[i].width;
                     beta.style.overflow = tempArr[i].overflow;
@@ -74,7 +74,7 @@ onLoad = () => {
                     ////console.log(tempArr[i]);
 
                     document.getElementById(tempArr[i].parentId).appendChild(beta);
-                    if(beta.tagName=="MYDMS"){
+                    if (beta.tagName == "MYDMS") {
                         createDms();
                     }
 
@@ -294,8 +294,8 @@ onDragOver = (event) => {
             if (cren.length == 0) {
                 var div = document.createElement('DIV');
                 div.id = "tempDiv1"
-                div.style.height = "100px";
-                div.style.widows = "100px";
+                // div.style.height = "100px";
+                // div.style.widows = "100px";
                 div.style.backgroundColor = "blue";
                 mode = "parent";
                 ////console.log(event.target.id);
@@ -306,8 +306,8 @@ onDragOver = (event) => {
             else if (nextNode == null) {
                 var div = document.createElement('DIV');
                 div.id = "tempDiv1"
-                div.style.height = "100px";
-                div.style.widows = "100px";
+                // div.style.height = "100px";
+                // div.style.widows = "100px";
                 div.style.backgroundColor = "blue";
                 div.className = "col-1";
                 mode = "parent";
@@ -529,7 +529,7 @@ drop = (event) => {
         newTable.id = id;
         newTable.style.cursor = "pointer";
         newTable.className = "table";
-        newTable.style.backgroundColor = "yellow";
+        newTable.style.background = "yellow";
         //newContainer.style.margin="20px";
         //newTable.style.border = "2px solid black";
         if (mode == "parent") {
@@ -618,6 +618,7 @@ drop = (event) => {
         var newForm = document.createElement("FORM");
         newForm.id = id;
         newForm.className = "form-group";
+        newForm.style.width = "100%"
         //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newForm);
@@ -630,6 +631,7 @@ drop = (event) => {
     } else if (sourceElement == "para") {
         var newPara = document.createElement("P");
         newPara.id = id;
+        newPara.innerText="This is the sample para. Change it using the text property below!"
         //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newPara);
@@ -640,6 +642,7 @@ drop = (event) => {
     } else if (sourceElement == "hr") {
         var newHr = document.createElement("HR");
         newHr.id = id;
+        newHr.style.border="1px solid black";
         ////console.log("HR ADDED");
         //newContainer.style.margin="20px";
         if (mode == "parent") {
@@ -684,7 +687,7 @@ drop = (event) => {
     } else if (sourceElement == "dms") {
         var newDMS = document.createElement("mydms");
         newDMS.id = id;
-        newDMS.setAttribute("uniqueIdentifier",new Date().getTime());
+        newDMS.setAttribute("uniqueIdentifier", new Date().getTime());
         ////console.log("HR ADDED");
         //newContainer.style.margin="20px";
         if (mode == "parent") {
@@ -736,6 +739,9 @@ var cur = "";
 var curBorder = "";
 
 document.getElementById('right-section').addEventListener('click', (ev) => {
+    document.getElementById('prop-div').style.visibility="visible";
+    document.getElementById('prop-div-pane').style.visibility="hidden";
+    document.getElementById('prop-div-pane').style.display="none";
     var tesmp = ev.target.id;
     var expId = ev.target.id;
 
@@ -794,7 +800,7 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     document.getElementById('ctr-width').value = document.getElementById(cur).style.width;
     document.getElementById('ctr-overflow').value = document.getElementById(cur).style.overflow;
     document.getElementById('ctr-class').value = document.getElementById(cur).classList;
-    document.getElementById('ctr-bg-clr').value = document.getElementById(cur).style.backgroundColor;
+    //    document.getElementById('ctr-bg-clr').value = document.getElementById(cur).style.backgroundColor;
     document.getElementById('ctr-padding').value = document.getElementById(cur).style.padding;
     document.getElementById('ctr-margin').value = document.getElementById(cur).style.margin;
     document.getElementById('ctr-holder').value = document.getElementById(cur).getAttribute('placeholder');
@@ -817,6 +823,147 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     document.getElementById('ctr-color').value = document.getElementById(cur).style.color;
     document.getElementById('ctr-bind').value = document.getElementById(cur).getAttribute('bind');
     document.getElementById('ctr-name').value = document.getElementById(cur).name;
+    if (document.getElementById(cur).tagName == "FORM") {
+        document.getElementById('prop-name').style.visibility="visible";
+        document.getElementById('prop-height').style.visibility="visible";
+        document.getElementById('prop-width').style.visibility="visible";
+        document.getElementById('prop-display').style.visibility="hidden";
+        document.getElementById('prop-overflow').style.visibility="hidden";
+        document.getElementById('prop-class').style.visibility="visible";
+        document.getElementById('prop-align').style.visibility="hidden";
+        document.getElementById('prop-padding').style.visibility="visible";
+        document.getElementById('prop-margin').style.visibility="visible";
+        document.getElementById('prop-holder').style.visibility="hidden";
+        document.getElementById('prop-text').style.visibility="hidden";
+        document.getElementById('prop-src').style.visibility="hidden";
+        document.getElementById('prop-background').style.visibility="visible";
+        document.getElementById('prop-opacity').style.visibility="hidden";
+        document.getElementById('prop-position').style.visibility="hidden";
+        document.getElementById('prop-float').style.visibility="hidden";
+        document.getElementById('prop-binding').style.visibility="visible";
+        document.getElementById('prop-color').style.visibility="visible";
+        document.getElementById('prop-border').style.visibility="visible";
+    }else if (document.getElementById(cur).tagName == "TABLE") {
+        document.getElementById('prop-name').style.visibility="visible";
+        document.getElementById('prop-height').style.visibility="visible";
+        document.getElementById('prop-width').style.visibility="visible";
+        document.getElementById('prop-display').style.visibility="hidden";
+        document.getElementById('prop-overflow').style.visibility="hidden";
+        document.getElementById('prop-class').style.visibility="visible";
+        document.getElementById('prop-align').style.visibility="hidden";
+        document.getElementById('prop-padding').style.visibility="visible";
+        document.getElementById('prop-margin').style.visibility="visible";
+        document.getElementById('prop-holder').style.visibility="hidden";
+        document.getElementById('prop-text').style.visibility="hidden";
+        document.getElementById('prop-src').style.visibility="hidden";
+        document.getElementById('prop-background').style.visibility="visible";
+        document.getElementById('prop-opacity').style.visibility="hidden";
+        document.getElementById('prop-position').style.visibility="hidden";
+        document.getElementById('prop-float').style.visibility="hidden";
+        document.getElementById('prop-binding').style.visibility="visible";
+        document.getElementById('prop-color').style.visibility="visible";
+        document.getElementById('prop-border').style.visibility="visible";
+    }else if (document.getElementById(cur).tagName == "P") {
+        document.getElementById('prop-name').style.visibility="visible";
+        document.getElementById('prop-height').style.visibility="visible";
+        document.getElementById('prop-width').style.visibility="visible";
+        document.getElementById('prop-display').style.visibility="hidden";
+        document.getElementById('prop-overflow').style.visibility="hidden";
+        document.getElementById('prop-class').style.visibility="visible";
+        document.getElementById('prop-align').style.visibility="hidden";
+        document.getElementById('prop-padding').style.visibility="visible";
+        document.getElementById('prop-margin').style.visibility="visible";
+        document.getElementById('prop-holder').style.visibility="hidden";
+        document.getElementById('prop-text').style.visibility="visible";
+        document.getElementById('prop-src').style.visibility="hidden";
+        document.getElementById('prop-background').style.visibility="visible";
+        document.getElementById('prop-opacity').style.visibility="hidden";
+        document.getElementById('prop-position').style.visibility="hidden";
+        document.getElementById('prop-float').style.visibility="hidden";
+        document.getElementById('prop-binding').style.visibility="hidden";
+        document.getElementById('prop-color').style.visibility="visible";
+        document.getElementById('prop-border').style.visibility="visible";
+    }else if (document.getElementById(cur).tagName == "HR") {
+        document.getElementById('prop-name').style.visibility="visible";
+        document.getElementById('prop-height').style.visibility="visible";
+        document.getElementById('prop-width').style.visibility="visible";
+        document.getElementById('prop-display').style.visibility="hidden";
+        document.getElementById('prop-overflow').style.visibility="hidden";
+        document.getElementById('prop-class').style.visibility="hidden";
+        document.getElementById('prop-align').style.visibility="hidden";
+        document.getElementById('prop-padding').style.visibility="visible";
+        document.getElementById('prop-margin').style.visibility="visible";
+        document.getElementById('prop-holder').style.visibility="hidden";
+        document.getElementById('prop-text').style.visibility="hidden";
+        document.getElementById('prop-src').style.visibility="hidden";
+        document.getElementById('prop-background').style.visibility="hidden";
+        document.getElementById('prop-opacity').style.visibility="hidden";
+        document.getElementById('prop-position').style.visibility="hidden";
+        document.getElementById('prop-float').style.visibility="hidden";
+        document.getElementById('prop-binding').style.visibility="hidden";
+        document.getElementById('prop-color').style.visibility="visible";
+        document.getElementById('prop-border').style.visibility="visible";
+    }else if (document.getElementById(cur).tagName == "IMG") {
+        document.getElementById('prop-name').style.visibility="visible";
+        document.getElementById('prop-height').style.visibility="visible";
+        document.getElementById('prop-width').style.visibility="visible";
+        document.getElementById('prop-display').style.visibility="hidden";
+        document.getElementById('prop-overflow').style.visibility="hidden";
+        document.getElementById('prop-class').style.visibility="hidden";
+        document.getElementById('prop-align').style.visibility="hidden";
+        document.getElementById('prop-padding').style.visibility="visible";
+        document.getElementById('prop-margin').style.visibility="visible";
+        document.getElementById('prop-holder').style.visibility="hidden";
+        document.getElementById('prop-text').style.visibility="hidden";
+        document.getElementById('prop-src').style.visibility="hidden";
+        document.getElementById('prop-background').style.visibility="hidden";
+        document.getElementById('prop-opacity').style.visibility="hidden";
+        document.getElementById('prop-position').style.visibility="hidden";
+        document.getElementById('prop-float').style.visibility="hidden";
+        document.getElementById('prop-binding').style.visibility="hidden";
+        document.getElementById('prop-color').style.visibility="hidden";
+        document.getElementById('prop-border').style.visibility="visible";
+    }else if (document.getElementById(cur).tagName == "MYDMS") {
+        document.getElementById('prop-name').style.visibility="visible";
+        document.getElementById('prop-height').style.visibility="hidden";
+        document.getElementById('prop-width').style.visibility="hidden";
+        document.getElementById('prop-display').style.visibility="hidden";
+        document.getElementById('prop-overflow').style.visibility="hidden";
+        document.getElementById('prop-class').style.visibility="hidden";
+        document.getElementById('prop-align').style.visibility="hidden";
+        document.getElementById('prop-padding').style.visibility="visible";
+        document.getElementById('prop-margin').style.visibility="visible";
+        document.getElementById('prop-holder').style.visibility="hidden";
+        document.getElementById('prop-text').style.visibility="hidden";
+        document.getElementById('prop-src').style.visibility="hidden";
+        document.getElementById('prop-background').style.visibility="hidden";
+        document.getElementById('prop-opacity').style.visibility="hidden";
+        document.getElementById('prop-position').style.visibility="hidden";
+        document.getElementById('prop-float').style.visibility="hidden";
+        document.getElementById('prop-binding').style.visibility="hidden";
+        document.getElementById('prop-color').style.visibility="hidden";
+        document.getElementById('prop-border').style.visibility="visible";
+    }else if (document.getElementById(cur).tagName == "DIV") {
+        document.getElementById('prop-name').style.visibility="visible";
+        document.getElementById('prop-height').style.visibility="visible";
+        document.getElementById('prop-width').style.visibility="visible";
+        document.getElementById('prop-display').style.visibility="visible";
+        document.getElementById('prop-overflow').style.visibility="hidden";
+        document.getElementById('prop-class').style.visibility="visible";
+        document.getElementById('prop-align').style.visibility="hidden";
+        document.getElementById('prop-padding').style.visibility="visible";
+        document.getElementById('prop-margin').style.visibility="visible";
+        document.getElementById('prop-holder').style.visibility="hidden";
+        document.getElementById('prop-text').style.visibility="hidden";
+        document.getElementById('prop-src').style.visibility="hidden";
+        document.getElementById('prop-background').style.visibility="visible";
+        document.getElementById('prop-opacity').style.visibility="hidden";
+        document.getElementById('prop-position').style.visibility="hidden";
+        document.getElementById('prop-float').style.visibility="hidden";
+        document.getElementById('prop-binding').style.visibility="hidden";
+        document.getElementById('prop-color').style.visibility="visible";
+        document.getElementById('prop-border').style.visibility="visible";
+    }
 
 });
 
@@ -837,9 +984,9 @@ document.getElementById('ctr-class').addEventListener('focusout', (ev) => {
     document.getElementById(cur).classList = ev.target.value;
 })
 
-document.getElementById('ctr-bg-clr').addEventListener('focusout', (ev) => {
-    document.getElementById(cur).style.backgroundColor = ev.target.value;
-})
+// document.getElementById('ctr-bg-clr').addEventListener('focusout', (ev) => {
+//     document.getElementById(cur).style.backgroundColor = ev.target.value;
+// })
 
 
 document.getElementById('ctr-padding').addEventListener('focusout', (ev) => {
@@ -964,7 +1111,7 @@ bindObject = (bindObjName, currentEl) => {
                             newEl.pattern = decodeURI(schema[key].pattern);
                         }
 
-                        if (typeof (schema[key].required) !== 'undefined'  && schema[key].required=="true") {
+                        if (typeof (schema[key].required) !== 'undefined' && schema[key].required == "true") {
                             newEl.required = true;
                         }
 
@@ -1094,7 +1241,7 @@ checkForMe = (mainNode, count, parent) => {
             width: document.getElementById(mainNode).style.width,
             display: document.getElementById(mainNode).style.display,
             overflow: document.getElementById(mainNode).style.overflow,
-            bgc: document.getElementById(mainNode).style.backgroundColor,
+            //            bgc: document.getElementById(mainNode).style.backgroundColor,
             align: document.getElementById(mainNode).style.textAlign,
             padding: document.getElementById(mainNode).style.padding,
             margin: document.getElementById(mainNode).style.margin,
@@ -1209,57 +1356,63 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
 
     }
 
-
-    document.getElementById('right-section').innerHTML = "";
-    tempArr = [];
-    checkForMe('main-section', 1, "none");
-
-    ////console.log(tempArr);
+    if (document.getElementById('formName').value.length > 0) {
 
 
-    var jsonBody = '{"name":"' + document.getElementById('formName').value + '","structure":' + JSON.stringify(tempArr) + '}';
-    ////console.log(jsonBody);
+        document.getElementById('right-section').innerHTML = "";
+        tempArr = [];
+        checkForMe('main-section', 1, "none");
 
-    //    body = '<html><head><link rel="stylesheet" href="css/bootstrap-4.0.0-dist/css/bootstrap.min.css">    <link rel="stylesheet" href="css/main.css"> </head><body>' + document.getElementById('main-section').innerHTML + '</body > '
-    //
-    //    var jsonBody = "{name:'sample',form:'" + body + "'}"
-    //    
-    //    ////console.log(jsonBody);
-    //
-    if (jsonBody.indexOf("Submit") == -1) {
-        alert("Submit button will be added by the system since the user has not added! And if reject is applicable, the same will also be added by the system");
-    }
-    if (formId != undefined && formId.length > 0) {
-        fetch('/forms/' + formId, {
-            method: 'PUT',
-            headers: {
-                'content-type': 'application/json'
+        ////console.log(tempArr);
 
-            },
-            credentials: 'include',
-            body: jsonBody
-        }).then((prom) => {
-            return prom.text();
-        }).then((res) => {
-            window.location.hash = "listForms"
 
-            ////console.log(res);
-        })
+        var jsonBody = '{"name":"' + document.getElementById('formName').value + '","structure":' + JSON.stringify(tempArr) + '}';
+        ////console.log(jsonBody);
+
+        //    body = '<html><head><link rel="stylesheet" href="css/bootstrap-4.0.0-dist/css/bootstrap.min.css">    <link rel="stylesheet" href="css/main.css"> </head><body>' + document.getElementById('main-section').innerHTML + '</body > '
+        //
+        //    var jsonBody = "{name:'sample',form:'" + body + "'}"
+        //    
+        //    ////console.log(jsonBody);
+        //
+        if (jsonBody.indexOf("Submit") == -1) {
+            alert("Submit button will be added by the system since the user has not added! And if reject is applicable, the same will also be added by the system");
+        }
+        if (formId != undefined && formId.length > 0) {
+            fetch('/forms/' + formId, {
+                method: 'PUT',
+                headers: {
+                    'content-type': 'application/json'
+
+                },
+                credentials: 'include',
+                body: jsonBody
+            }).then((prom) => {
+                return prom.text();
+            }).then((res) => {
+                window.location.hash = "listForms"
+
+                ////console.log(res);
+            })
+        } else {
+            fetch('/forms', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+
+                },
+                credentials: 'include',
+                body: jsonBody
+            }).then((prom) => {
+                return prom.text();
+            }).then((res) => {
+                window.location.hash = "listForms"
+                ////console.log(res);
+            })
+        }
+
     } else {
-        fetch('/forms', {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-
-            },
-            credentials: 'include',
-            body: jsonBody
-        }).then((prom) => {
-            return prom.text();
-        }).then((res) => {
-            window.location.hash = "listForms"
-            ////console.log(res);
-        })
+        alert("Form Name is mandatory");
     }
 
 
@@ -1285,7 +1438,7 @@ document.getElementById('clearForm').addEventListener('click', (ev) => {
         beta.className = tempArr[i].class;
         if (tempArr[i].tagName != "DIV" && tempArr[i].tagName != "FORM" && tempArr[i].tagName != "TABLE") beta.innerText = tempArr[i].text;
         beta.style.display = tempArr[i].display;
-        beta.style.backgroundColor = tempArr[i].bgc;
+        //        beta.style.backgroundColor = tempArr[i].bgc;
         beta.style.height = tempArr[i].height;
         beta.style.width = tempArr[i].width;
         beta.style.overflow = tempArr[i].overflow;

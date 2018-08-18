@@ -22,49 +22,59 @@
                         </div>
                         <div class="row">
                             <div class="col-6 left-cols">
-                                <img id="container" class="img img-responsive left-imgs" src="resources/images/container.png" draggable=true ondragstart="drag(event)">
+                                <img id="form" class="img img-responsive left-imgs" src="resources/images/form.png" draggable=true ondragstart="drag(event)"
+                                    title="Drag and drop Form on the middle section. Then select a binding for the form from the objects created!">
 
                             </div>
                             <div class="col-6 left-cols">
-                                <img id="table" class="img img-responsive left-imgs" src="resources/images/table.png" draggable=true ondragstart="drag(event)">
+                                <img id="table" class="img img-responsive left-imgs" src="resources/images/table.png" draggable=true ondragstart="drag(event)"
+                                    title="Drag and drop Form on the middle section. Then select a binding for the table from the objects created!">
 
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-6 left-cols">
-                                <img id="form" class="img img-responsive left-imgs" src="resources/images/form.png" draggable=true ondragstart="drag(event)">
 
-                            </div>
-                            <div class="col-6 left-cols">
+                            <!-- <div class="col-6 left-cols">
                                 <img id="button" class="img img-responsive left-imgs" src="resources/images/button.png" draggable=true ondragstart="drag(event)">
 
-                            </div>
+                            </div> -->
                         </div>
+
                         <div class="row">
-                            <div class="col-6 left-cols">
+                            <!-- <div class="col-6 left-cols">
                                 <img id="text" class="img img-responsive left-imgs" src="resources/images/text.png" draggable=true ondragstart="drag(event)">
 
+                            </div> -->
+                            <div class="col-6 left-cols">
+                                <img id="hr" class="img img-responsive left-imgs" src="resources/images/hr.png" draggable=true ondragstart="drag(event)"
+                                    title="Drag and drop Form on the middle section">
+
                             </div>
                             <div class="col-6 left-cols">
-                                <img id="para" class="img img-responsive left-imgs" src="resources/images/para.png" draggable=true ondragstart="drag(event)">
+                                <img id="para" class="img img-responsive left-imgs" src="resources/images/para.png" draggable=true ondragstart="drag(event)"
+                                    title="Drag and drop Form on the middle section. Then provide the text in the properties section!">
 
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-6 left-cols">
-                                <img id="image" class="img img-responsive left-imgs" src="resources/images/image.png" draggable=true ondragstart="drag(event)">
+                                <img id="dms" class="img img-responsive left-imgs" src="resources/images/dms.png" draggable=true ondragstart="drag(event)"
+                                    title="Drag and drop Form on the middle section. Only 1 per form is permitted!">
 
                             </div>
                             <div class="col-6 left-cols">
-                                <img id="hr" class="img img-responsive left-imgs" src="resources/images/hr.png" draggable=true ondragstart="drag(event)">
+                                <img id="image" class="img img-responsive left-imgs" src="resources/images/image.png" draggable=true ondragstart="drag(event)"
+                                    title="Drag and drop Form on the middle section. Then select a src for the image!">
 
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-6 left-cols">
-                                <img id="dms" class="img img-responsive left-imgs" src="resources/images/dms.png" draggable=true ondragstart="drag(event)">
+                                <img id="container" class="img img-responsive left-imgs" src="resources/images/container.png" draggable=true ondragstart="drag(event)"
+                                    title="Drag and drop Form on the middle section. Then select height/width other properties">
 
                             </div>
+
                         </div>
                         <div class="row">
                             <div class="col-10">
@@ -86,7 +96,7 @@
                         </div>
                     </div>
                     <div class="col-2 test-c" id="test-c">
-                        <h5 id="toggle"> 
+                        <h5 id="toggle">
                             <</h5>
                     </div>
                 </div>
@@ -112,11 +122,15 @@
         </div>
         <footer id="footer">
 
-            <div class="row">
+            <div id="prop-div-pane" style="display: flex;justify-content: center;align-content:middle;align-items: middle">
+                <h3>PROPERTIES PANE</h3>
+            </div>
+
+            <div class="row" id="prop-div" style="visibility: hidden">
                 <div class="col-1"></div>
 
                 <div class="col-2">
-                    <div class="row">
+                    <div class="row" id="prop-name">
                         <div class="col-4">
                             <label>Name</label>
                         </div>
@@ -126,17 +140,17 @@
 
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-height">
                         <div class="col-4">
-                            <label>Height</label> 
+                            <label>Height</label>
                         </div>
                         <div class="col-8">
                             <input id="ctr-height" class="form-control" type="text">
                         </div>
 
                     </div>
-                    <div class="row">
-                        <div class="col-4"> 
+                    <div class="row" id="prop-width">
+                        <div class="col-4">
                             <label>Width</label>
                         </div>
                         <div class="col-8">
@@ -144,27 +158,45 @@
                         </div>
 
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-display">
                         <div class="col-4">
                             <label>Display</label>
                         </div>
                         <div class="col-8">
-                            <input id="ctr-display" type="text" class="form-control">
+                            <select id="ctr-display" class="form-control">
+                                <option></option>
+                                <option>inline</option>
+                                <option>block</option>
+                                <option>contents</option>
+                                <option>flex</option>
+                                <option>grid</option>
+                                <option>table</option>
+                                <option>initial</option>
+                                <option>inherit</option>
+                            </select>
                         </div>
 
                     </div>
                 </div>
                 <div class="col-2">
-                    <div class="row">
+                    <div class="row" id="prop-overflow">
                         <div class="col-4">
                             <label>Overflow</label>
                         </div>
                         <div class="col-8">
-                            <input id="ctr-overflow" type="text" class="form-control">
+                            <select id="ctr-overflow" class="form-control">
+                                <option></option>
+                                <option>visible</option>
+                                <option>hidden</option>
+                                <option>scroll</option>
+                                <option>auto</option>
+                                <option>initial</option>
+                                <option>inherit</option>
+                            </select>
                         </div>
 
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-class">
                         <div class="col-4">
                             <label>Class</label>
                         </div>
@@ -173,27 +205,26 @@
                         </div>
 
                     </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <label>BGC</label>
-                        </div>
-                        <div class="col-8">
-                            <input id="ctr-bg-clr" type="text" class="form-control">
-                        </div>
-
-                    </div>
-                    <div class="row">
+                    <div class="row" id="prop-align">
                         <div class="col-4">
                             <label>Align</label>
                         </div>
                         <div class="col-8">
-                            <input id="ctr-align" type="text" class="form-control">
+                            <select id="ctr-align" class="form-control">
+                                <option></option>
+                                <option>left</option>
+                                <option>right</option>
+                                <option>center</option>
+                                <option>justify</option>
+                                <option>initial</option>
+                                <option>inherit</option>
+                            </select>
                         </div>
 
                     </div>
                 </div>
                 <div class="col-2">
-                    <div class="row">
+                    <div class="row" id="prop-padding">
                         <div class="col-4">
                             <label>Padding</label>
                         </div>
@@ -201,7 +232,7 @@
                             <input id="ctr-padding" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-margin">
                         <div class="col-4">
                             <label>Margin</label>
                         </div>
@@ -210,7 +241,7 @@
                         </div>
 
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-holder">
                         <div class="col-4">
                             <label>Holder</label>
                         </div>
@@ -218,7 +249,7 @@
                             <input id="ctr-holder" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-text">
                         <div class="col-4">
                             <label>Text</label>
                         </div>
@@ -229,7 +260,7 @@
                     </div>
                 </div>
                 <div class="col-2">
-                    <div class="row">
+                    <div class="row" id="prop-src">
                         <div class="col-4">
                             <label>Src</label>
                         </div>
@@ -237,7 +268,7 @@
                             <input id="ctr-src" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-background">
                         <div class="col-4">
                             <label>Background</label>
                         </div>
@@ -245,7 +276,7 @@
                             <input id="ctr-bg" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-opacity">
                         <div class="col-4">
                             <label>Opacity</label>
                         </div>
@@ -253,25 +284,41 @@
                             <input id="ctr-op" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-position">
                         <div class="col-4">
                             <label>Position</label>
                         </div>
                         <div class="col-8">
-                            <input id="ctr-pos" type="text" class="form-control">
+                            <select id="ctr-pos" class="form-control">
+                                <option></option>
+                                <option>static</option>
+                                <option>absolute</option>
+                                <option>fixed</option>
+                                <option>relative</option>
+                                <option>sticky</option>
+                                <option>initial</option>
+                                <option>inherit</option>
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="col-2">
-                    <div class="row">
+                    <div class="row" id="prop-float">
                         <div class="col-4">
                             <label>Float</label>
                         </div>
                         <div class="col-8">
-                            <input id="ctr-float" type="text" class="form-control">
+                            <select id="ctr-float" class="form-control">
+                                <option></option>
+                                <option>none</option>
+                                <option>left</option>
+                                <option>right</option>
+                                <option>initial</option>
+                                <option>inherit</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-binding">
                         <div class="col-4">
                             <label>binding</label>
                         </div>
@@ -282,7 +329,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row" id="prop-color">
                         <div class="col-4">
                             <label>Color</label>
                         </div>
@@ -290,7 +337,7 @@
                             <input id="ctr-color" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="prop-border">
                         <div class="col-4">
                             <label>Border</label>
                         </div>
@@ -312,6 +359,7 @@
                 </div>
 
             </div>
+
     </div>
     </footer>
     </div>
