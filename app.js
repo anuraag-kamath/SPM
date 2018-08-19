@@ -661,7 +661,7 @@ app.get('/process', (req, res) => {
     console.log("**/process entered**");
 
     var alpha = req.query.process;
-    searchQuery = "";
+    searchForm = req.query.searchForm;
     if (alpha != undefined) {
         logger("API", "process", "", req.query.process, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "GET");
 
@@ -669,13 +669,16 @@ app.get('/process', (req, res) => {
         process1.find({ "_id": ObjectId(alpha) }).select().then((docs) => {
             res.send(docs);
         })
+    } else if (searchForm != undefined) {
+        process1.find({ $and: [{ obsolete: { $ne: 'yes' } }, { deleted: { $ne: true } }, { $or: [{ formName: searchForm }, { "steps.frm1": searchForm }, { "steps.frm2": searchForm }] }] }, 'processName', (err, res1) => {
+            res.send(res1);
+        });
     }
     else {
         logger("API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "GET");
-
-        process1.find({ $and: [{ obsolete: { $ne: 'yes' } }] }, (err, res1) => {
-            res.send(res1);
-        });
+        console.log("");
+        process1.find({ $and: [{ obsolete: { $ne: 'yes' } }, { deleted: { $ne: true } }] }).
+            then((res1) => res.send(res1));
 
 
     }
@@ -709,6 +712,21 @@ app.post('/forms', (req, res) => {
 
 })
 
+app.delete('/forms/:id', (req, res) => {
+    console.log("**/forms entered**");
+
+    var id = req.params.id;
+
+    form1.findByIdAndUpdate(id, {
+        deleted: true
+    }).then((res1) => {
+        res.send({ deleted: true })
+    })
+
+    console.log("**/forms entered**");
+
+})
+
 app.put('/forms/:id', (req, res) => {
     console.log("**/forms entered**");
 
@@ -726,11 +744,38 @@ app.put('/forms/:id', (req, res) => {
 app.get('/forms/:id', (req, res) => {
     console.log("**/forms entered**");
     id = req.params.id;
-    form1.findById(id, (err, res2) => {
-        logger("API", "form", "", res2._id, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "GET");
+    canDelete = req.query.mode || "";
+    var used = "N";
 
-        res.send(res2);
-    })
+    if (canDelete.length > 0 && canDelete === "canDelete") {
+        process1.find({ formName: id }).then((processes) => {
+            var count = 0;
+            console.log("AACC" + processes.length);
+            if (processes.length == 0) {
+                console.log("SEND");
+                res.send(usedInstances)
+            }
+            for (var i = 0; i < processes.length; i++) {
+                console.log("PROCESS");
+                workitem.find({ processId: processes[i]._id, status: "scheduled" }).then((workitems) => {
+                    if (workitems.length > 0) {
+                        used = "Y";
+                    }
+                    count += 1;
+                    if (count == processes.length) {
+                        res.send({ used });
+                    }
+                })
+            }
+        })
+    } else {
+        form1.findById(id, (err, res2) => {
+            logger("API", "form", "", res2._id, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "GET");
+
+            res.send(res2);
+        })
+
+    }
     console.log("**/forms exited**");
 
 })
@@ -739,7 +784,7 @@ app.get('/forms', (req, res) => {
     console.log("**/forms entered**");
 
     fields = req.query.fields;
-    form1.find({}).select(fields).then((docs) => {
+    form1.find({ deleted: { $ne: true } }).select(fields).then((docs) => {
         logger("API", "form", "", "", "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "GET");
 
 
@@ -1152,13 +1197,37 @@ function addObjects(objects, instanceId) {
 
 
 
+
 }
+
+
+app.delete('/process/:id', (req, res) => {
+    var id = req.params.id;
+
+    console.log("DELETED"+id);
+
+    process1.findByIdAndUpdate(id, {
+        deleted: true
+    }).then((doc) => {
+        res.send({ deleted: true })
+    })
+
+
+});
 
 app.get('/instance', (req, res) => {
     var searchProcessId = req.query.processId;
     var searchStatus = req.query.status;
     var mode = req.query.mode || "";
-    if (mode.length > 0 && mode == "listAll") {
+    var searchProcess = req.query.searchProcess;
+    console.log("XYZ"+searchProcess);
+    if (searchProcess != undefined && searchProcess.length > 0) {
+        console.log(searchProcess);
+        instance.find({ processId: searchProcess }, (err, res2) => {
+            res.send(res2);
+        })
+    }
+    else if (mode.length > 0 && mode == "listAll") {
         instance.find({}, (err, res2) => {
             res.send(res2);
         })
@@ -1220,8 +1289,8 @@ waitForTrigger = (triggerId, curr, esc, escDate, schDate, instanceId) => {
         setTimeout(() => {
             user.find({}).then((users) => {
                 for (var j = 0; j < users.length; j++) {
-                    if (users[j].user.email!=undefined && users[j].user.email !== "undefined" && users[j].user.email.length > 0) {
-                        sendMail(users[j].user.email, "Escalation for InstanceId:-" + instanceId, "<h3>Dear "+users[j].user.username+",</h3><br><br>Instance Id:-" + instanceId + " Workitem Id:-" + triggerId + " scheduled on:-" + schDate + " escalated on " + escDate + "<hr> Kindly take attention!<hr><hr>Shortcut for the same is here:-<a href='https://dry-depths-41802.herokuapp.com#" + triggerId + "'><h3>Click me!</h3></a>");
+                    if (users[j].user.email != undefined && users[j].user.email !== "undefined" && users[j].user.email.length > 0) {
+                        sendMail(users[j].user.email, "Escalation for InstanceId:-" + instanceId, "<h3>Dear " + users[j].user.username + ",</h3><br><br>Instance Id:-" + instanceId + " Workitem Id:-" + triggerId + " scheduled on:-" + schDate + " escalated on " + escDate + "<hr> Kindly take attention!<hr><hr>Shortcut for the same is here:-<a href='https://dry-depths-41802.herokuapp.com#" + triggerId + "'><h3>Click me!</h3></a>");
 
                     }
                 }

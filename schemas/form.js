@@ -1,10 +1,10 @@
-var mongoose=require('mongoose');
+var mongoose = require('mongoose');
 
-var form1=mongoose.model('form',{
-    name:{
+var form1 = mongoose.model('form', {
+    name: {
         type: String
     },
-    structure:[{
+    structure: [{
         id: String,
         name: String,
         tagName: String,
@@ -18,9 +18,9 @@ var form1=mongoose.model('form',{
         bgc: String,
         color: String,
         align: String,
-        padding:String,
+        padding: String,
         margin: String,
-        holder:String,
+        holder: String,
         text: String,
         src: String,
         background: String,
@@ -29,7 +29,10 @@ var form1=mongoose.model('form',{
         float: String,
         binding: String,
         border: String
-    }]
+    }],
+    deleted: {
+        type: Boolean
+    }
 });
 
 module.exports = {

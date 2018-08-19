@@ -10,8 +10,11 @@ var process1 = mongoose.model('process',
         objects: [{
             type: String
         }],
-        obsolete:{
+        obsolete: {
             type: String
+        },
+        deleted: {
+            type: Boolean
         },
         steps: [
             {

@@ -527,6 +527,8 @@ drop = (event) => {
         newTable.id = "table_" + ts;
         newTable.innerHTML = "<th>Name</th><th>Age</th><tr><td>Anuraag</td><td>27</td></tr>"
         newTable.id = id;
+        newTable.setAttribute("bind",objs[0].schemaName)
+
         newTable.style.cursor = "pointer";
         newTable.className = "table";
         newTable.style.background = "yellow";
@@ -618,7 +620,8 @@ drop = (event) => {
         var newForm = document.createElement("FORM");
         newForm.id = id;
         newForm.className = "form-group";
-        newForm.style.width = "100%"
+        newForm.style.width = "100%";
+        newForm.setAttribute("bind",objs[0].schemaName)
         //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newForm);
@@ -631,7 +634,7 @@ drop = (event) => {
     } else if (sourceElement == "para") {
         var newPara = document.createElement("P");
         newPara.id = id;
-        newPara.innerText="This is the sample para. Change it using the text property below!"
+        newPara.innerText = "This is the sample para. Change it using the text property below!"
         //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newPara);
@@ -642,7 +645,7 @@ drop = (event) => {
     } else if (sourceElement == "hr") {
         var newHr = document.createElement("HR");
         newHr.id = id;
-        newHr.style.border="1px solid black";
+        newHr.style.border = "1px solid black";
         ////console.log("HR ADDED");
         //newContainer.style.margin="20px";
         if (mode == "parent") {
@@ -739,9 +742,9 @@ var cur = "";
 var curBorder = "";
 
 document.getElementById('right-section').addEventListener('click', (ev) => {
-    document.getElementById('prop-div').style.visibility="visible";
-    document.getElementById('prop-div-pane').style.visibility="hidden";
-    document.getElementById('prop-div-pane').style.display="none";
+    document.getElementById('prop-div').style.visibility = "visible";
+    document.getElementById('prop-div-pane').style.visibility = "hidden";
+    document.getElementById('prop-div-pane').style.display = "none";
     var tesmp = ev.target.id;
     var expId = ev.target.id;
 
@@ -824,145 +827,145 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     document.getElementById('ctr-bind').value = document.getElementById(cur).getAttribute('bind');
     document.getElementById('ctr-name').value = document.getElementById(cur).name;
     if (document.getElementById(cur).tagName == "FORM") {
-        document.getElementById('prop-name').style.visibility="visible";
-        document.getElementById('prop-height').style.visibility="visible";
-        document.getElementById('prop-width').style.visibility="visible";
-        document.getElementById('prop-display').style.visibility="hidden";
-        document.getElementById('prop-overflow').style.visibility="hidden";
-        document.getElementById('prop-class').style.visibility="visible";
-        document.getElementById('prop-align').style.visibility="hidden";
-        document.getElementById('prop-padding').style.visibility="visible";
-        document.getElementById('prop-margin').style.visibility="visible";
-        document.getElementById('prop-holder').style.visibility="hidden";
-        document.getElementById('prop-text').style.visibility="hidden";
-        document.getElementById('prop-src').style.visibility="hidden";
-        document.getElementById('prop-background').style.visibility="visible";
-        document.getElementById('prop-opacity').style.visibility="hidden";
-        document.getElementById('prop-position').style.visibility="hidden";
-        document.getElementById('prop-float').style.visibility="hidden";
-        document.getElementById('prop-binding').style.visibility="visible";
-        document.getElementById('prop-color').style.visibility="visible";
-        document.getElementById('prop-border').style.visibility="visible";
-    }else if (document.getElementById(cur).tagName == "TABLE") {
-        document.getElementById('prop-name').style.visibility="visible";
-        document.getElementById('prop-height').style.visibility="visible";
-        document.getElementById('prop-width').style.visibility="visible";
-        document.getElementById('prop-display').style.visibility="hidden";
-        document.getElementById('prop-overflow').style.visibility="hidden";
-        document.getElementById('prop-class').style.visibility="visible";
-        document.getElementById('prop-align').style.visibility="hidden";
-        document.getElementById('prop-padding').style.visibility="visible";
-        document.getElementById('prop-margin').style.visibility="visible";
-        document.getElementById('prop-holder').style.visibility="hidden";
-        document.getElementById('prop-text').style.visibility="hidden";
-        document.getElementById('prop-src').style.visibility="hidden";
-        document.getElementById('prop-background').style.visibility="visible";
-        document.getElementById('prop-opacity').style.visibility="hidden";
-        document.getElementById('prop-position').style.visibility="hidden";
-        document.getElementById('prop-float').style.visibility="hidden";
-        document.getElementById('prop-binding').style.visibility="visible";
-        document.getElementById('prop-color').style.visibility="visible";
-        document.getElementById('prop-border').style.visibility="visible";
-    }else if (document.getElementById(cur).tagName == "P") {
-        document.getElementById('prop-name').style.visibility="visible";
-        document.getElementById('prop-height').style.visibility="visible";
-        document.getElementById('prop-width').style.visibility="visible";
-        document.getElementById('prop-display').style.visibility="hidden";
-        document.getElementById('prop-overflow').style.visibility="hidden";
-        document.getElementById('prop-class').style.visibility="visible";
-        document.getElementById('prop-align').style.visibility="hidden";
-        document.getElementById('prop-padding').style.visibility="visible";
-        document.getElementById('prop-margin').style.visibility="visible";
-        document.getElementById('prop-holder').style.visibility="hidden";
-        document.getElementById('prop-text').style.visibility="visible";
-        document.getElementById('prop-src').style.visibility="hidden";
-        document.getElementById('prop-background').style.visibility="visible";
-        document.getElementById('prop-opacity').style.visibility="hidden";
-        document.getElementById('prop-position').style.visibility="hidden";
-        document.getElementById('prop-float').style.visibility="hidden";
-        document.getElementById('prop-binding').style.visibility="hidden";
-        document.getElementById('prop-color').style.visibility="visible";
-        document.getElementById('prop-border').style.visibility="visible";
-    }else if (document.getElementById(cur).tagName == "HR") {
-        document.getElementById('prop-name').style.visibility="visible";
-        document.getElementById('prop-height').style.visibility="visible";
-        document.getElementById('prop-width').style.visibility="visible";
-        document.getElementById('prop-display').style.visibility="hidden";
-        document.getElementById('prop-overflow').style.visibility="hidden";
-        document.getElementById('prop-class').style.visibility="hidden";
-        document.getElementById('prop-align').style.visibility="hidden";
-        document.getElementById('prop-padding').style.visibility="visible";
-        document.getElementById('prop-margin').style.visibility="visible";
-        document.getElementById('prop-holder').style.visibility="hidden";
-        document.getElementById('prop-text').style.visibility="hidden";
-        document.getElementById('prop-src').style.visibility="hidden";
-        document.getElementById('prop-background').style.visibility="hidden";
-        document.getElementById('prop-opacity').style.visibility="hidden";
-        document.getElementById('prop-position').style.visibility="hidden";
-        document.getElementById('prop-float').style.visibility="hidden";
-        document.getElementById('prop-binding').style.visibility="hidden";
-        document.getElementById('prop-color').style.visibility="visible";
-        document.getElementById('prop-border').style.visibility="visible";
-    }else if (document.getElementById(cur).tagName == "IMG") {
-        document.getElementById('prop-name').style.visibility="visible";
-        document.getElementById('prop-height').style.visibility="visible";
-        document.getElementById('prop-width').style.visibility="visible";
-        document.getElementById('prop-display').style.visibility="hidden";
-        document.getElementById('prop-overflow').style.visibility="hidden";
-        document.getElementById('prop-class').style.visibility="hidden";
-        document.getElementById('prop-align').style.visibility="hidden";
-        document.getElementById('prop-padding').style.visibility="visible";
-        document.getElementById('prop-margin').style.visibility="visible";
-        document.getElementById('prop-holder').style.visibility="hidden";
-        document.getElementById('prop-text').style.visibility="hidden";
-        document.getElementById('prop-src').style.visibility="hidden";
-        document.getElementById('prop-background').style.visibility="hidden";
-        document.getElementById('prop-opacity').style.visibility="hidden";
-        document.getElementById('prop-position').style.visibility="hidden";
-        document.getElementById('prop-float').style.visibility="hidden";
-        document.getElementById('prop-binding').style.visibility="hidden";
-        document.getElementById('prop-color').style.visibility="hidden";
-        document.getElementById('prop-border').style.visibility="visible";
-    }else if (document.getElementById(cur).tagName == "MYDMS") {
-        document.getElementById('prop-name').style.visibility="visible";
-        document.getElementById('prop-height').style.visibility="hidden";
-        document.getElementById('prop-width').style.visibility="hidden";
-        document.getElementById('prop-display').style.visibility="hidden";
-        document.getElementById('prop-overflow').style.visibility="hidden";
-        document.getElementById('prop-class').style.visibility="hidden";
-        document.getElementById('prop-align').style.visibility="hidden";
-        document.getElementById('prop-padding').style.visibility="visible";
-        document.getElementById('prop-margin').style.visibility="visible";
-        document.getElementById('prop-holder').style.visibility="hidden";
-        document.getElementById('prop-text').style.visibility="hidden";
-        document.getElementById('prop-src').style.visibility="hidden";
-        document.getElementById('prop-background').style.visibility="hidden";
-        document.getElementById('prop-opacity').style.visibility="hidden";
-        document.getElementById('prop-position').style.visibility="hidden";
-        document.getElementById('prop-float').style.visibility="hidden";
-        document.getElementById('prop-binding').style.visibility="hidden";
-        document.getElementById('prop-color').style.visibility="hidden";
-        document.getElementById('prop-border').style.visibility="visible";
-    }else if (document.getElementById(cur).tagName == "DIV") {
-        document.getElementById('prop-name').style.visibility="visible";
-        document.getElementById('prop-height').style.visibility="visible";
-        document.getElementById('prop-width').style.visibility="visible";
-        document.getElementById('prop-display').style.visibility="visible";
-        document.getElementById('prop-overflow').style.visibility="hidden";
-        document.getElementById('prop-class').style.visibility="visible";
-        document.getElementById('prop-align').style.visibility="hidden";
-        document.getElementById('prop-padding').style.visibility="visible";
-        document.getElementById('prop-margin').style.visibility="visible";
-        document.getElementById('prop-holder').style.visibility="hidden";
-        document.getElementById('prop-text').style.visibility="hidden";
-        document.getElementById('prop-src').style.visibility="hidden";
-        document.getElementById('prop-background').style.visibility="visible";
-        document.getElementById('prop-opacity').style.visibility="hidden";
-        document.getElementById('prop-position').style.visibility="hidden";
-        document.getElementById('prop-float').style.visibility="hidden";
-        document.getElementById('prop-binding').style.visibility="hidden";
-        document.getElementById('prop-color').style.visibility="visible";
-        document.getElementById('prop-border').style.visibility="visible";
+        document.getElementById('prop-name').style.visibility = "visible";
+        document.getElementById('prop-height').style.visibility = "visible";
+        document.getElementById('prop-width').style.visibility = "visible";
+        document.getElementById('prop-display').style.visibility = "hidden";
+        document.getElementById('prop-overflow').style.visibility = "hidden";
+        document.getElementById('prop-class').style.visibility = "visible";
+        document.getElementById('prop-align').style.visibility = "hidden";
+        document.getElementById('prop-padding').style.visibility = "visible";
+        document.getElementById('prop-margin').style.visibility = "visible";
+        document.getElementById('prop-holder').style.visibility = "hidden";
+        document.getElementById('prop-text').style.visibility = "hidden";
+        document.getElementById('prop-src').style.visibility = "hidden";
+        document.getElementById('prop-background').style.visibility = "visible";
+        document.getElementById('prop-opacity').style.visibility = "hidden";
+        document.getElementById('prop-position').style.visibility = "hidden";
+        document.getElementById('prop-float').style.visibility = "hidden";
+        document.getElementById('prop-binding').style.visibility = "visible";
+        document.getElementById('prop-color').style.visibility = "visible";
+        document.getElementById('prop-border').style.visibility = "visible";
+    } else if (document.getElementById(cur).tagName == "TABLE") {
+        document.getElementById('prop-name').style.visibility = "visible";
+        document.getElementById('prop-height').style.visibility = "visible";
+        document.getElementById('prop-width').style.visibility = "visible";
+        document.getElementById('prop-display').style.visibility = "hidden";
+        document.getElementById('prop-overflow').style.visibility = "hidden";
+        document.getElementById('prop-class').style.visibility = "visible";
+        document.getElementById('prop-align').style.visibility = "hidden";
+        document.getElementById('prop-padding').style.visibility = "visible";
+        document.getElementById('prop-margin').style.visibility = "visible";
+        document.getElementById('prop-holder').style.visibility = "hidden";
+        document.getElementById('prop-text').style.visibility = "hidden";
+        document.getElementById('prop-src').style.visibility = "hidden";
+        document.getElementById('prop-background').style.visibility = "visible";
+        document.getElementById('prop-opacity').style.visibility = "hidden";
+        document.getElementById('prop-position').style.visibility = "hidden";
+        document.getElementById('prop-float').style.visibility = "hidden";
+        document.getElementById('prop-binding').style.visibility = "visible";
+        document.getElementById('prop-color').style.visibility = "visible";
+        document.getElementById('prop-border').style.visibility = "visible";
+    } else if (document.getElementById(cur).tagName == "P") {
+        document.getElementById('prop-name').style.visibility = "visible";
+        document.getElementById('prop-height').style.visibility = "visible";
+        document.getElementById('prop-width').style.visibility = "visible";
+        document.getElementById('prop-display').style.visibility = "hidden";
+        document.getElementById('prop-overflow').style.visibility = "hidden";
+        document.getElementById('prop-class').style.visibility = "visible";
+        document.getElementById('prop-align').style.visibility = "hidden";
+        document.getElementById('prop-padding').style.visibility = "visible";
+        document.getElementById('prop-margin').style.visibility = "visible";
+        document.getElementById('prop-holder').style.visibility = "hidden";
+        document.getElementById('prop-text').style.visibility = "visible";
+        document.getElementById('prop-src').style.visibility = "hidden";
+        document.getElementById('prop-background').style.visibility = "visible";
+        document.getElementById('prop-opacity').style.visibility = "hidden";
+        document.getElementById('prop-position').style.visibility = "hidden";
+        document.getElementById('prop-float').style.visibility = "hidden";
+        document.getElementById('prop-binding').style.visibility = "hidden";
+        document.getElementById('prop-color').style.visibility = "visible";
+        document.getElementById('prop-border').style.visibility = "visible";
+    } else if (document.getElementById(cur).tagName == "HR") {
+        document.getElementById('prop-name').style.visibility = "visible";
+        document.getElementById('prop-height').style.visibility = "visible";
+        document.getElementById('prop-width').style.visibility = "visible";
+        document.getElementById('prop-display').style.visibility = "hidden";
+        document.getElementById('prop-overflow').style.visibility = "hidden";
+        document.getElementById('prop-class').style.visibility = "hidden";
+        document.getElementById('prop-align').style.visibility = "hidden";
+        document.getElementById('prop-padding').style.visibility = "visible";
+        document.getElementById('prop-margin').style.visibility = "visible";
+        document.getElementById('prop-holder').style.visibility = "hidden";
+        document.getElementById('prop-text').style.visibility = "hidden";
+        document.getElementById('prop-src').style.visibility = "hidden";
+        document.getElementById('prop-background').style.visibility = "hidden";
+        document.getElementById('prop-opacity').style.visibility = "hidden";
+        document.getElementById('prop-position').style.visibility = "hidden";
+        document.getElementById('prop-float').style.visibility = "hidden";
+        document.getElementById('prop-binding').style.visibility = "hidden";
+        document.getElementById('prop-color').style.visibility = "visible";
+        document.getElementById('prop-border').style.visibility = "visible";
+    } else if (document.getElementById(cur).tagName == "IMG") {
+        document.getElementById('prop-name').style.visibility = "visible";
+        document.getElementById('prop-height').style.visibility = "visible";
+        document.getElementById('prop-width').style.visibility = "visible";
+        document.getElementById('prop-display').style.visibility = "hidden";
+        document.getElementById('prop-overflow').style.visibility = "hidden";
+        document.getElementById('prop-class').style.visibility = "hidden";
+        document.getElementById('prop-align').style.visibility = "hidden";
+        document.getElementById('prop-padding').style.visibility = "visible";
+        document.getElementById('prop-margin').style.visibility = "visible";
+        document.getElementById('prop-holder').style.visibility = "hidden";
+        document.getElementById('prop-text').style.visibility = "hidden";
+        document.getElementById('prop-src').style.visibility = "hidden";
+        document.getElementById('prop-background').style.visibility = "hidden";
+        document.getElementById('prop-opacity').style.visibility = "hidden";
+        document.getElementById('prop-position').style.visibility = "hidden";
+        document.getElementById('prop-float').style.visibility = "hidden";
+        document.getElementById('prop-binding').style.visibility = "hidden";
+        document.getElementById('prop-color').style.visibility = "hidden";
+        document.getElementById('prop-border').style.visibility = "visible";
+    } else if (document.getElementById(cur).tagName == "MYDMS") {
+        document.getElementById('prop-name').style.visibility = "visible";
+        document.getElementById('prop-height').style.visibility = "hidden";
+        document.getElementById('prop-width').style.visibility = "hidden";
+        document.getElementById('prop-display').style.visibility = "hidden";
+        document.getElementById('prop-overflow').style.visibility = "hidden";
+        document.getElementById('prop-class').style.visibility = "hidden";
+        document.getElementById('prop-align').style.visibility = "hidden";
+        document.getElementById('prop-padding').style.visibility = "visible";
+        document.getElementById('prop-margin').style.visibility = "visible";
+        document.getElementById('prop-holder').style.visibility = "hidden";
+        document.getElementById('prop-text').style.visibility = "hidden";
+        document.getElementById('prop-src').style.visibility = "hidden";
+        document.getElementById('prop-background').style.visibility = "hidden";
+        document.getElementById('prop-opacity').style.visibility = "hidden";
+        document.getElementById('prop-position').style.visibility = "hidden";
+        document.getElementById('prop-float').style.visibility = "hidden";
+        document.getElementById('prop-binding').style.visibility = "hidden";
+        document.getElementById('prop-color').style.visibility = "hidden";
+        document.getElementById('prop-border').style.visibility = "visible";
+    } else if (document.getElementById(cur).tagName == "DIV") {
+        document.getElementById('prop-name').style.visibility = "visible";
+        document.getElementById('prop-height').style.visibility = "visible";
+        document.getElementById('prop-width').style.visibility = "visible";
+        document.getElementById('prop-display').style.visibility = "visible";
+        document.getElementById('prop-overflow').style.visibility = "hidden";
+        document.getElementById('prop-class').style.visibility = "visible";
+        document.getElementById('prop-align').style.visibility = "hidden";
+        document.getElementById('prop-padding').style.visibility = "visible";
+        document.getElementById('prop-margin').style.visibility = "visible";
+        document.getElementById('prop-holder').style.visibility = "hidden";
+        document.getElementById('prop-text').style.visibility = "hidden";
+        document.getElementById('prop-src').style.visibility = "hidden";
+        document.getElementById('prop-background').style.visibility = "visible";
+        document.getElementById('prop-opacity').style.visibility = "hidden";
+        document.getElementById('prop-position').style.visibility = "hidden";
+        document.getElementById('prop-float').style.visibility = "hidden";
+        document.getElementById('prop-binding').style.visibility = "hidden";
+        document.getElementById('prop-color').style.visibility = "visible";
+        document.getElementById('prop-border').style.visibility = "visible";
     }
 
 });
@@ -1375,7 +1378,7 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
         //    
         //    ////console.log(jsonBody);
         //
-        if (jsonBody.indexOf("Submit") == -1) {
+        if (jsonBody.indexOf("Submit") == -1 && 1==2) {
             alert("Submit button will be added by the system since the user has not added! And if reject is applicable, the same will also be added by the system");
         }
         if (formId != undefined && formId.length > 0) {
