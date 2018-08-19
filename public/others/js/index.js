@@ -169,6 +169,7 @@ else {
 }
 
 window.addEventListener("hashchange", (ev) => {
+    document.getElementById('pop-up').innerHTML = "";
     hashCheck();
 
 })

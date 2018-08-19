@@ -1204,7 +1204,7 @@ function addObjects(objects, instanceId) {
 app.delete('/process/:id', (req, res) => {
     var id = req.params.id;
 
-    console.log("DELETED"+id);
+    console.log("DELETED" + id);
 
     process1.findByIdAndUpdate(id, {
         deleted: true
@@ -1220,7 +1220,20 @@ app.get('/instance', (req, res) => {
     var searchStatus = req.query.status;
     var mode = req.query.mode || "";
     var searchProcess = req.query.searchProcess;
-    console.log("XYZ"+searchProcess);
+    var status = req.query.status
+    var initatedBy = req.query.initiatedBy
+    var search = "{";
+    if (status!=undefined && status !== 'undefined' && status.length > 0) {
+        search += '"status":' + '"' + status + '"';
+    }
+    if (initatedBy!=undefined && initatedBy !== 'undefined' && initatedBy.length > 0) {
+        if(search.length>1){
+            search+=","
+        }
+        search += '"user":' + '"' + initatedBy + '"';
+    }
+    search += "}"
+    console.log("XYZ" + searchProcess);
     if (searchProcess != undefined && searchProcess.length > 0) {
         console.log(searchProcess);
         instance.find({ processId: searchProcess }, (err, res2) => {
@@ -1228,7 +1241,10 @@ app.get('/instance', (req, res) => {
         })
     }
     else if (mode.length > 0 && mode == "listAll") {
-        instance.find({}, (err, res2) => {
+        console.log("########");
+        console.log(search);
+        console.log("########");
+        instance.find(JSON.parse(search), (err, res2) => {
             res.send(res2);
         })
     } else {
