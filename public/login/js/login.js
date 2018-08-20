@@ -1,4 +1,5 @@
 document.getElementById('login').addEventListener('click', (ev) => {
+    loadBar();
     ev.preventDefault();
     loginRegister("login");
 
@@ -6,6 +7,8 @@ document.getElementById('login').addEventListener('click', (ev) => {
 
 
 document.getElementById('register').addEventListener('click', (ev) => {
+    loadBar();
+
     ev.preventDefault();
     if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198206993').value.length > 0 && document.getElementById('reg_email').value.length > 0 ) {
         loginRegister("register");
@@ -73,6 +76,7 @@ loginRegister = (type) => {
             document.getElementById('mess').style.visibility = "visible"
 
         }
+        removeLoadBar();
     })
 }
 
@@ -133,3 +137,30 @@ document.getElementById("register").addEventListener('mouseout', (ev) => {
 
     }
 });
+
+
+
+loadBar = () => {
+    loadIt = true
+    var elem = document.getElementById("loading");
+    document.getElementById("loading").style.visibility = "visible"
+    var width = 1;
+    var id = setInterval(frame, 10);
+    function frame() {
+        if (loadIt == false) {
+            clearInterval(id);
+        }
+        if (width >= 100) {
+            width = 1;
+        } else {
+            width++;
+
+            elem.style.width = (width) + '%';
+        }
+    }
+}
+
+removeLoadBar = () => {
+    loadIt = false;
+    document.getElementById("loading").style.visibility = "hidden";
+}

@@ -127,6 +127,7 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     console.log("**/login entered**");
 
+
     user.find({ "user.username": req.body.username }).then((res1) => {
         if (res1.length > 0) {
             bcrypt.compare(req.body.password, res1[0].user.password).then((res2) => {
