@@ -56,7 +56,7 @@ loginRegister = (type) => {
             }else{
                 window.location.href=res.url;
             }
-
+ 
         } else if (res.deactivated==true){
             document.getElementById('mess').innerText = "User deactivated";
             document.getElementById('mess').style.visibility = "visible"
@@ -85,7 +85,7 @@ document.getElementById("login").addEventListener('mouseover', (ev) => {
     console.log(temp);
     div.style.left = (temp.x - ((document.getElementById(ev.target.id).getBoundingClientRect().width / 2))) + "px";
     div.style.position = "absolute";
-    div.style.top = (temp.y + temp.height) + "px";
+    div.style.top = (temp.y + temp.height+30) + "px";
     div.style.backgroundColor = "blue"
     var h2=document.createElement("H6");
     h2.style.color="white"
@@ -105,7 +105,7 @@ document.getElementById("register").addEventListener('mouseover', (ev) => {
     console.log(temp);
     div.style.left = (temp.x - ((document.getElementById(ev.target.id).getBoundingClientRect().width / 2))) + "px";
     div.style.position = "absolute";
-    div.style.top = (temp.y + temp.height) + "px";
+    div.style.top = (temp.y + temp.height+30) + "px";
     div.style.backgroundColor = "blue";
     var h2=document.createElement("H6");
     h2.style.color="white"

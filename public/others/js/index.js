@@ -1,3 +1,5 @@
+loggedInUser = "";
+
 
 loadBar = () => {
     loadIt = true
@@ -136,6 +138,7 @@ hashCheck = () => {
         loadPage("listProcess", "List of Processes", "N");
 
     } else if (location.hash.indexOf("newpro") != -1) {
+        processId = "";
         loadPage("process", "Process Definition", "N")
     } else if (location.hash.indexOf("frmbdr") != -1) {
         loadPage("formBuilder", "Form Builder", "N");
@@ -154,8 +157,31 @@ hashCheck = () => {
     } else if (location.hash.indexOf("listInstances") != -1) {
         loadPage("listInstances", "List of Instances", "N")
     } else {
+        if (location.hash.indexOf("frm") == -1) {
+            var wi_id = location.hash.substr(1);
 
-        loadPage("formViewer", "Form Viewer", "N");
+            fetch('/workitems/' + wi_id + '?checkOpen=Y', {
+                credentials: "include"
+            }).then((prom) => prom.text()).then((res) => {
+
+                if (JSON.parse(res).status != "OK") {
+                    fetch('/user/' + JSON.parse(res).user, {
+                        credentials: "include"
+                    }).then((prom) => prom.text()).then((user) => {
+                        alert("Work item is already opened by " + JSON.parse(user).user);
+
+                    })
+                } else {
+                    loadPage("formViewer", "Form Viewer", "N");
+
+                }
+            })
+
+        } else {
+            loadPage("formViewer", "Form Viewer", "N");
+
+        }
+
     }
 }
 
@@ -176,6 +202,7 @@ window.addEventListener("hashchange", (ev) => {
 
 fetch('/whoami', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {
     document.getElementById('loggedinUser').innerText = JSON.parse(res).user;
+    loggedInUser = JSON.parse(res).userId;
 })
 
 
@@ -230,25 +257,68 @@ popupClose = () => {
 }
 
 
-document.getElementById('loggedinUser').addEventListener('mouseover', (ev) => {
+document.getElementById('loggedinUser').addEventListener('click', (ev) => {
     var div = document.createElement("DIV");
     console.log(document.getElementById(ev.target.id).getBoundingClientRect());
     div.style.height = "30px";
-    div.style.width = document.getElementById(ev.target.id).getBoundingClientRect().width * 2;
+    div.style.width = document.getElementById(ev.target.id).getBoundingClientRect().width * 4;
     div.style.backgroundColor = "pink";
     div.style.position = "fixed";
 
     div.id = "userOverlay";
 
+    var input1 = document.createElement("INPUT");
+    input1.type = "password";
+    input1.id = "pwd1";
+    input1.setAttribute("placeholder", "New Password")
+    var input2 = document.createElement("INPUT");
+    input2.type = "password";
+    input2.id = "pwd2";
+    input2.setAttribute("placeholder", "Confirm Password")
+
+    var buttonChange = document.createElement("BUTTON");
+    buttonChange.id = "changePwd";
+    buttonChange.innerText = "Change Password"
+    buttonChange.className = "btn btn-primary"
+
+
     div.style.top = document.getElementById(ev.target.id).getBoundingClientRect().y + document.getElementById(ev.target.id).getBoundingClientRect().height;
 
     div.style.left = document.getElementById(ev.target.id).getBoundingClientRect().x - document.getElementById(ev.target.id).getBoundingClientRect().width / 2;
+    div.appendChild(input1);
+    div.appendChild(input2);
+    div.appendChild(buttonChange);
     document.getElementsByTagName("body")[0].appendChild(div);
+    document.getElementById('changePwd').addEventListener('click', (ev) => {
+        if (document.getElementById('pwd1').value.length > 0 && document.getElementById('pwd2').value.length > 0 && document.getElementById('pwd1').value == document.getElementById('pwd2').value) {
+            var bodyJson = '{"newPassword": "' + document.getElementById('pwd1').value + '"}'
+            console.log(bodyJson);
+            fetch('/user', {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: bodyJson
+            }).then((prom) => prom.text()).then((res) => {
+                    alert("Next time login with the new password");
+                    document.getElementById('pwd1').value = "";
+                    document.getElementById('pwd2').value = "";
+                    document.getElementById("userOverlay").parentNode.removeChild(document.getElementById("userOverlay"));
+
+                })
+        } else {
+            alert("Passwords should be greater than 0 characters!:) and should be same");
+        }
+    });
 });
 
-document.getElementById('loggedinUser').addEventListener('mouseout', (ev) => {
-    console.log(ev);
-    document.getElementById("userOverlay").parentNode.removeChild(document.getElementById("userOverlay"));
+document.addEventListener('click', (ev) => {
+    if (document.getElementById("userOverlay") != undefined && document.getElementById("userOverlay") !== 'undefined' && ev.target.id != "userOverlay" && ev.target.id != "loggedinUser"
+        && ev.target.id != "pwd1" && ev.target.id != "pwd2" && ev.target.id != "changePwd") {
+
+        document.getElementById("userOverlay").parentNode.removeChild(document.getElementById("userOverlay"));
+    }
 });
 
 

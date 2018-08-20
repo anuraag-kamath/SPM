@@ -39,7 +39,22 @@ var process1 = mongoose.model('process',
                 minutes1: {
                     type: Number
                 },
-                step2: {
+                method1:{
+                    type: String
+                },
+                url1:{
+                    type: String
+                },
+                headers1: [{
+                    type: String
+                }],
+                queryParams1: [{
+                    type: String
+                }],
+                input1: {
+                    type: String
+                },
+                output1: {
                     type: String
                 },
                 lbl2: {
@@ -59,6 +74,21 @@ var process1 = mongoose.model('process',
                 },
                 minutes2: {
                     type: Number
+                },
+                url2:{
+                    type: String
+                },
+                headers2: [{
+                    type: String
+                }],
+                queryParams2: [{
+                    type: String
+                }],
+                input2: {
+                    type: String
+                },
+                output2: {
+                    type: String
                 }
             }
         ]

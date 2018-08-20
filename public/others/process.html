@@ -76,7 +76,7 @@
                 </div> -->
 
             </div>
-            <div class="col-7">
+            <div class="col-8">
                 <!-- <div class="row">
                     <div class="col-2" style="text-align:left;padding-left: 4em;">
                         Condition:
@@ -214,52 +214,97 @@
                     </div>
                     <div class="col-5"></div>
                 </div>
-
-                <div id="st_act">
-
-                    <div class="row">
-
-
-                        <div class="col-2">
-                            <select class="form-control">
-                                <option></option>
-                                <option>GET</option>
-                                <option>POST</option>
-                                <option>PUT</option>
-                                <option>DELETE</option>
-                            </select>
-
-                        </div>
-                        <div class="col-10">
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="row">
-
-
-                        <div class="col-4">
-
+                <div class="row">
+                    <div class="col-12" id="st_act">
+                        <div class="row">
                             <div class="col-12">
-                                <button id="addHeader">Header+</button>
-                                <div class="row" id="headers">
+                                <strong>Select an object name in query string or params. Like for instance:-employee_v0._id. Object cannot be an array.Only 1 param will work!</strong>
+                            </div>
+                        </div>
 
+                        <div class="row">
+
+
+                            <div class="col-3">
+                                <select id="st-method" class="form-control">
+                                    <option></option>
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                    <option value="PUT">PUT</option>
+                                    <option value="DELETE">DELETE</option>
+                                </select>
+
+                            </div>
+                            <div class="col-9">
+                                <input type="text" class="form-control" id="st-url" placeholder="URL http://182.20.20.20/employees/:employee_v0._id">
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+
+                            <div class="col-4">
+
+                                <div class="col-12">
+                                    <button id="addHeader">Header+</button>
+                                    <div class="row" id="st-headers">
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <button id="addQueryParam">Query+</button>
+                                <div class="row" id="st-queryParams">
+
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <strong>Input and Output are optional.</strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <select id="st-input"></select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <select id="st-output"></select>
+                                    </div>
                                 </div>
 
                             </div>
                         </div>
-                        <div class="col-4">
-                            <button id="addQueryParam">Query+</button>
-                            <div class="row" id="queryParams">
 
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <strong>First save the configuration before proceeding to try out</strong>
                         </div>
-                        <div class="col-4">
-                            <textarea placeholder="JSON BODY"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button id="st-save" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                    <div class="row" id="st-sample">
+                        <div class="col-5">
+                            <textarea  rows="6" cols="40" placeholder="SAMPLE INPUT" id="sampleInput"></textarea>
+                        </div>
+                        <div class="col-2">
+                            <button id="tryOut">Try Out</button>
+                        </div>
+                        <div class="col-5">
+                            <textarea rows="6" cols="40"  disabled placeholder="SAMPLE OUTPUT" id="sampleOutput"></textarea>
                         </div>
                     </div>
                 </div>
             </div>
+
+
 
             <!-- <div class="col-1">
                 <h5 class="down" id="toggle-down">\/</h5>

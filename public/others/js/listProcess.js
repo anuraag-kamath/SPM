@@ -4,7 +4,7 @@ listProcess = () => {
     document.getElementById('processes-body').innerHTML="";
     fetch('/process', {
         method: 'GET',
-        headers: {
+        headers: { 
             'Access-Control-Allow-Origin': '*'
         },
         credentials: 'include'

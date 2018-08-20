@@ -23,14 +23,23 @@ fetch('/workitems?search={"status":"scheduled"}', {
 
             for (var i = 0; i < alpha.length; i++) {
                 var row = document.createElement("tr");
-                if(alpha[i].escalationStatus=="done"){
-                    row.style.backgroundColor="red"
-                    row.style.color="white";
+                if (alpha[i].escalationStatus == "done") {
+                    row.style.backgroundColor = "red"
+                    row.style.color = "white";
                 }
 
-                row.title="Escalated on "+alpha[i].escalationDate
-    
-                row.innerHTML = "<td>" + (i + 1) + "</td><td class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + ">" + alpha[i]._id + "</td><td  class='editUsers'  id='" + alpha[i].instanceId + "'>" + alpha[i].instanceId + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + alpha[i].status + "</td><td>" + alpha[i].date + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
+                row.title = "Escalated on " + alpha[i].escalationDate
+                var wi_status = alpha[i].status;
+                
+                if(alpha[i].currentStatus!=undefined && alpha[i].currentStatus!=='undefined' && alpha[i].currentStatus=="open"){
+                    wi_status = alpha[i].currentStatus;
+                    if(alpha[i].currentUser==loggedInUser){
+                        wi_status+=" by you"
+                    }else{
+                        wi_status+=" by some other user"
+                    }
+                }
+                row.innerHTML = "<td>" + (i + 1) + "</td><td class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + ">" + alpha[i]._id + "</td><td  class='editUsers'  id='" + alpha[i].instanceId + "'>" + alpha[i].instanceId + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + wi_status + "</td><td>" + alpha[i].date + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
 
                 // {
 
@@ -90,7 +99,7 @@ fetch('/workitems?search={"status":"scheduled"}', {
                             }
                         }
                         else {
-                            document.getElementById("objectWorkitemDiv").innerHTML ="<h3>No Objects associated with this instance</h3>";
+                            document.getElementById("objectWorkitemDiv").innerHTML = "<h3>No Objects associated with this instance</h3>";
 
                         }
                     })

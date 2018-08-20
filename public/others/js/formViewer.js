@@ -12,10 +12,10 @@ var workitemId = "";
 var submitExists = false;
 var rejectExists = false;
 onLoad = (formId, processId, workitemId, instanceId1, role) => {
-
+    console.log("AM");
     fetch('/objects', {
         credentials: 'include'
-    }).then((prom) => prom.text()).then((res) => {
+    }).then((prom) => prom.text()).then((res) => { 
         objs = JSON.parse(res);
 
 
@@ -26,7 +26,8 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
             credentials: 'include'
         }).then((prom) => {
             return prom.text()
-        }).then((res) => {
+        }).then((res) => {  
+            console.log(res);
 
             if (workitemId.length == 0) {
                 fetch('/instance', {
@@ -83,12 +84,12 @@ loadContents = (res, role) => {
     document.getElementById('main-section').innerHTML = "";
     var button = document.createElement("BUTTON");
     button.id = "comments_button"
-    button.innerHTML='COMMENTS'
+    button.innerHTML = 'COMMENTS'
     button.style.position = "fixed";
     button.style.top = "6vh";
     button.style.marginRight = "15px";
     button.style.right = "0";
-    button.style.zIndex="1";
+    button.style.zIndex = "1";
 
     document.getElementById('main-section').appendChild(button);
 
@@ -384,6 +385,7 @@ loadContents = (res, role) => {
                     var tempRow = "<tr>";
                     for (key in schemaStructure) {
                         var temp = String(ev.target.id).replace("modalAdd", key)
+                        console.log(temp);
                         tempRow += "<td value='" + key + "'>" + document.getElementById(temp).value + "</td>"
                     }
 
@@ -464,12 +466,15 @@ userName = (userId) => {
 
 document.addEventListener('click', (ev) => {
     console.log(ev.target.id);
-    if (String(document.getElementById(ev.target.id).className).indexOf("commentsDiv") == -1 && 
-    String(ev.target.id).indexOf("comments_button") == -1) {
-        document.getElementById("commentsDiv").style.display = "none";
-    };
-    if(String(ev.target.id).indexOf("comments_button") != -1){
-        document.getElementById("commentsDiv").style.display = "block";
+    if (String(ev.target.id).length > 0) {
+        if (String(document.getElementById(ev.target.id).className).indexOf("commentsDiv") == -1 &&
+            String(ev.target.id).indexOf("comments_button") == -1) {
+            document.getElementById("commentsDiv").style.display = "none";
+        };
+        if (String(ev.target.id).indexOf("comments_button") != -1) {
+            document.getElementById("commentsDiv").style.display = "block";
+        }
+
     }
 });
 
@@ -884,21 +889,36 @@ putMe = (node) => {
 
     var but1 = document.createElement('BUTTON');
     var but2 = document.createElement('BUTTON');
+    var but3 = document.createElement('BUTTON');
     but1.id = "Submit" + new Date().getTime();
     but2.id = "Reject";
+    but3.id = "Close";
     but1.innerText = "Submit";
     but2.innerText = "Reject";
     but1.className = "btn btn-primary";
     but2.className = "btn btn-primary";
+    but3.innerText = "Close";
+    but3.className = "btn btn-primary";
     but1.style.position = "fixed";
     but1.style.bottom = "0";
     but2.style.position = "fixed";
     but2.style.bottom = "0";
-    but2.style.left = "200"
+    but2.style.left = "400"
+    but3.style.position = "fixed";
+    but3.style.bottom = "0";
+    but3.style.left = "200"
     if (submitExists == false) {
         document.getElementById('app').appendChild(but1);
         eventPage("submit", but1.id)
-
+        document.getElementById('app').appendChild(but3);
+        document.getElementById('Close').addEventListener('click', (ev) => {
+            fetch('/workitems/' + workitemId, {
+                credentials: "include",
+                method: "PUT"
+            }).then((prom) => prom.text()).then((res) => {
+                window.location.hash = "workitems"
+            })
+        })
     }
     if (rejectExists == false) {
         //document.getElementById('app').appendChild(but2);

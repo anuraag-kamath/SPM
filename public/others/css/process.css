@@ -54,7 +54,7 @@ footer input {
 }
 
 .mid-section {
-    height: 65vh;
+    height: 55vh;
 }
 
 #process-section {
@@ -62,7 +62,7 @@ footer input {
 }
 
 footer {
-    height: 20vh;
+    height: 30vh;
     background-color: darkgrey;
     display: none;
     overflow: scroll;

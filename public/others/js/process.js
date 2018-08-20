@@ -1,5 +1,28 @@
-
 var objects = [];
+
+
+var sts = {};
+
+fetch('/objects', {
+
+    credentials: 'include'
+}).then((prom) => prom.text()).then((res) => {
+    //////console.log(res);
+    objs = JSON.parse(res);
+    document.getElementById('st-input').innerHTML = "";
+    document.getElementById('st-output').innerHTML = "";
+    document.getElementById('st-input').innerHTML += "<option value=''>INPUT</option>";
+    document.getElementById('st-output').innerHTML += "<option value=''>OUTPUT</option>";
+    for (var ob in JSON.parse(res)) {
+        ////console.log(objs[ob].schemaName);
+        document.getElementById('st-input').innerHTML += "<option value='" + objs[ob].schemaName + "'>" + objs[ob].schemaName + "</option>";
+        document.getElementById('st-output').innerHTML += "<option value='" + objs[ob].schemaName + "'>" + objs[ob].schemaName + "</option>";
+    }
+
+})
+
+
+
 // document.addEventListener('click', (event) => {
 //     if (!(event.target.classList.contains("noclick"))) {
 //         console.log("PROCEED");
@@ -61,7 +84,19 @@ checkme = (processId) => {
                 minutes2 = steps[i].minutes2 || 0;
                 hours1 = steps[i].hours1 || 0;
                 hours2 = steps[i].hours2 || 0;
-                addProcess(step1, step2, lbl1, lbl2, frm1, frm2, part1, part2, steps[i]._id, days1, hours1, minutes1, days2, hours2, minutes2)
+                url1 = steps[i].url1 || "";
+                method1 = steps[i].method1 || "";
+                headers1 = steps[i].headers1 || "[]";
+                queryParams1 = steps[i].queryParams1 || "[]";
+                input1 = steps[i].input1 || "";
+                output1 = steps[i].output1 || "";
+                url2 = steps[i].url2 || "";
+                method2 = steps[i].method2 || "";
+                headers2 = steps[i].headers2 || "[]";
+                queryParams2 = steps[i].queryParams2 || "[]";
+                input2 = steps[i].input2 || "";
+                output2 = steps[i].output2 || "";
+                addProcess(step1, step2, lbl1, lbl2, frm1, frm2, part1, part2, steps[i]._id, days1, hours1, minutes1, days2, hours2, minutes2, url1, method1, headers1, queryParams1, input1, output1, url2, method2, headers2, queryParams2, input2, output2)
 
             }
             recalcCount();
@@ -311,13 +346,15 @@ document.getElementById('myForm').addEventListener('submit', (event) => {
 
     }
     console.log(t1 + "#" + t2 + "#" + step1 + "#" + step2);
-    if (String(t1).indexOf("Service") != -1 || String(t2).indexOf("Service") != -1) {
-        alert("Kindly delete System task, it is currently under progress!!:)");
-    } else {
-        addProcess(t1, t2, step1, step2, '', '', '', '', '', 0, 0, 0, 0, 0, 0);
+    // if (String(t1).indexOf("Service") != -1 && String(t2).indexOf("Service") != -1) {
+    //     alert("Kindly delete System task, it is currently under progress!!:)");
+    // } else {
+    //     addProcess(t1, t2, step1, step2, '', '', '', '', '', 0, 0, 0, 0, 0, 0);
 
 
-    }
+    // }
+    addProcess(t1, t2, step1, step2, '', '', '', '', '', 0, 0, 0, 0, 0, 0, "", "", "[]", "[]", "", "", "", "", "[]", "[]", "", "");
+
 
     recalcCount();
 
@@ -341,15 +378,17 @@ dragover = (event) => {
     event.preventDefault();
 }
 
-var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1, hours1, minutes1, days2, hours2, minutes2) => {
-    console.log("@@@@@@"); 
-    console.log(days1); 
-    console.log(hours1); 
-    console.log(minutes1); 
-    console.log(days2); 
-    console.log(hours2); 
-    console.log(minutes2); 
-    console.log("@@@@@@"); 
+var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1, hours1, minutes1, days2, hours2, minutes2, url1, method1, headers1, queryParams1, input1, output1, url2, method2, headers2, queryParams2, input2, output2) => {
+    console.log("@@@@@@");
+    console.log(days1);
+    console.log(hours1);
+    console.log(minutes1);
+    console.log(days2);
+    console.log(hours2);
+    console.log(minutes2);
+    console.log(headers1);
+    console.log(headers2);
+    console.log("@@@@@@");
     var ts = "";
     if (stepId.length > 0) {
         ts = stepId;
@@ -362,6 +401,33 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         // newDiv.ondragstart = "dragStart(event)";
         // newDiv.drag = "drag(event)";
         newDiv.id = "div_" + ts;
+        if (step1.indexOf("Service") != -1) {
+            if (headers1.length == 0) {
+                headers1 = "[]"
+            } else {
+                headers1 = JSON.stringify(headers1)
+            }
+            if (queryParams1.length == 0) {
+                queryParams1 = "[]"
+            } else {
+                queryParams1 = JSON.stringify(queryParams1)
+            }
+            sts["lbl1_" + ts] = '{"url": "' + url1 + '","method": "' + method1 + '","headers": ' + headers1 + ',"queryParams": ' + queryParams1 + ',"input": "' + input1 + '","output":"' + output1 + '" }'
+        }
+        if (step2.indexOf("Service") != -1) {
+            if (headers2 != undefined && headers2.length == 0) {
+                headers2 = "[]"
+            } else {
+                headers2 = JSON.stringify(headers2)
+            }
+            if (queryParams2 != undefined && queryParams2.length == 0) {
+                queryParams2 = "[]"
+            } else {
+                queryParams2 = JSON.stringify(queryParams2)
+            }
+            sts["lbl2_" + ts] = '{"url": "' + url2 + '","method": "' + method2 + '","headers": ' + headers2 + ',"queryParams": ' + queryParams2 + ',"input": "' + input2 + '","output":"' + output2 + '" }'
+
+        }
         newDiv.className = "row";
         var countDiv = document.createElement("DIV");
         countDiv.id = "count_" + ts;
@@ -371,11 +437,11 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         leftDiv.className = "col-5"
         console.log(days1 + "#" + hours1 + "#" + minutes1);
         console.log(days2 + "#" + hours2 + "#" + minutes2);
-        var esc1=days1 + "#" + hours1 + "#" + minutes1;
+        var esc1 = days1 + "#" + hours1 + "#" + minutes1;
         leftDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "' participant='" + part1 + "' esc=" + esc1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
         var rightDiv = document.createElement("DIV");
         rightDiv.className = "col-5";
-        var esc2=days2 + "#" + hours2 + "#" + minutes2;
+        var esc2 = days2 + "#" + hours2 + "#" + minutes2;
         rightDiv.innerHTML = "<h6 id='step2_" + ts + "' >" + step2 + "</h6><label formName='" + frm2 + "' participant='" + part2 + "' esc=" + esc2 + " id='lbl2_" + ts + "' class='lbl noclick'>" + t2 + "</label>"
         var cancelDiv = document.createElement("DIV");
         cancelDiv.className = "col-1 ctr"
@@ -386,25 +452,102 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         newDiv.appendChild(cancelDiv);
         document.getElementById('process-section').appendChild(newDiv);
         document.getElementById(('lbl2_' + ts)).addEventListener('click', (event) => {
+
             console.log('APPLIED EVENT FOR lbl2_' + ts);
             //selectRejection(document.getElementById(String(event.target.id).replace("lbl2_", "count_")).innerText);
 
-            document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
-            document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
-            var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
-            document.getElementById('escalation-days').value = esc[0];
-            document.getElementById('escalation-hours').value = esc[1];
-            document.getElementById('escalation-minutes').value = esc[2];
+            // document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
+            // document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+            // var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
+            // document.getElementById('escalation-days').value = esc[0];
+            // document.getElementById('escalation-hours').value = esc[1];
+            // document.getElementById('escalation-minutes').value = esc[2];
 
-            if (currentElement != "") {
+            // if (currentElement != "") {
+            //     document.getElementById(currentElement).style.border = "2px solid black";
+            //     document.getElementById(event.target.id).style.border = "2px solid red";
+            //     document.getElementById('name').value = event.target.innerText;
+            //     currentElement = event.target.id;
+            //     document.getElementsByTagName('footer')[0].style.display = "block";
+            //     document.getElementsByClassName('mid-section')[0].style.height = "60vh";
+
+            // }
+
+            var tempText = document.getElementById(String(event.target.id).replace("lbl2_", "step2_")).innerText;
+            if (document.getElementById(currentElement) != undefined && currentElement != "") {
                 document.getElementById(currentElement).style.border = "2px solid black";
-                document.getElementById(event.target.id).style.border = "2px solid red";
-                document.getElementById('name').value = event.target.innerText;
-                currentElement = event.target.id;
-                document.getElementsByTagName('footer')[0].style.display = "block";
-                document.getElementsByClassName('mid-section')[0].style.height = "60vh";
 
             }
+
+            document.getElementById(event.target.id).style.border = "2px solid red";
+            document.getElementById('name').value = event.target.innerText;
+            currentElement = event.target.id;
+            document.getElementsByTagName('footer')[0].style.display = "block";
+            document.getElementsByClassName('mid-section')[0].style.height = "50vh";
+            if (String(tempText).indexOf("Human Task") != -1) {
+                document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
+                document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+                var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
+                document.getElementById('escalation-days').value = esc[0];
+                document.getElementById('escalation-hours').value = esc[1];
+                document.getElementById('escalation-minutes').value = esc[2];
+
+                document.getElementById('participant_div').style.display = "flex";
+                document.getElementById('escalation_div').style.display = "flex";
+                document.getElementById('st-sample').style.display = "block";
+                document.getElementById('form_div').style.display = "flex";
+                document.getElementById('st_act').style.display = "none";
+
+            } else {
+                document.getElementById("st-headers").innerHTML = "";
+                document.getElementById("st-queryParams").innerHTML = "";
+                document.getElementById("st-url").value = "";
+
+                document.getElementById("st-method").value = "";
+                document.getElementById("st-input").value = "";
+                document.getElementById("st-output").value = "";
+
+
+                document.getElementById('participant_div').style.display = "none";
+                document.getElementById('escalation_div').style.display = "none";
+                document.getElementById('st-sample').style.display = "none";
+
+                document.getElementById('form_div').style.display = "none";
+                document.getElementById('st_act').style.display = "block";
+
+                console.log("##");
+                console.log(sts[currentElement]);
+
+                if (sts[currentElement] != undefined) {
+                    console.log(sts[currentElement]);
+                    var cur = JSON.parse(sts[currentElement])
+
+                    document.getElementById('st-url').value = cur.url;
+                    document.getElementById('st-method').value = cur.method;
+                    var headers = [];
+                    var queryParams = [];
+                    document.getElementById('st-input').value = cur.input;
+                    document.getElementById('st-output').value = cur.output;
+                    console.log(currentElement);
+                    for (var i = 0; i < cur.headers.length; i++) {
+                        console.log("##");
+                        console.log(cur.headers[i].split("#"));
+                        console.log("#");
+                        addHeader(cur.headers[i].split("#")[0], cur.headers[i].split("#")[1])
+                    }
+                    for (var i = 0; i < cur.queryParams.length; i++) {
+                        console.log("##");
+                        console.log(cur.queryParams[i].split("#"));
+                        console.log("#");
+                        addQueryParams(cur.queryParams[i].split("#")[0], cur.queryParams[i].split("#")[1])
+                    }
+
+                }
+
+
+            }
+
+
         });
 
 
@@ -413,6 +556,22 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         //newDiv.draggable = true;
         // newDiv.ondragstart = "dragStart(event)";
         // newDiv.drag = "drag(event)";
+        console.log("@");
+        if (step1.indexOf("Service") != -1) {
+            if (headers1.length == 0) {
+                headers1 = "[]"
+            } else {
+                headers1 = JSON.stringify(headers1)
+            }
+            if (queryParams1.length == 0) {
+                queryParams1 = "[]"
+            } else {
+                queryParams1 = JSON.stringify(queryParams1)
+            }
+            sts["lbl1_" + ts] = '{"url": "' + url1 + '","method": "' + method1 + '","headers": ' + headers1 + ',"queryParams": ' + queryParams1 + ',"input": "' + input1 + '","output":"' + output1 + '" }'
+        }
+        console.log("@");
+
         newDiv.id = "div_" + ts;
         newDiv.className = "row";
         var countDiv = document.createElement("DIV");
@@ -425,7 +584,7 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         rightDiv.className = "col-2"
         var midDiv = document.createElement("DIV");
         midDiv.className = "col-6";
-        var esc1=days1 + "#" + hours1 + "#" + minutes1; 
+        var esc1 = days1 + "#" + hours1 + "#" + minutes1;
         midDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "'  participant='" + part1 + "' esc=" + esc1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
         var cancelDiv = document.createElement("DIV");
         cancelDiv.className = "col-1 ctr"
@@ -444,8 +603,16 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
         //selectRejection(document.getElementById(String(event.target.id).replace("lbl1_", "count_")).innerText);
         tempText = document.getElementById(String(event.target.id).replace("lbl1_", "step1_")).innerText;
-        console.log(String(tempText).indexOf("Human Task"));
-        console.log(tempText == "Human Task");
+        if (document.getElementById(currentElement) != undefined && currentElement != "") {
+            document.getElementById(currentElement).style.border = "2px solid black";
+
+        }
+        document.getElementById(event.target.id).style.border = "2px solid red";
+        document.getElementById('name').value = event.target.innerText;
+        currentElement = event.target.id;
+        document.getElementsByTagName('footer')[0].style.display = "block";
+        document.getElementsByClassName('mid-section')[0].style.height = "50vh";
+
         if (String(tempText).indexOf("Human Task") != -1) {
             document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
             document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
@@ -455,27 +622,57 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
             document.getElementById('escalation-minutes').value = esc[2];
 
             document.getElementById('participant_div').style.display = "flex";
+            document.getElementById('escalation_div').style.display = "flex";
             document.getElementById('form_div').style.display = "flex";
             document.getElementById('st_act').style.display = "none";
 
         } else {
+            document.getElementById("st-headers").innerHTML = "";
+            document.getElementById("st-queryParams").innerHTML = "";
+            document.getElementById("st-url").value = "";
+            document.getElementById("st-method").value = "";
+            document.getElementById("st-input").value = "";
+            document.getElementById("st-output").value = "";
+
+
             document.getElementById('participant_div').style.display = "none";
+            document.getElementById('escalation_div').style.display = "none";
             document.getElementById('form_div').style.display = "none";
-            document.getElementById('st_act').style.display = "flex";
+            document.getElementById('st_act').style.display = "block";
+
+            console.log("##");
+            console.log(sts[currentElement]);
+
+            if (sts[currentElement] != undefined) {
+                console.log(currentElement);
+                var cur = JSON.parse(sts[currentElement])
+
+                document.getElementById('st-url').value = cur.url;
+                document.getElementById('st-method').value = cur.method;
+                var headers = [];
+                var queryParams = [];
+                document.getElementById('st-input').value = cur.input;
+                document.getElementById('st-output').value = cur.output;
+                console.log(currentElement);
+                for (var i = 0; i < cur.headers.length; i++) {
+                    console.log("##");
+                    console.log(cur.headers[i].split("#"));
+                    console.log("#");
+                    addHeader(cur.headers[i].split("#")[0], cur.headers[i].split("#")[1])
+                }
+                for (var i = 0; i < cur.queryParams.length; i++) {
+                    console.log("##");
+                    console.log(cur.queryParams[i].split("#"));
+                    console.log("#");
+                    addQueryParams(cur.queryParams[i].split("#")[0], cur.queryParams[i].split("#")[1])
+                }
+
+            }
 
 
         }
 
 
-        if (currentElement != "") {
-            document.getElementById(currentElement).style.border = "2px solid black";
-
-        }
-        document.getElementById(event.target.id).style.border = "2px solid red";
-        document.getElementById('name').value = event.target.innerText;
-        currentElement = event.target.id;
-        document.getElementsByTagName('footer')[0].style.display = "block";
-        document.getElementsByClassName('mid-section')[0].style.height = "60vh";
 
     });
 
@@ -483,10 +680,16 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
 
     document.getElementById("delete1_" + ts).addEventListener('click', (event) => {
+        console.log(document.getElementById(String(event.target.id).replace("delete1", "count")).innerText);
+        // if (document.getElementById(String(event.target.id).replace("delete1", "count")).innerText != 1) {
         var child = event.target.parentElement.parentElement;
         var parent = event.target.parentElement.parentElement.parentElement;
         parent.removeChild(child);
         recalcCount();
+
+        // }else{
+        //     alert("cannot delete the first step!");
+        // }
 
     });
 
@@ -560,12 +763,58 @@ document.getElementById("save-process").addEventListener('click', (event) => {
         days1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[0];
         hours1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[1];
         minutes1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[2];
+
+        url1 = '""';
+        method1 = '""';
+        headers1 = "[]";
+        queryParams1 = "[]";
+        input1 = '""';
+        output1 = '""';
+
+
+        if (step1.indexOf("Service") != -1) {
+            url1 = '"' + JSON.parse(sts['lbl1_' + id]).url + '"';
+            method1 = '"' + JSON.parse(sts['lbl1_' + id]).method + '"';
+            headers1 = JSON.parse(sts['lbl1_' + id]).headers;
+            if (headers1.length == 0) {
+                headers1 = "[]";
+            } else {
+                headers1 = "[" + headers1 + "]"
+            }
+            queryParams1 = JSON.parse(sts['lbl1_' + id]).queryParams;
+            if (queryParams1.length == 0) {
+                queryParams1 = "[]";
+            } else {
+                queryParams1 = "[" + queryParams1 + "]"
+            }
+            input1 = '"' + JSON.parse(sts['lbl1_' + id]).input + '"';
+            if (input1.length == 0) {
+                input1 = '""';
+            }
+            output1 = '"' + JSON.parse(sts['lbl1_' + id]).output + '"';
+            if (output1.length == 0) {
+                output1 = '""';
+            }
+        }
+
+
         step2 = "";
-        json += '{"step1":"' + step1 + '","lbl1":"' + lbl1 + '","frm1":"' + frm1 + '","part1":"' + part1 + '"' + ',"days1":' + days1 + ',"hours1":' + hours1 + ',"minutes1":' + minutes1;
-        if (step1.length == 0 ||
+        json += '{"step1":"' + step1 + '","lbl1":"' + lbl1 + '","frm1":"' + frm1 + '","part1":"' + part1 + '"' + ',"days1":' + days1 + ',"hours1":' + hours1 + ',"minutes1":' + minutes1 + ',"method1":' + method1 + ',"url1":' + url1 + ',"headers1":' + headers1 + ',"queryParams1":' + queryParams1 + ',"input1":' + input1 + ',"output1":' + output1;
+        if (step1.indexOf("Service") == -1 && (step1.length == 0 ||
             lbl1.length == 0 ||
             frm1.length == 0 ||
-            part1.length == 0) {
+            part1.length == 0)) {
+            console.log(step1);
+            console.log(step1.indexOf("System") == -1);
+            err = "problem found, focussing on the problem!";
+            errEl = "lbl1_" + id;
+            break;
+        } else if (step1.indexOf("Service") != -1 && (step1.length == 0 ||
+            url1.length == 0 ||
+            method1.length == 0)) {
+            console.log(url1.length);
+            console.log(method1.length);
+
             err = "problem found, focussing on the problem!";
             errEl = "lbl1_" + id;
             break;
@@ -578,11 +827,57 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             days2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[0];
             hours2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[1];
             minutes2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[2];
-            json += ',"step2":"' + step2 + '","lbl2":"' + lbl2 + '","frm2":"' + frm2 + '","part2":"' + part2 + '"' + ',"days2":' + days2 + ',"hours2":' + hours2 + ',"minutes2":' + minutes2;
-            if (step2.length == 0 ||
+
+            url2 = '""';
+            method2 = '""';
+            headers2 = "[]";
+            queryParams2 = "[]";
+            input2 = '""';
+            output2 = '""';
+
+
+
+
+            if (step2.indexOf("Service") != -1) {
+                console.log(JSON.parse(sts['lbl2_' + id]));
+                url2 = '"' + JSON.parse(sts['lbl2_' + id]).url + '"';
+                method2 = '"' + JSON.parse(sts['lbl2_' + id]).method + '"';
+                headers2 = JSON.parse(sts['lbl2_' + id]).headers;
+                if (headers2.length == 0) {
+                    headers2 = "[]";
+                } else {
+                    headers2 = "[" + headers2 + "]"
+                }
+                queryParams2 = JSON.parse(sts['lbl2_' + id]).queryParams;
+                if (queryParams2.length == 0) {
+                    queryParams2 = "[]";
+                } else {
+                    queryParams2 = "[" + queryParams2 + "]"
+                }
+                input2 = '"' + JSON.parse(sts['lbl2_' + id]).input + '"';
+                if (input2.length == 0) {
+                    input2 = '""';
+                }
+                output2 = '"' + JSON.parse(sts['lbl2_' + id]).output + '"';
+                if (output2.length == 0) {
+                    output2 = '""';
+                }
+
+
+
+            }
+
+            json += ',"step2":"' + step2 + '","lbl2":"' + lbl2 + '","frm2":"' + frm2 + '","part2":"' + part2 + '"' + ',"days2":' + days2 + ',"hours2":' + hours2 + ',"minutes2":' + minutes2 + ',"method2":' + method2 + ',"url2":' + url2 + ',"headers2":' + headers2 + ',"queryParams2":' + queryParams2 + ',"input2":' + input2 + ',"output2":' + output2;
+            if (step2.indexOf("Service") == -1 && (step2.length == 0 ||
                 lbl2.length == 0 ||
                 frm2.length == 0 ||
-                part2.length == 0) {
+                part2.length == 0)) {
+                err = "problem found, focussing on the problem!";
+                errEl = "lbl2_" + id;
+                break;
+            } else if (step2.indexOf("Service") != -1 && (step2.length == 0 ||
+                url2.length == 0 ||
+                method2.length == 0)) {
                 err = "problem found, focussing on the problem!";
                 errEl = "lbl2_" + id;
                 break;
@@ -706,6 +1001,12 @@ if (location.hash != undefined && location.hash.length > 0 && location.hash != "
 
 
 document.getElementById('addHeader').addEventListener('click', (ev) => {
+    addHeader("", "");
+
+});
+
+addHeader = (left, right) => {
+    console.log("####" + left + "###" + right);
     ts = Math.ceil(new Date().getTime() * Math.random());
 
     var div = document.createElement("DIV");
@@ -713,16 +1014,18 @@ document.getElementById('addHeader').addEventListener('click', (ev) => {
     var inpLeft = document.createElement("INPUT");
     inpLeft.id = "inpLeft_" + ts;
     inpLeft.style.width = "40%";
+    inpLeft.value = left;
     var inpRight = document.createElement("INPUT");
     inpRight.id = "inpRight_" + ts;
     inpRight.style.width = "40%";
+    inpRight.value = right;
     var button = document.createElement("BUTTON");
     button.id = "btn_" + ts;
     button.innerText = "X";
     div.appendChild(inpLeft);
     div.appendChild(inpRight);
     div.appendChild(button);
-    document.getElementById("headers").appendChild(div);
+    document.getElementById("st-headers").appendChild(div);
     document.getElementById(inpLeft.id).focus();
 
 
@@ -730,10 +1033,14 @@ document.getElementById('addHeader').addEventListener('click', (ev) => {
         document.getElementById(String(ev.target.id).replace('btn', 'div')).parentNode.removeChild(document.getElementById(String(ev.target.id).replace('btn', 'div')));
     })
 
-
-});
+}
 
 document.getElementById('addQueryParam').addEventListener('click', (ev) => {
+    addQueryParams("", "")
+
+});
+
+addQueryParams = (left, right) => {
     ts = Math.ceil(new Date().getTime() * Math.random());
 
     var div = document.createElement("DIV");
@@ -741,24 +1048,116 @@ document.getElementById('addQueryParam').addEventListener('click', (ev) => {
     var inpLeft = document.createElement("INPUT");
     inpLeft.id = "inpLeft_" + ts;
     inpLeft.style.width = "40%";
+    inpLeft.value = left;
     var inpRight = document.createElement("INPUT");
     inpRight.id = "inpRight_" + ts;
     inpRight.style.width = "40%";
+    inpRight.value = right;
     var button = document.createElement("BUTTON");
     button.id = "btn_" + ts;
     button.innerText = "X";
     div.appendChild(inpLeft);
     div.appendChild(inpRight);
     div.appendChild(button);
-    document.getElementById("queryParams").appendChild(div);
+    document.getElementById("st-queryParams").appendChild(div);
     document.getElementById(inpLeft.id).focus();
 
     document.getElementById('btn_' + ts).addEventListener('click', (ev) => {
         document.getElementById(String(ev.target.id).replace('btn', 'div')).parentNode.removeChild(document.getElementById(String(ev.target.id).replace('btn', 'div')));
     })
 
+}
 
+document.getElementById('st-save').addEventListener('click', (ev) => {
+    saveSt(currentElement);
 });
 
 
-document.getElementById("");
+document.getElementById('st-method').addEventListener('change', (ev) => {
+    if(ev.target.value=="GET" || ev.target.value=="DELETE" ){
+
+        document.getElementById('st-input').value="";
+//        document.getElementById('st-input').disabled=true;
+    }else{
+//        document.getElementById('st-input').disabled=false;
+    }
+});
+
+saveSt = (currentElement) => {
+    var url = document.getElementById('st-url');
+    var method = document.getElementById('st-method');
+    var headers = [];
+    var queryParams = [];
+    var input = document.getElementById('st-input').value;
+    var output = document.getElementById('st-output').value;
+
+    var st_headers = document.getElementById('st-headers').childNodes;
+    var st_queryParams = document.getElementById('st-queryParams').childNodes;
+
+    for (var i = 0; i < st_headers.length; i++) {
+        console.log(st_headers[i]);
+        if (st_headers[i].id != undefined) {
+            var leftInp = st_headers[i].id.replace("div", "inpLeft")
+            var rightInp = st_headers[i].id.replace("div", "inpRight")
+            leftInp = document.getElementById(leftInp).value;
+            rightInp = document.getElementById(rightInp).value;
+            headers.push('\"' + leftInp + "#" + rightInp + '\"');
+        }
+        console.log(leftInp);
+        console.log(rightInp);
+
+    }
+    for (var i = 0; i < st_queryParams.length; i++) {
+        console.log(st_queryParams[i]);
+        if (st_queryParams[i].id != undefined) {
+            var leftInp = st_queryParams[i].id.replace("div", "inpLeft")
+            var rightInp = st_queryParams[i].id.replace("div", "inpRight")
+            leftInp = document.getElementById(leftInp).value;
+            rightInp = document.getElementById(rightInp).value;
+            queryParams.push('"' + leftInp + "#" + rightInp + '"');
+        }
+        console.log(leftInp);
+        console.log(rightInp);
+    }
+    if (headers.length == 0) {
+        headers = "[]"
+    } else {
+        headers = JSON.stringify(headers)
+        //headers = '[' + headers + ']'
+    }
+    if (queryParams.length == 0) {
+        queryParams = "[]"
+    } else {
+        queryParams = JSON.stringify(queryParams)
+        //queryParams = '[' + queryParams + ']'
+    }
+    var jsonBuildup = '{"' + currentElement + '": {"url": "' + document.getElementById('st-url').value + '","method": "' + document.getElementById('st-method').value + '","headers": ' + headers + ',"queryParams": ' + queryParams + ',"input": "' + document.getElementById('st-input').value + '","output":"' + document.getElementById('st-output').value + '" }}'
+
+    console.log(jsonBuildup);
+    sts[currentElement] = '{"url": "' + document.getElementById('st-url').value + '","method": "' + document.getElementById('st-method').value + '","headers": ' + headers + ',"queryParams": ' + queryParams + ',"input": "' + document.getElementById('st-input').value + '","output":"' + document.getElementById('st-output').value + '" }'
+
+    console.log(jsonBuildup);
+
+}
+
+
+document.getElementById("tryOut").addEventListener('click', (ev) => {
+    st(sts[currentElement]);
+});
+
+
+st = (cur) => {
+    cur = JSON.parse(cur);
+    var sampleInput = document.getElementById("sampleInput").value;
+    console.log(cur.method);
+    fetch(cur.url, {
+        method: cur.method,
+        headers: {
+
+            "content-type": "application/json"
+        }
+    }).then((prom) => prom.json()).then((res) => {
+        document.getElementById("sampleOutput").value = JSON.stringify(res)
+    })
+
+}

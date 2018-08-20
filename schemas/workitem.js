@@ -48,6 +48,12 @@ var workitem = mongoose.model('workitem', {
     },
     status: {
         type: String
+    },
+    currentStatus: {
+        type: String
+    },
+    currentUser: {
+        type: String
     }
 })
 
