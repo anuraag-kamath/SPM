@@ -315,7 +315,7 @@ app.post('/comments/:instanceId', (req, res) => {
     com.save().then(
         (res1) => {
             console.log("COMMENT SAVED"+res1);
-            res.send();
+            res.send(res1);
         }
     );
 })

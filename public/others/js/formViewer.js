@@ -183,6 +183,7 @@ loadContents = (res, role) => {
             },
             body: jsonBody
         }).then((prom) => prom.text()).then((res) => {
+            alert("comment added"+JSON.parse(res)._id);
             loadComments();
             document.getElementById('newComment').value = "";
         })
