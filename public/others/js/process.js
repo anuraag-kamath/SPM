@@ -55,7 +55,6 @@ fetch('/objects', {
 var steps = [];
 
 checkme = (processId) => {
-
     console.log(processId)
 
     if (processId != undefined) {
@@ -127,6 +126,9 @@ checkme = (processId) => {
 
 
             if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") {
+
+                document.getElementById('mid-section-process').style.height = "100%";
+                
                 document.getElementById('left-menu-div').style.display = "none";
                 document.getElementById('header').style.display = "none";
                 document.getElementById('saveDiv').style.display = "none";
@@ -189,7 +191,7 @@ checkme = (processId) => {
                                 document.getElementById('lbl2_' + res[i].stepId).innerText += " -done by:" + res[i].user + " @ " + res[i].date;
 
 
-                            }
+                            } 
 
                         }
                     }

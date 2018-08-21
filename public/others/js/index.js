@@ -75,7 +75,7 @@ loadPage = (page, message, popUp) => {
             document.getElementById("pop-up").style.position = "fixed";
             document.getElementById("pop-up").style.top = "50px";
 
-            document.addEventListener('click', (ev) => {
+            document.getElementById("body_index").addEventListener('click', (ev) => {
                 if (String(ev.target.className).indexOf("noclick") == -1) {
                     document.getElementById("pop-up").style.display = "none";
                     document.getElementById("app").style.opacity = 1;
