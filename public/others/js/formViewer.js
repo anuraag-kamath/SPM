@@ -483,7 +483,8 @@ userName = (userId) => {
 
 document.addEventListener('click', (ev) => {
     console.log(ev.target.id);
-    if (String(ev.target.id).length > 0) {
+    alert(ev.target.id);
+    if (String(ev.target.id).length > 0 && document.getElementById(ev.target.id) != undefined && document.getElementById(ev.target.id) !== 'undefined') {
         if (String(document.getElementById(ev.target.id).className).indexOf("commentsDiv") == -1 &&
             String(ev.target.id).indexOf("comments_button") == -1) {
             document.getElementById("commentsDiv").style.display = "none";
