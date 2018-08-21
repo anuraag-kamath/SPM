@@ -77,6 +77,14 @@ header {
     #smallScreenBurger{
         display: block;
     }
+
+    .commentsDiv{
+        width: 40%;
+    }
+
+    .smallScreen{
+        display: none;
+    }
 }
 
 @media only screen and (min-width: 900px) {
@@ -92,4 +100,12 @@ header {
         display: none;
     }
 
+    .commentsDiv{
+        width: 30%;
+    }
+    .smallScreen{
+        display:  table-cell;
+    }
+
 }
+
