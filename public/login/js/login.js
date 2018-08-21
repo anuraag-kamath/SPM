@@ -80,45 +80,45 @@ loginRegister = (type) => {
     })
 }
 
-document.getElementById("login").addEventListener('mouseover', (ev) => {
-    var div = document.createElement("DIV");
-    div.style.height = "100px";
-    div.style.width = (document.getElementById(ev.target.id).getBoundingClientRect().width * 2) + "px";
-    div.id = "test"
-    var temp = document.getElementById(ev.target.id).getBoundingClientRect();
-    console.log(temp);
-    div.style.left = (temp.x - ((document.getElementById(ev.target.id).getBoundingClientRect().width / 2))) + "px";
-    div.style.position = "absolute";
-    div.style.top = (temp.y + temp.height+30) + "px";
-    div.style.backgroundColor = "blue"
-    var h2=document.createElement("H6");
-    h2.style.color="white"
-    h2.innerText="If a user is not yet created, then add a new username and password and click register!";
-    div.appendChild(h2);
-    console.log("**" + (temp.x - 50) + "##" + (temp.y + temp.height));
-    document.getElementById(ev.target.id).parentNode.appendChild(div)
-    console.log(document.getElementById('test').getBoundingClientRect());
-});
+// document.getElementById("login").addEventListener('mouseover', (ev) => {
+//     var div = document.createElement("DIV");
+//     div.style.height = "100px";
+//     div.style.width = (document.getElementById(ev.target.id).getBoundingClientRect().width * 2) + "px";
+//     div.id = "test"
+//     var temp = document.getElementById(ev.target.id).getBoundingClientRect();
+//     console.log(temp);
+//     div.style.left = (temp.x - ((document.getElementById(ev.target.id).getBoundingClientRect().width / 2))) + "px";
+//     div.style.position = "absolute";
+//     div.style.top = (temp.y + temp.height+30) + "px";
+//     div.style.backgroundColor = "blue"
+//     var h2=document.createElement("H6");
+//     h2.style.color="white"
+//     h2.innerText="If a user is not yet created, then add a new username and password and click register!";
+//     div.appendChild(h2);
+//     console.log("**" + (temp.x - 50) + "##" + (temp.y + temp.height));
+//     document.getElementById(ev.target.id).parentNode.appendChild(div)
+//     console.log(document.getElementById('test').getBoundingClientRect());
+// });
 
-document.getElementById("register").addEventListener('mouseover', (ev) => {
-    var div = document.createElement("DIV");
-    div.style.height = "100px";
-    div.style.width = (document.getElementById(ev.target.id).getBoundingClientRect().width * 2) + "px";
-    div.id = "test"
-    var temp = document.getElementById(ev.target.id).getBoundingClientRect();
-    console.log(temp);
-    div.style.left = (temp.x - ((document.getElementById(ev.target.id).getBoundingClientRect().width / 2))) + "px";
-    div.style.position = "absolute";
-    div.style.top = (temp.y + temp.height+30) + "px";
-    div.style.backgroundColor = "blue";
-    var h2=document.createElement("H6");
-    h2.style.color="white"
-    h2.innerText="If a user is not yet created, then add a new username and password and click register!";
-    div.appendChild(h2);
-    console.log("**" + (temp.x - 50) + "##" + (temp.y + temp.height));
-    document.getElementById(ev.target.id).parentNode.appendChild(div)
-    console.log(document.getElementById('test').getBoundingClientRect());
-});
+// document.getElementById("register").addEventListener('mouseover', (ev) => {
+//     var div = document.createElement("DIV");
+//     div.style.height = "100px";
+//     div.style.width = (document.getElementById(ev.target.id).getBoundingClientRect().width * 2) + "px";
+//     div.id = "test"
+//     var temp = document.getElementById(ev.target.id).getBoundingClientRect();
+//     console.log(temp);
+//     div.style.left = (temp.x - ((document.getElementById(ev.target.id).getBoundingClientRect().width / 2))) + "px";
+//     div.style.position = "absolute";
+//     div.style.top = (temp.y + temp.height+30) + "px";
+//     div.style.backgroundColor = "blue";
+//     var h2=document.createElement("H6");
+//     h2.style.color="white"
+//     h2.innerText="If a user is not yet created, then add a new username and password and click register!";
+//     div.appendChild(h2);
+//     console.log("**" + (temp.x - 50) + "##" + (temp.y + temp.height));
+//     document.getElementById(ev.target.id).parentNode.appendChild(div)
+//     console.log(document.getElementById('test').getBoundingClientRect());
+// });
 
 document.getElementById("login").addEventListener('mouseout', (ev) => {
     try {
