@@ -85,6 +85,10 @@ header {
     .smallScreen{
         display: none;
     }
+
+    .bigScreen{
+        display: block
+    }
 }
 
 @media only screen and (min-width: 900px) {
@@ -105,6 +109,10 @@ header {
     }
     .smallScreen{
         display:  table-cell;
+    }
+
+    .bigScreen{
+        display: none
     }
 
 }
