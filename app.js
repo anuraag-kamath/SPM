@@ -2579,6 +2579,8 @@ app.get('/user', (req, res) => {
 });
 
 app.get('/user/:id', (req, res) => {
+    console.log(req.params.id);
+    req.params.id=req.params.id.replace("_","")
     user.findById(req.params.id, (err, docs) => {
         res.send({
             user: docs.user.username

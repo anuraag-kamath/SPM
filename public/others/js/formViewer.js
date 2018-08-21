@@ -12,10 +12,11 @@ var workitemId = "";
 var submitExists = false;
 var rejectExists = false;
 onLoad = (formId, processId, workitemId, instanceId1, role) => {
+
     console.log("AM");
     fetch('/objects', {
         credentials: 'include'
-    }).then((prom) => prom.text()).then((res) => { 
+    }).then((prom) => prom.text()).then((res) => {
         objs = JSON.parse(res);
 
 
@@ -26,7 +27,7 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
             credentials: 'include'
         }).then((prom) => {
             return prom.text()
-        }).then((res) => {  
+        }).then((res) => {
             console.log(res);
 
             if (workitemId.length == 0) {
@@ -82,21 +83,30 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
 loadContents = (res, role) => {
     tempArr = (JSON.parse(res).structure)
     document.getElementById('main-section').innerHTML = "";
-    var button = document.createElement("BUTTON");
+    // var button = document.createElement("BUTTON");
+    // button.id = "comments_button"
+    // button.innerHTML = '<i class="fas fa-comment"></i>'
+    // button.style.position = "fixed";
+    // button.style.top = "6vh";
+    // button.style.marginRight = "15px";
+    // button.style.right = "0";
+    // button.style.zIndex = "1";
+    var button = document.createElement("I");
     button.id = "comments_button"
-    button.innerHTML = 'COMMENTS'
+    //button.innerHTML = '<i class="fas fa-comment"></i>'
     button.style.position = "fixed";
+    button.className = "fas fa-comment"
     button.style.top = "6vh";
-    button.style.marginRight = "15px";
+    button.style.marginRight = "25px";
     button.style.right = "0";
-    button.style.zIndex = "1";
+    button.style.zIndex = "2";
+    button.style.transform = "scale(2.5,2)";
 
     document.getElementById('main-section').appendChild(button);
 
     var commentsDiv = document.createElement("DIV");
     commentsDiv.id = "commentsDiv"
-    commentsDiv.style.height = "100%";
-    commentsDiv.style.width = "10%";
+    commentsDiv.style.height = "80%";
     commentsDiv.style.position = "fixed";
     commentsDiv.style.top = "9vh";
     commentsDiv.style.marginRight = "15px";
@@ -130,6 +140,7 @@ loadContents = (res, role) => {
     var newComment = document.createElement("INPUT");
     newComment.id = "inputComment";
     newComment.className = "commentsDiv"
+    newComment.style.width = "100%"
 
     newComment.id = "newComment";
     newCol1.appendChild(newComment);
@@ -146,15 +157,18 @@ loadContents = (res, role) => {
     newCommentButton.innerText = "+";
     newCol3.style.margin = "0"
     newCol3.style.padding = "0"
+    newCommentButton.style.width = "100%";
     newCommentButton.id = "newCommentsButton_" + instanceId1;
     newCol3.appendChild(newCommentButton);
 
     newRow.appendChild(newCol1);
     newRow.appendChild(newCol3);
-    newRow.style.marginRight = "15px"
+    newRow.style.margin = "0"
     document.getElementById('commentsDiv').appendChild(newRow);
     document.getElementById('commentsDiv').appendChild(commentsList);
     loadComments();
+    document.getElementById("commentsDiv").style.display = "none";
+
 
 
 
@@ -426,11 +440,12 @@ loadComments = () => {
 
             // newRow1.className = "row";
             newRow1.innerText = res[i].comment;
+            newRow1.style.color = "white"
             newRow1.style.marginRight = "15px"
             document.getElementById('commentsList').appendChild(newRow1);
             var newRow2 = document.createElement("DIV");
             newRow2.id = "commentsDiv2" + i;
-
+            newRow2.style.width = "6em"
             newRow2.className = "commentsDiv"
 
             // newRow2.className = "row";
@@ -900,13 +915,14 @@ putMe = (node) => {
     but3.innerText = "Close";
     but3.className = "btn btn-primary";
     but1.style.position = "fixed";
-    but1.style.bottom = "0";
+    but1.style.bottom = "15px";
+    but1.style.left = "15px";
     but2.style.position = "fixed";
-    but2.style.bottom = "0";
-    but2.style.left = "400"
+    but2.style.bottom = "15px";
+    but2.style.left = "400px";
     but3.style.position = "fixed";
-    but3.style.bottom = "0";
-    but3.style.left = "200"
+    but3.style.bottom = "15px";
+    but3.style.right = "15px";
     if (submitExists == false) {
         document.getElementById('app').appendChild(but1);
         eventPage("submit", but1.id)

@@ -1,5 +1,5 @@
 //var dms_server_url = "http://localhost:4000";
-var dms_server_url="https://damp-woodland-10129.herokuapp.com"
+var dms_server_url = "https://damp-woodland-10129.herokuapp.com"
 
 var dms_tag_id = "";
 
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* your logic here */
 
     createDms("normal")
- 
+
 
 });
 
@@ -52,11 +52,16 @@ createDms = (mode) => {
         var th3 = document.createElement("TH");
         th3.className = "dms_header";
         th1.innerText = "Name"
+        th1.style.borderBottom="1px solid black"
         table.appendChild(th1);
         table.style.width = "100%"
         th2.innerText = "Extension"
+        th2.className = "smallScreen"
+        th2.style.borderBottom="1px solid black"
         table.appendChild(th2);
         th3.innerText = "Size"
+        th3.className = "smallScreen"
+        th3.style.borderBottom="1px solid black"
         table.appendChild(th3);
         var documentDiv = document.createElement("DIV");
         documentDiv.style.display = "none";
@@ -90,6 +95,7 @@ createDms = (mode) => {
 }
 
 fetchDocuments = () => {
+    document.getElementById("dms_doc_list").innerHTML="";
     fetch(dms_server_url + '/documents?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier'), {
         method: "GET",
         headers: {
@@ -105,10 +111,15 @@ fetchDocuments = () => {
             td1.innerText = res[i]['name']
             td1.id = res[i]._id;
             td1.style.cursor = "pointer";
+            td1.style.borderBottom="1px solid black"
             var td2 = document.createElement("TD");
             td2.innerText = res[i]['ext']
+            td2.className = "smallScreen"
+            td2.style.borderBottom="1px solid black"
             var td3 = document.createElement("TD");
             td3.innerText = res[i]['totalSize']
+            td3.className = "smallScreen"
+            td3.style.borderBottom="1px solid black"
             var td5 = document.createElement("TD");
 
             td2.id = res[i]._id + "_ext";

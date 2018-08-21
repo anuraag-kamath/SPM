@@ -112,3 +112,26 @@ form {
 #addObject {
     float:right;
 }
+
+
+
+@media only screen and (max-width: 900px) {
+    .commentsDiv{
+        width: 40%;
+    }
+
+    .smallScreen{
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 900px) {
+    .commentsDiv{
+        width: 30%;
+    }
+    .smallScreen{
+        display:  table-cell;
+    }
+   
+
+}
