@@ -340,6 +340,7 @@ instanceIdLoader = (bindingId, calledFrom1) => {
         }).then((prom) => prom.text()).then((proc) => {
             console.log(JSON.parse(proc).processId + "#" + calledFrom1);
             processId = JSON.parse(proc).processId;
+            console.log("%%%"+processId);
 
             calledFrom = calledFrom1;
             console.log("****");

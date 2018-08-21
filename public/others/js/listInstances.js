@@ -25,7 +25,7 @@ listInstances = (searchParams) => {
             }
             for (var i = 0; i < res.length; i++) {
                 var alpha = "<tr>"
-                alpha += '<td>' + (i + 1) + '</td><td class="editUsers" id=' + res[i]._id + '><u style="cursor:pointer"  title="Click me to get to know the current status of the instance!">' + res[i]._id + '</u></td><td>' + res[i].processId + '</td><td  id=' + i + "_" + res[i].processId + '></td><td>' + res[i].status + '</td><td>' + res[i].user + '</td><td></td>'
+                alpha += '<td class="smallScreen">' + (i + 1) + '</td><td><u class="editUsers" id=' + res[i]._id + ' style="cursor:pointer"  title="Click me to get to know the current status of the instance!">' + res[i]._id + '</u></td><td class="smallScreen">' + res[i].processId + '</td><td  id=' + i + "_" + res[i].processId + '></td><td>' + res[i].status + '</td><td class="smallScreen">' + res[i].user + '</td><td></td>'
                 alpha += "</tr>"
 
                 document.getElementById('instances-body').innerHTML += alpha;

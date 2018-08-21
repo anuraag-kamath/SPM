@@ -184,7 +184,7 @@ checkme = (processId) => {
                             } if (document.getElementById('lbl2_' + res[i].stepId) != undefined &&
                                 document.getElementById('lbl2_' + res[i].stepId).innerText == res[i].stepName) {
                                 document.getElementById('lbl2_' + res[i].stepId).style.backgroundColor = "green";
-                                document.getElementById('lbl1_' + res[i].stepId).style.color = "white";
+                                document.getElementById('lbl2_' + res[i].stepId).style.color = "white";
 
                                 document.getElementById('lbl2_' + res[i].stepId).innerText += " -done by:" + res[i].user + " @ " + res[i].date;
 
