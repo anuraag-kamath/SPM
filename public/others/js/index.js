@@ -129,6 +129,8 @@ document.getElementById('logout').addEventListener('click', (ev) => {
 
 
 hashCheck = () => {
+    document.getElementById("smallScreenOptions").style.display = "none";
+
     if (location.hash == "#listWorkitems" || location.hash == "#workitems") {
         loadPage("workitems", "List of Workitems", "N")
     }//else if(location.hash.indexOf("frm")!=-1){
@@ -301,12 +303,12 @@ document.getElementById('loggedinUser').addEventListener('click', (ev) => {
                 },
                 body: bodyJson
             }).then((prom) => prom.text()).then((res) => {
-                    alert("Next time login with the new password");
-                    document.getElementById('pwd1').value = "";
-                    document.getElementById('pwd2').value = "";
-                    document.getElementById("userOverlay").parentNode.removeChild(document.getElementById("userOverlay"));
+                alert("Next time login with the new password");
+                document.getElementById('pwd1').value = "";
+                document.getElementById('pwd2').value = "";
+                document.getElementById("userOverlay").parentNode.removeChild(document.getElementById("userOverlay"));
 
-                })
+            })
         } else {
             alert("Passwords should be greater than 0 characters!:) and should be same");
         }
@@ -348,3 +350,14 @@ instanceIdLoader = (bindingId, calledFrom1) => {
         })
     })
 }
+
+
+document.getElementById('smallScreenBurger').addEventListener('click', (ev) => {
+    if (document.getElementById("smallScreenOptions").style.display == "none") {
+        document.getElementById("smallScreenOptions").style.display = "block";
+
+    } else {
+        document.getElementById("smallScreenOptions").style.display = "none";
+
+    }
+});

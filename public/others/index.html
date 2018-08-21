@@ -21,25 +21,30 @@
         <header>
             <div class="row">
                 <div class="col-12">
-                    <h6 class="right" id="logout">&#8627;</h6>
+                    <h6 class="right" id="logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </h6>
+                    <h6 class="right" id="smallScreenBurger">
+                        <i class="fas fa-bars"></i>
+                    </h6>
                     <h6 class="right" id="loggedinUser"></h6>
-                    <h6 class="right" id="listForms">
+                    <h6 class="right bigScreenOptions" id="listForms">
                         <a href="#listForms">List Forms</a>
                     </h6>
 
-                    <h6 class="right" id="listObjects">
+                    <h6 class="right bigScreenOptions" id="listObjects">
                         <a href="#listObjects">List Objects</a>
                     </h6>
-                    <h6 class="right" id="listProcess">
+                    <h6 class="right bigScreenOptions" id="listProcess">
                         <a href="#listProcess">List Process</a>
                     </h6>
-                    <h6 class="right" id="listInstances">
+                    <h6 class="right bigScreenOptions" id="listInstances">
                         <a href="#listInstances">List Instances</a>
                     </h6>
-                    <h6 class="right" id="listWorkitems">
+                    <h6 class="right bigScreenOptions" id="listWorkitems">
                         <a href="#listWorkitems">List Work Items</a>
                     </h6>
-                    <h6 class="right" id="listUsers">
+                    <h6 class="right bigScreenOptions" id="listUsers">
                         <a href="#listUsers">Users</a>
                     </h6>
 
@@ -48,13 +53,54 @@
             </div>
 
         </header>
-        <div id="app">
-        </div>
+        <div class="smallScreenOptions" id="smallScreenOptions">
+            <div class="row">
 
-        <div class="pop-up" id="pop-up">
+                <div class="col-12">
+                    <h6 style="text-align: center">
+                        <a href="#listForms">List Forms</a>
+                    </h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h6 style="text-align: center">
+                        <a href="#listObjects">List Objects</a>
+                    </h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h6 style="text-align: center">
+                        <a href="#listProcess">List Process</a>
+                    </h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h6 style="text-align: center">
+                        <a href="#listInstances">List Instances</a>
+                    </h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h6 style="text-align: center">
+                        <a href="#listWorkitems">List Work Items</a>
+                    </h6>
+                </div>
+            </div>
+
 
         </div>
-        <script type="application/javascript" src="js/index.js"></script>
+    </div>
+    <div id="app">
+    </div>
+
+    <div class="pop-up" id="pop-up">
+
+    </div>
+    <script type="application/javascript" src="js/index.js"></script>
 
     </div>
 </body>

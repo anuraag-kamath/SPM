@@ -39,7 +39,7 @@ fetch('/workitems?search={"status":"scheduled"}', {
                         wi_status+=" by some other user"
                     }
                 }
-                row.innerHTML = "<td>" + (i + 1) + "</td><td class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + ">" + alpha[i]._id + "</td><td  class='editUsers'  id='" + alpha[i].instanceId + "'>" + alpha[i].instanceId + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + wi_status + "</td><td>" + alpha[i].date + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
+                row.innerHTML = "<td>" + (i + 1) + "</td><td class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + "><u title='Click me to get all the objects associated with the selected workitem and instance!'>" + alpha[i]._id + "</u></td><td  class='editUsers'  id='" + alpha[i].instanceId + "'><u title='Click me to get to know the current status of the instance!'>" + alpha[i].instanceId + "</u></td><td>" + alpha[i].processName + "</td><td>" + alpha[i].stepName + "</td><td>" + wi_status + "</td><td>" + alpha[i].date + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle'></i></h3></a></td>"
 
                 // {
 
