@@ -159,6 +159,7 @@ hashCheck = () => {
         loadPage("listProcess", "List of Processes", "N");
 
     } else if (location.hash.indexOf("newpro") != -1) {
+        calledFrom=null
         processId = "";
         loadPage("process", "Process Definition", "N")
     } else if (location.hash.indexOf("frmbdr") != -1) {
@@ -174,6 +175,9 @@ hashCheck = () => {
     } else if (location.hash.indexOf("listObjects") != -1) {
         loadPage("listObjects", "List of Objects", "N")
     } else if (location.hash.indexOf("pro") != -1) {
+        calledFrom=null
+        processId = "";
+
         loadPage("process", "Process Definition", "N")
     } else if (location.hash.indexOf("listInstances") != -1) {
         loadPage("listInstances", "List of Instances", "N")

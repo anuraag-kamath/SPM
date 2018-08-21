@@ -13,7 +13,7 @@ listForms = () => {
     }).then(
         function (response) {
             return (response.text());
-        }
+        } 
     ).then(
         function (res) {
             ts = new Date().getTime();
@@ -24,7 +24,7 @@ listForms = () => {
                 for (var i = 0; i < alpha.length; i++) {
                     var row = document.createElement("tr");
 
-                    row.innerHTML = "<td>" + (i + 1) + "</td><td>" + alpha[i].name + "</td><td><i id=edit_" + alpha[i]._id + " class='edit fas fa-edit'></i></td><td><i id=delete_" + alpha[i]._id + " class='edit fas fa-ban editUsers'></i></td>"
+                    row.innerHTML = "<td class='smallScreen'>" + (i + 1) + "</td><td>" + alpha[i].name + "</td><td class='smallScreen'><i id=edit_" + alpha[i]._id + " class='edit fas fa-edit'></i></td><td class='smallScreen'><i id=delete_" + alpha[i]._id + " class='edit fas fa-ban editUsers'></i></td>"
                     document.getElementById('form-body').appendChild(row);
                     document.getElementById("delete_" + alpha[i]._id).addEventListener("click", (ev) => {
                         fetch('/process?searchForm=' + String(ev.target.id).replace("delete_", "")).then((prom) => prom.text()).then((res) => {

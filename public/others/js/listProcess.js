@@ -22,7 +22,7 @@ listProcess = () => {
                 alpha = JSON.parse(res);
                 for (var i = 0; i < alpha.length; i++) {
                     var row = document.createElement("tr");
-                    row.innerHTML = "<td>" + (i + 1) + "</td><td>" + alpha[i].processName + "</td><td>" + alpha[i].steps.length + "</td><td id=live_" + alpha[i]._id + ">0</td><td id=finished_" + alpha[i]._id + ">0</td><td class='edit' id=" + alpha[i]._id + "><a href=#pro" + alpha[i]._id + "><h3><i class='edit fas fa-edit'></i></h3></a></td><td class='trigger'><a href=#frm" + alpha[i]._id + "$" + alpha[i].formName + "><h3><i class='far fa-play-circle'></i></h3></a></td><td class='trigger'><h3><i  id=delete_" + alpha[i]._id + " class='fas fa-ban editUsers'></i></h3></td>"
+                    row.innerHTML = "<td class='smallScreen'>" + (i + 1) + "</td><td>" + alpha[i].processName + "</td><td class='smallScreen'>" + alpha[i].steps.length + "</td><td class='smallScreen' id=live_" + alpha[i]._id + ">0</td><td class='smallScreen' id=finished_" + alpha[i]._id + ">0</td><td class='edit smallScreen' id=" + alpha[i]._id + "><a href=#pro" + alpha[i]._id + "><h3><i class='edit fas fa-edit'></i></h3></a></td><td class='trigger'><a href=#frm" + alpha[i]._id + "$" + alpha[i].formName + "><h3><i class='far fa-play-circle'></i></h3></a></td><td class='trigger smallScreen'><h3><i  id=delete_" + alpha[i]._id + " class='fas fa-ban editUsers'></i></h3></td>"
                     getCount(alpha[i]._id);
 
                     document.getElementById('processes-body').appendChild(row);
