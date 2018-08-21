@@ -95,7 +95,7 @@ loadContents = (res, role) => {
     button.id = "comments_button"
     //button.innerHTML = '<i class="fas fa-comment"></i>'
     button.style.position = "fixed";
-    button.className = "fas fa-comment"
+    button.className = "fas fa-comment editUsers"
     button.style.top = "6vh";
     button.style.marginRight = "25px";
     button.style.right = "0";
