@@ -303,7 +303,7 @@ app.get('/comments/:instanceId', (req, res) => {
 
 app.post('/comments/:instanceId', (req, res) => {
     logger("API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
-
+    console.log("COMMENT SAVED for"+req.params.instanceId);
     var com = new comments({
         comment: req.body.comment,
         user: jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId,
@@ -314,6 +314,7 @@ app.post('/comments/:instanceId', (req, res) => {
     })
     com.save().then(
         (res1) => {
+            console.log("COMMENT SAVED"+res1);
             res.send();
         }
     );
