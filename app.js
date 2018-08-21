@@ -302,6 +302,7 @@ app.get('/comments/:instanceId', (req, res) => {
 })
 
 app.post('/comments/:instanceId', (req, res) => {
+    console.log("DID I COME HERE???");
     logger("API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
     console.log("COMMENT SAVED for"+req.params.instanceId);
     var com = new comments({
