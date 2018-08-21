@@ -59,6 +59,10 @@ checkme = (processId) => {
 
     if (processId != undefined) {
 
+        document.getElementById('left-menu-div').style.display = "none";
+        document.getElementById('header').style.display = "none";
+        document.getElementById('saveDiv').style.display = "none";
+
         fetch('/process?process=' + processId, {
             method: "GET",
             credentials: 'include'
@@ -128,7 +132,7 @@ checkme = (processId) => {
             if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") {
 
                 document.getElementById('mid-section-process').style.height = "100%";
-                
+
                 document.getElementById('left-menu-div').style.display = "none";
                 document.getElementById('header').style.display = "none";
                 document.getElementById('saveDiv').style.display = "none";
@@ -191,7 +195,7 @@ checkme = (processId) => {
                                 document.getElementById('lbl2_' + res[i].stepId).innerText += " -done by:" + res[i].user + " @ " + res[i].date;
 
 
-                            } 
+                            }
 
                         }
                     }
@@ -199,6 +203,10 @@ checkme = (processId) => {
 
 
 
+            }else{
+                document.getElementById('left-menu-div').style.display = "block";
+                document.getElementById('header').style.display = "block";
+                document.getElementById('saveDiv').style.display = "block";
             }
             removeLoadBar();
 
@@ -453,104 +461,107 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         newDiv.appendChild(rightDiv);
         newDiv.appendChild(cancelDiv);
         document.getElementById('process-section').appendChild(newDiv);
-        document.getElementById(('lbl2_' + ts)).addEventListener('click', (event) => {
+        if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") { } else {
 
-            console.log('APPLIED EVENT FOR lbl2_' + ts);
-            //selectRejection(document.getElementById(String(event.target.id).replace("lbl2_", "count_")).innerText);
+            document.getElementById(('lbl2_' + ts)).addEventListener('click', (event) => {
 
-            // document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
-            // document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
-            // var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
-            // document.getElementById('escalation-days').value = esc[0];
-            // document.getElementById('escalation-hours').value = esc[1];
-            // document.getElementById('escalation-minutes').value = esc[2];
+                console.log('APPLIED EVENT FOR lbl2_' + ts);
+                //selectRejection(document.getElementById(String(event.target.id).replace("lbl2_", "count_")).innerText);
 
-            // if (currentElement != "") {
-            //     document.getElementById(currentElement).style.border = "2px solid black";
-            //     document.getElementById(event.target.id).style.border = "2px solid red";
-            //     document.getElementById('name').value = event.target.innerText;
-            //     currentElement = event.target.id;
-            //     document.getElementsByTagName('footer')[0].style.display = "block";
-            //     document.getElementsByClassName('mid-section')[0].style.height = "60vh";
+                // document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
+                // document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+                // var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
+                // document.getElementById('escalation-days').value = esc[0];
+                // document.getElementById('escalation-hours').value = esc[1];
+                // document.getElementById('escalation-minutes').value = esc[2];
 
-            // }
+                // if (currentElement != "") {
+                //     document.getElementById(currentElement).style.border = "2px solid black";
+                //     document.getElementById(event.target.id).style.border = "2px solid red";
+                //     document.getElementById('name').value = event.target.innerText;
+                //     currentElement = event.target.id;
+                //     document.getElementsByTagName('footer')[0].style.display = "block";
+                //     document.getElementsByClassName('mid-section')[0].style.height = "60vh";
 
-            var tempText = document.getElementById(String(event.target.id).replace("lbl2_", "step2_")).innerText;
-            if (document.getElementById(currentElement) != undefined && currentElement != "") {
-                document.getElementById(currentElement).style.border = "2px solid black";
+                // }
 
-            }
+                var tempText = document.getElementById(String(event.target.id).replace("lbl2_", "step2_")).innerText;
+                if (document.getElementById(currentElement) != undefined && currentElement != "") {
+                    document.getElementById(currentElement).style.border = "2px solid black";
 
-            document.getElementById(event.target.id).style.border = "2px solid red";
-            document.getElementById('name').value = event.target.innerText;
-            currentElement = event.target.id;
-            document.getElementsByTagName('footer')[0].style.display = "block";
-            document.getElementsByClassName('mid-section')[0].style.height = "50vh";
-            if (String(tempText).indexOf("Human Task") != -1) {
-                document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
-                document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
-                var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
-                document.getElementById('escalation-days').value = esc[0];
-                document.getElementById('escalation-hours').value = esc[1];
-                document.getElementById('escalation-minutes').value = esc[2];
+                }
 
-                document.getElementById('participant_div').style.display = "flex";
-                document.getElementById('escalation_div').style.display = "flex";
-                document.getElementById('st-sample').style.display = "block";
-                document.getElementById('form_div').style.display = "flex";
-                document.getElementById('st_act').style.display = "none";
+                document.getElementById(event.target.id).style.border = "2px solid red";
+                document.getElementById('name').value = event.target.innerText;
+                currentElement = event.target.id;
+                document.getElementsByTagName('footer')[0].style.display = "block";
+                document.getElementsByClassName('mid-section')[0].style.height = "50vh";
+                if (String(tempText).indexOf("Human Task") != -1) {
+                    document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
+                    document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+                    var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
+                    document.getElementById('escalation-days').value = esc[0];
+                    document.getElementById('escalation-hours').value = esc[1];
+                    document.getElementById('escalation-minutes').value = esc[2];
 
-            } else {
-                document.getElementById("st-headers").innerHTML = "";
-                document.getElementById("st-queryParams").innerHTML = "";
-                document.getElementById("st-url").value = "";
+                    document.getElementById('participant_div').style.display = "flex";
+                    document.getElementById('escalation_div').style.display = "flex";
+                    document.getElementById('st-sample').style.display = "block";
+                    document.getElementById('form_div').style.display = "flex";
+                    document.getElementById('st_act').style.display = "none";
 
-                document.getElementById("st-method").value = "";
-                document.getElementById("st-input").value = "";
-                document.getElementById("st-output").value = "";
+                } else {
+                    document.getElementById("st-headers").innerHTML = "";
+                    document.getElementById("st-queryParams").innerHTML = "";
+                    document.getElementById("st-url").value = "";
+
+                    document.getElementById("st-method").value = "";
+                    document.getElementById("st-input").value = "";
+                    document.getElementById("st-output").value = "";
 
 
-                document.getElementById('participant_div').style.display = "none";
-                document.getElementById('escalation_div').style.display = "none";
-                document.getElementById('st-sample').style.display = "none";
+                    document.getElementById('participant_div').style.display = "none";
+                    document.getElementById('escalation_div').style.display = "none";
+                    document.getElementById('st-sample').style.display = "none";
 
-                document.getElementById('form_div').style.display = "none";
-                document.getElementById('st_act').style.display = "block";
+                    document.getElementById('form_div').style.display = "none";
+                    document.getElementById('st_act').style.display = "block";
 
-                console.log("##");
-                console.log(sts[currentElement]);
-
-                if (sts[currentElement] != undefined) {
+                    console.log("##");
                     console.log(sts[currentElement]);
-                    var cur = JSON.parse(sts[currentElement])
 
-                    document.getElementById('st-url').value = cur.url;
-                    document.getElementById('st-method').value = cur.method;
-                    var headers = [];
-                    var queryParams = [];
-                    document.getElementById('st-input').value = cur.input;
-                    document.getElementById('st-output').value = cur.output;
-                    console.log(currentElement);
-                    for (var i = 0; i < cur.headers.length; i++) {
-                        console.log("##");
-                        console.log(cur.headers[i].split("#"));
-                        console.log("#");
-                        addHeader(cur.headers[i].split("#")[0], cur.headers[i].split("#")[1])
+                    if (sts[currentElement] != undefined) {
+                        console.log(sts[currentElement]);
+                        var cur = JSON.parse(sts[currentElement])
+
+                        document.getElementById('st-url').value = cur.url;
+                        document.getElementById('st-method').value = cur.method;
+                        var headers = [];
+                        var queryParams = [];
+                        document.getElementById('st-input').value = cur.input;
+                        document.getElementById('st-output').value = cur.output;
+                        console.log(currentElement);
+                        for (var i = 0; i < cur.headers.length; i++) {
+                            console.log("##");
+                            console.log(cur.headers[i].split("#"));
+                            console.log("#");
+                            addHeader(cur.headers[i].split("#")[0], cur.headers[i].split("#")[1])
+                        }
+                        for (var i = 0; i < cur.queryParams.length; i++) {
+                            console.log("##");
+                            console.log(cur.queryParams[i].split("#"));
+                            console.log("#");
+                            addQueryParams(cur.queryParams[i].split("#")[0], cur.queryParams[i].split("#")[1])
+                        }
+
                     }
-                    for (var i = 0; i < cur.queryParams.length; i++) {
-                        console.log("##");
-                        console.log(cur.queryParams[i].split("#"));
-                        console.log("#");
-                        addQueryParams(cur.queryParams[i].split("#")[0], cur.queryParams[i].split("#")[1])
-                    }
+
 
                 }
 
 
-            }
-
-
-        });
+            });
+        }
 
 
     } else {
@@ -600,83 +611,85 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
     }
 
-    document.getElementById(('lbl1_' + ts)).addEventListener('click', (event) => {
-        console.log('APPLIED EVENT FOR lbl1_' + ts);
+    if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") { } else {
+        document.getElementById(('lbl1_' + ts)).addEventListener('click', (event) => {
+            console.log('APPLIED EVENT FOR lbl1_' + ts);
 
-        //selectRejection(document.getElementById(String(event.target.id).replace("lbl1_", "count_")).innerText);
-        tempText = document.getElementById(String(event.target.id).replace("lbl1_", "step1_")).innerText;
-        if (document.getElementById(currentElement) != undefined && currentElement != "") {
-            document.getElementById(currentElement).style.border = "2px solid black";
+            //selectRejection(document.getElementById(String(event.target.id).replace("lbl1_", "count_")).innerText);
+            tempText = document.getElementById(String(event.target.id).replace("lbl1_", "step1_")).innerText;
+            if (document.getElementById(currentElement) != undefined && currentElement != "") {
+                document.getElementById(currentElement).style.border = "2px solid black";
 
-        }
-        document.getElementById(event.target.id).style.border = "2px solid red";
-        document.getElementById('name').value = event.target.innerText;
-        currentElement = event.target.id;
-        document.getElementsByTagName('footer')[0].style.display = "block";
-        document.getElementsByClassName('mid-section')[0].style.height = "50vh";
+            }
+            document.getElementById(event.target.id).style.border = "2px solid red";
+            document.getElementById('name').value = event.target.innerText;
+            currentElement = event.target.id;
+            document.getElementsByTagName('footer')[0].style.display = "block";
+            document.getElementsByClassName('mid-section')[0].style.height = "50vh";
 
-        if (String(tempText).indexOf("Human Task") != -1) {
-            document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
-            document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
-            var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
-            document.getElementById('escalation-days').value = esc[0];
-            document.getElementById('escalation-hours').value = esc[1];
-            document.getElementById('escalation-minutes').value = esc[2];
+            if (String(tempText).indexOf("Human Task") != -1) {
+                document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
+                document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+                var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
+                document.getElementById('escalation-days').value = esc[0];
+                document.getElementById('escalation-hours').value = esc[1];
+                document.getElementById('escalation-minutes').value = esc[2];
 
-            document.getElementById('participant_div').style.display = "flex";
-            document.getElementById('escalation_div').style.display = "flex";
-            document.getElementById('form_div').style.display = "flex";
-            document.getElementById('st_act').style.display = "none";
+                document.getElementById('participant_div').style.display = "flex";
+                document.getElementById('escalation_div').style.display = "flex";
+                document.getElementById('form_div').style.display = "flex";
+                document.getElementById('st_act').style.display = "none";
 
-        } else {
-            document.getElementById("st-headers").innerHTML = "";
-            document.getElementById("st-queryParams").innerHTML = "";
-            document.getElementById("st-url").value = "";
-            document.getElementById("st-method").value = "";
-            document.getElementById("st-input").value = "";
-            document.getElementById("st-output").value = "";
+            } else {
+                document.getElementById("st-headers").innerHTML = "";
+                document.getElementById("st-queryParams").innerHTML = "";
+                document.getElementById("st-url").value = "";
+                document.getElementById("st-method").value = "";
+                document.getElementById("st-input").value = "";
+                document.getElementById("st-output").value = "";
 
 
-            document.getElementById('participant_div').style.display = "none";
-            document.getElementById('escalation_div').style.display = "none";
-            document.getElementById('form_div').style.display = "none";
-            document.getElementById('st_act').style.display = "block";
+                document.getElementById('participant_div').style.display = "none";
+                document.getElementById('escalation_div').style.display = "none";
+                document.getElementById('form_div').style.display = "none";
+                document.getElementById('st_act').style.display = "block";
 
-            console.log("##");
-            console.log(sts[currentElement]);
+                console.log("##");
+                console.log(sts[currentElement]);
 
-            if (sts[currentElement] != undefined) {
-                console.log(currentElement);
-                var cur = JSON.parse(sts[currentElement])
+                if (sts[currentElement] != undefined) {
+                    console.log(currentElement);
+                    var cur = JSON.parse(sts[currentElement])
 
-                document.getElementById('st-url').value = cur.url;
-                document.getElementById('st-method').value = cur.method;
-                var headers = [];
-                var queryParams = [];
-                document.getElementById('st-input').value = cur.input;
-                document.getElementById('st-output').value = cur.output;
-                console.log(currentElement);
-                for (var i = 0; i < cur.headers.length; i++) {
-                    console.log("##");
-                    console.log(cur.headers[i].split("#"));
-                    console.log("#");
-                    addHeader(cur.headers[i].split("#")[0], cur.headers[i].split("#")[1])
+                    document.getElementById('st-url').value = cur.url;
+                    document.getElementById('st-method').value = cur.method;
+                    var headers = [];
+                    var queryParams = [];
+                    document.getElementById('st-input').value = cur.input;
+                    document.getElementById('st-output').value = cur.output;
+                    console.log(currentElement);
+                    for (var i = 0; i < cur.headers.length; i++) {
+                        console.log("##");
+                        console.log(cur.headers[i].split("#"));
+                        console.log("#");
+                        addHeader(cur.headers[i].split("#")[0], cur.headers[i].split("#")[1])
+                    }
+                    for (var i = 0; i < cur.queryParams.length; i++) {
+                        console.log("##");
+                        console.log(cur.queryParams[i].split("#"));
+                        console.log("#");
+                        addQueryParams(cur.queryParams[i].split("#")[0], cur.queryParams[i].split("#")[1])
+                    }
+
                 }
-                for (var i = 0; i < cur.queryParams.length; i++) {
-                    console.log("##");
-                    console.log(cur.queryParams[i].split("#"));
-                    console.log("#");
-                    addQueryParams(cur.queryParams[i].split("#")[0], cur.queryParams[i].split("#")[1])
-                }
+
 
             }
 
 
-        }
 
-
-
-    });
+        });
+    }
 
 
 
@@ -1076,12 +1089,12 @@ document.getElementById('st-save').addEventListener('click', (ev) => {
 
 
 document.getElementById('st-method').addEventListener('change', (ev) => {
-    if(ev.target.value=="GET" || ev.target.value=="DELETE" ){
+    if (ev.target.value == "GET" || ev.target.value == "DELETE") {
 
-        document.getElementById('st-input').value="";
-//        document.getElementById('st-input').disabled=true;
-    }else{
-//        document.getElementById('st-input').disabled=false;
+        document.getElementById('st-input').value = "";
+        //        document.getElementById('st-input').disabled=true;
+    } else {
+        //        document.getElementById('st-input').disabled=false;
     }
 });
 

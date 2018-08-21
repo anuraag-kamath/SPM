@@ -47,7 +47,16 @@ loadPage = (page, message, popUp) => {
         if (popUp == "Y") {
 
             document.getElementById('pop-up').innerHTML = "";
-            document.getElementById('pop-up').innerHTML = res;
+            var button = document.createElement("BUTTON");
+            button.innerText = "CLOSE"
+            button.className = "right"
+            button.id = "closePop"
+            document.getElementById('pop-up').appendChild(button);
+            document.getElementById('pop-up').innerHTML += res;
+            document.getElementById('left-menu-div').style.display = "none";
+            document.getElementById('header').style.display = "none";
+            document.getElementById('saveDiv').style.display = "none";
+
             // if (document.getElementById('currentStyle') != undefined && document.getElementById('currentStyle') != "undefined") {
             //     document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentStyle"))
             //     document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentScript"))
@@ -75,15 +84,25 @@ loadPage = (page, message, popUp) => {
             document.getElementById("pop-up").style.position = "fixed";
             document.getElementById("pop-up").style.top = "50px";
 
-            document.getElementById("body_index").addEventListener('click', (ev) => {
-                if (String(ev.target.className).indexOf("noclick") == -1) {
-                    document.getElementById("pop-up").style.display = "none";
-                    document.getElementById("app").style.opacity = 1;
-                    if (document.getElementById('currentStylePopUp') != undefined && document.getElementById('currentStylePopUp') != "undefined") {
-                        document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentStylePopUp"))
-                        document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentScriptPopUp"))
-                    }
-                };
+            // document.getElementById("body_index").addEventListener('click', (ev) => {
+            //     if (String(ev.target.className).indexOf("noclick") == -1) {
+            //         document.getElementById("pop-up").style.display = "none";
+            //         document.getElementById("app").style.opacity = 1;
+            //         if (document.getElementById('currentStylePopUp') != undefined && document.getElementById('currentStylePopUp') != "undefined") {
+            //             document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentStylePopUp"))
+            //             document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentScriptPopUp"))
+            //         }
+            //     };
+            // })
+
+            document.getElementById("closePop").addEventListener('click', (ev) => {
+                document.getElementById("pop-up").style.display = "none";
+                document.getElementById("app").style.opacity = 1;
+                if (document.getElementById('currentStylePopUp') != undefined && document.getElementById('currentStylePopUp') != "undefined") {
+                    document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentStylePopUp"))
+                    document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentScriptPopUp"))
+                }
+
             })
 
         } else {
@@ -340,7 +359,7 @@ instanceIdLoader = (bindingId, calledFrom1) => {
         }).then((prom) => prom.text()).then((proc) => {
             console.log(JSON.parse(proc).processId + "#" + calledFrom1);
             processId = JSON.parse(proc).processId;
-            console.log("%%%"+processId);
+            console.log("%%%" + processId);
 
             calledFrom = calledFrom1;
             console.log("****");
