@@ -91,7 +91,7 @@ loadContents = (res, role) => {
     // button.style.marginRight = "15px";
     // button.style.right = "0";
     // button.style.zIndex = "1";
-    var button = document.createElement("I");
+    var button = document.createElement("BUTTON");
     button.id = "comments_button"
     //button.innerHTML = '<i class="fas fa-comment"></i>'
     button.style.position = "fixed";
