@@ -177,13 +177,14 @@ loadContents = (res, role) => {
         jsonBody = '{"comment": "' + document.getElementById('newComment').value + '"}';
         console.log(jsonBody);
         fetch('/comments/' + instanceId1, {
+            credentials: "include",
             method: "POST",
             headers: {
                 "content-type": "application/json"
             },
             body: jsonBody
         }).then((prom) => prom.text()).then((res) => {
-            alert("comment added"+JSON.parse(res)._id);
+            alert("comment added" + JSON.parse(res)._id);
             loadComments();
             document.getElementById('newComment').value = "";
         })

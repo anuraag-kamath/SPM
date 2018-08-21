@@ -195,7 +195,7 @@ app.post('/login', (req, res) => {
 app.use((req, res, next) => {
     //ABCDEF
     console.log("**/Checking Auth entered**");
-    console.log(req);
+    console.log(req.body);
     url = req.url;
     console.log(req.cookies);
     if (req.cookies.token == undefined) {
