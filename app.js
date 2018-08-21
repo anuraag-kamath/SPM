@@ -195,7 +195,6 @@ app.post('/login', (req, res) => {
 app.use((req, res, next) => {
     //ABCDEF
     console.log("**/Checking Auth entered**");
-    console.log(req.body);
     url = req.url;
     console.log(req.cookies);
     if (req.cookies.token == undefined) {
@@ -303,7 +302,6 @@ app.get('/comments/:instanceId', (req, res) => {
 })
 
 app.post('/comments/:instanceId', (req, res) => {
-    console.log("DID I COME HERE???");
     logger("API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
     console.log("COMMENT SAVED for"+req.params.instanceId);
     var com = new comments({
