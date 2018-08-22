@@ -5,7 +5,6 @@ var fetch = require('node-fetch')
 
 var { ObjectID } = require('mongodb');
 
-var fs = require('fs')
 
 var { process1 } = require('./schemas/process')
 var { processMaster } = require('./schemas/processMaster')
