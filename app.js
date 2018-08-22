@@ -195,7 +195,7 @@ app.get('/activate/:activationId/:userId', (req, res) => {
             console.log(res1.user.activated);
             if (res1.user.activated == false) {
                 res.writeHeader(200, { "Content-Type": "text/html" });
-                res.write("<input type='text' placeholder='username' id='username'><input type='password' placeholder='password' id='password1'><input type='password' placeholder='password' id='password2'><button>Create Account</button>");
+                res.write("<html><head><href rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'</head><body><input type='text' class='form-control' placeholder='username' id='username'><input type='password' class='form-control' placeholder='Enter password' id='password1'><input type='password' class='form-control' placeholder='Confirm password' id='password2'><button  class='form-control' onclick=''>Create Account</button></body></html>");
                 res.end();
 
             } else {
