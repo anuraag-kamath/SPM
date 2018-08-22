@@ -1,5 +1,6 @@
 var objects = [];
 
+var processSteps = {};
 
 var sts = {};
 
@@ -72,6 +73,11 @@ checkme = (processId) => {
             console.log(response);
             steps = JSON.parse(response)[0].steps;
             for (var i = 0; i < steps.length; i++) {
+                console.log("##$$%%");
+                console.log(steps[i]);
+                console.log("##$$%%");
+                rej1 = steps[i].rej1 || false;
+                rej2 = steps[i].rej2 || false;
                 step1 = steps[i].step1 || "";
                 step2 = steps[i].step2 || "";
                 lbl1 = steps[i].lbl1 || "";
@@ -99,7 +105,7 @@ checkme = (processId) => {
                 queryParams2 = steps[i].queryParams2 || "[]";
                 input2 = steps[i].input2 || "";
                 output2 = steps[i].output2 || "";
-                addProcess(step1, step2, lbl1, lbl2, frm1, frm2, part1, part2, steps[i]._id, days1, hours1, minutes1, days2, hours2, minutes2, url1, method1, headers1, queryParams1, input1, output1, url2, method2, headers2, queryParams2, input2, output2)
+                addProcess(step1, step2, lbl1, lbl2, frm1, frm2, part1, part2, steps[i]._id, days1, hours1, minutes1, days2, hours2, minutes2, url1, method1, headers1, queryParams1, input1, output1, url2, method2, headers2, queryParams2, input2, output2, rej1, rej2)
 
             }
             recalcCount();
@@ -203,7 +209,7 @@ checkme = (processId) => {
 
 
 
-            }else{
+            } else {
                 document.getElementById('left-menu-div').style.display = "block";
                 document.getElementById('header').style.display = "block";
                 document.getElementById('saveDiv').style.display = "block";
@@ -291,9 +297,22 @@ document.getElementById('formName').addEventListener('focusout', (event) => {
 
 });
 
+document.getElementById('rejection').addEventListener('change', (event) => {
+    console.log(event.target.value);
+    if (event.target.checked == false) {
+        document.getElementById(currentElement).setAttribute('rejection', false);
+
+    } else {
+
+        document.getElementById(currentElement).setAttribute('rejection', true);
+    }
+
+});
+
 document.getElementById('participant').addEventListener('focusout', (event) => {
     console.log(currentElement);
     console.log(event.target.value)
+
     document.getElementById(currentElement).setAttribute('participant', event.target.value);
 
 
@@ -363,7 +382,7 @@ document.getElementById('myForm').addEventListener('submit', (event) => {
 
 
     // }
-    addProcess(t1, t2, step1, step2, '', '', '', '', '', 0, 0, 0, 0, 0, 0, "", "", "[]", "[]", "", "", "", "", "[]", "[]", "", "");
+    addProcess(t1, t2, step1, step2, '', '', '', '', '', 0, 0, 0, 0, 0, 0, "", "", "[]", "[]", "", "", "", "", "[]", "[]", "", "", false, false);
 
 
     recalcCount();
@@ -388,7 +407,7 @@ dragover = (event) => {
     event.preventDefault();
 }
 
-var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1, hours1, minutes1, days2, hours2, minutes2, url1, method1, headers1, queryParams1, input1, output1, url2, method2, headers2, queryParams2, input2, output2) => {
+var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1, hours1, minutes1, days2, hours2, minutes2, url1, method1, headers1, queryParams1, input1, output1, url2, method2, headers2, queryParams2, input2, output2, rej1, rej2) => {
     console.log("@@@@@@");
     console.log(days1);
     console.log(hours1);
@@ -405,6 +424,7 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
     } else {
         ts = Math.ceil(new Date().getTime() * Math.random());
     }
+    console.log("####"+step1+"$"+step2+"#####");
     if (step1.length > 0 && step2.length > 0) {
         var newDiv = document.createElement("DIV");
         //newDiv.draggable = true;
@@ -448,11 +468,12 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         console.log(days1 + "#" + hours1 + "#" + minutes1);
         console.log(days2 + "#" + hours2 + "#" + minutes2);
         var esc1 = days1 + "#" + hours1 + "#" + minutes1;
-        leftDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "' participant='" + part1 + "' esc=" + esc1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
+
+        leftDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "' participant='" + part1 + "' esc=" + esc1 + "  rejection=" + rej1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
         var rightDiv = document.createElement("DIV");
         rightDiv.className = "col-5";
         var esc2 = days2 + "#" + hours2 + "#" + minutes2;
-        rightDiv.innerHTML = "<h6 id='step2_" + ts + "' >" + step2 + "</h6><label formName='" + frm2 + "' participant='" + part2 + "' esc=" + esc2 + " id='lbl2_" + ts + "' class='lbl noclick'>" + t2 + "</label>"
+        rightDiv.innerHTML = "<h6 id='step2_" + ts + "' >" + step2 + "</h6><label formName='" + frm2 + "' participant='" + part2 + "' esc=" + esc2 + "  rejection=" + rej2 + " id='lbl2_" + ts + "' class='lbl noclick'>" + t2 + "</label>"
         var cancelDiv = document.createElement("DIV");
         cancelDiv.className = "col-1 ctr"
         cancelDiv.innerHTML = '<h4 class="noclick" id="delete1_' + ts + '" name="delete1">X</h4>';
@@ -499,6 +520,13 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                 if (String(tempText).indexOf("Human Task") != -1) {
                     document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
                     document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+                    var checked = false;
+                    if (document.getElementById(event.target.id).getAttribute('rejection') != null && document.getElementById(event.target.id).getAttribute('rejection') == "true") {
+                        checked = true
+                    }
+                    document.getElementById("rejection").checked=checked;
+
+
                     var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
                     document.getElementById('escalation-days').value = esc[0];
                     document.getElementById('escalation-hours').value = esc[1];
@@ -508,7 +536,10 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                     document.getElementById('escalation_div').style.display = "flex";
                     document.getElementById('st-sample').style.display = "block";
                     document.getElementById('form_div').style.display = "flex";
+                    document.getElementById('st_act_div').style.display = "none";
                     document.getElementById('st_act').style.display = "none";
+                    document.getElementById('rejection_div').style.display = "flex";
+
 
                 } else {
                     document.getElementById("st-headers").innerHTML = "";
@@ -526,6 +557,10 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
                     document.getElementById('form_div').style.display = "none";
                     document.getElementById('st_act').style.display = "block";
+                    document.getElementById('st_act_div').style.display = "block";
+
+                    document.getElementById('rejection_div').style.display = "none";
+
 
                     console.log("##");
                     console.log(sts[currentElement]);
@@ -598,7 +633,7 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         var midDiv = document.createElement("DIV");
         midDiv.className = "col-6";
         var esc1 = days1 + "#" + hours1 + "#" + minutes1;
-        midDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "'  participant='" + part1 + "' esc=" + esc1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
+        midDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "'  participant='" + part1 + "'  rejection=" + rej1 + " esc=" + esc1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
         var cancelDiv = document.createElement("DIV");
         cancelDiv.className = "col-1 ctr"
         cancelDiv.innerHTML = '<h4 class="noclick" id="delete1_' + ts + '" name="delete1">X</h4>';
@@ -630,6 +665,14 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
             if (String(tempText).indexOf("Human Task") != -1) {
                 document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
                 document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
+                var checked = false;
+                console.log("@@@");
+                console.log(document.getElementById(event.target.id).getAttribute('rejection'));
+                console.log("@@@");
+                if (document.getElementById(event.target.id).getAttribute('rejection') != null && document.getElementById(event.target.id).getAttribute('rejection') == "true") {
+                    checked = true
+                }
+                document.getElementById("rejection").checked=checked;
                 var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
                 document.getElementById('escalation-days').value = esc[0];
                 document.getElementById('escalation-hours').value = esc[1];
@@ -639,6 +682,9 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                 document.getElementById('escalation_div').style.display = "flex";
                 document.getElementById('form_div').style.display = "flex";
                 document.getElementById('st_act').style.display = "none";
+                document.getElementById('st_act_div').style.display = "none";
+
+                document.getElementById('rejection_div').style.display = "flex";
 
             } else {
                 document.getElementById("st-headers").innerHTML = "";
@@ -653,6 +699,9 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                 document.getElementById('escalation_div').style.display = "none";
                 document.getElementById('form_div').style.display = "none";
                 document.getElementById('st_act').style.display = "block";
+                document.getElementById('st_act_div').style.display = "block";
+
+                document.getElementById('rejection_div').style.display = "none";
 
                 console.log("##");
                 console.log(sts[currentElement]);
@@ -775,10 +824,11 @@ document.getElementById("save-process").addEventListener('click', (event) => {
         lbl1 = document.getElementById('lbl1_' + id).innerText;
         frm1 = document.getElementById('lbl1_' + id).getAttribute('formName');
         part1 = document.getElementById('lbl1_' + id).getAttribute('participant');
+        rej1 = document.getElementById('lbl1_' + id).getAttribute('rejection');
         days1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[0];
         hours1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[1];
         minutes1 = document.getElementById('lbl1_' + id).getAttribute('esc').split("#")[2];
-
+        
         url1 = '""';
         method1 = '""';
         headers1 = "[]";
@@ -814,7 +864,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
 
 
         step2 = "";
-        json += '{"step1":"' + step1 + '","lbl1":"' + lbl1 + '","frm1":"' + frm1 + '","part1":"' + part1 + '"' + ',"days1":' + days1 + ',"hours1":' + hours1 + ',"minutes1":' + minutes1 + ',"method1":' + method1 + ',"url1":' + url1 + ',"headers1":' + headers1 + ',"queryParams1":' + queryParams1 + ',"input1":' + input1 + ',"output1":' + output1;
+        json += '{"step1":"' + step1 + '","lbl1":"' + lbl1 + '","frm1":"' + frm1 + '","part1":"' + part1 + '"' + ',"days1":' + days1 + ',"hours1":' + hours1 + ',"minutes1":' + minutes1 + ',"method1":' + method1 + ',"url1":' + url1 + ',"headers1":' + headers1 + ',"queryParams1":' + queryParams1 + ',"input1":' + input1 + ',"rej1":' + rej1 + ',"output1":' + output1;
         if (step1.indexOf("Service") == -1 && (step1.length == 0 ||
             lbl1.length == 0 ||
             frm1.length == 0 ||
@@ -842,6 +892,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             days2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[0];
             hours2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[1];
             minutes2 = document.getElementById('lbl2_' + id).getAttribute('esc').split("#")[2];
+            rej2 = document.getElementById('lbl2_' + id).getAttribute('rejection');
 
             url2 = '""';
             method2 = '""';
@@ -882,7 +933,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
 
             }
 
-            json += ',"step2":"' + step2 + '","lbl2":"' + lbl2 + '","frm2":"' + frm2 + '","part2":"' + part2 + '"' + ',"days2":' + days2 + ',"hours2":' + hours2 + ',"minutes2":' + minutes2 + ',"method2":' + method2 + ',"url2":' + url2 + ',"headers2":' + headers2 + ',"queryParams2":' + queryParams2 + ',"input2":' + input2 + ',"output2":' + output2;
+            json += ',"step2":"' + step2 + '","lbl2":"' + lbl2 + '","frm2":"' + frm2 + '","part2":"' + part2 + '"' + ',"days2":' + days2 + ',"hours2":' + hours2 + ',"minutes2":' + minutes2 + ',"method2":' + method2 + ',"url2":' + url2 + ',"headers2":' + headers2 + ',"queryParams2":' + queryParams2 + ',"input2":' + input2 + ',"rej2":' + rej2 + ',"output2":' + output2;
             if (step2.indexOf("Service") == -1 && (step2.length == 0 ||
                 lbl2.length == 0 ||
                 frm2.length == 0 ||

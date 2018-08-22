@@ -54,6 +54,9 @@ var workitem = mongoose.model('workitem', {
     },
     currentUser: {
         type: String
+    },
+    rejectionApplicable: {
+        type: Boolean
     }
 })
 

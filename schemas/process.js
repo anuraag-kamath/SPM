@@ -39,6 +39,9 @@ var process1 = mongoose.model('process',
                 minutes1: {
                     type: Number
                 },
+                rej1: {
+                    type: Boolean
+                },
                 method1:{
                     type: String
                 },
@@ -55,6 +58,9 @@ var process1 = mongoose.model('process',
                     type: String
                 },
                 output1: {
+                    type: String
+                },
+                step2: {
                     type: String
                 },
                 lbl2: {
@@ -74,6 +80,9 @@ var process1 = mongoose.model('process',
                 },
                 minutes2: {
                     type: Number
+                },
+                rej2: {
+                    type: Boolean
                 },
                 url2:{
                     type: String

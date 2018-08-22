@@ -214,11 +214,21 @@
                     </div>
                     <div class="col-5"></div>
                 </div>
-                <div class="row">
+                <div class="row" id="rejection_div">
+                    <div class="col-12" style="text-align:left;padding-left: 4em;">
+                        Rejection Applicable:
+                        <input type="checkbox" id="rejection" style="width:1em">
+
+                    </div>
+                    
+                </div>
+
+                <div class="row" id="st_act_div">
                     <div class="col-12" id="st_act">
                         <div class="row">
                             <div class="col-12">
-                                <strong>Select an object name in query string or params. Like for instance:-employee_v0._id. Object cannot be an array.Only 1 param will work!</strong>
+                                <strong>Select an object name in query string or params. Like for instance:-employee_v0._id. Object
+                                    cannot be an array.Only 1 param will work!</strong>
                             </div>
                         </div>
 
@@ -292,13 +302,13 @@
                     </div>
                     <div class="row" id="st-sample">
                         <div class="col-5">
-                            <textarea  rows="6" cols="40" placeholder="SAMPLE INPUT" id="sampleInput"></textarea>
+                            <textarea rows="6" cols="40" placeholder="SAMPLE INPUT" id="sampleInput"></textarea>
                         </div>
                         <div class="col-2">
                             <button id="tryOut">Try Out</button>
                         </div>
                         <div class="col-5">
-                            <textarea rows="6" cols="40"  disabled placeholder="SAMPLE OUTPUT" id="sampleOutput"></textarea>
+                            <textarea rows="6" cols="40" disabled placeholder="SAMPLE OUTPUT" id="sampleOutput"></textarea>
                         </div>
                     </div>
                 </div>

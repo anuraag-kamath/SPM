@@ -1033,6 +1033,7 @@ app.post('/instance/:id', (req, res) => {
             var escalationDate = date;
             var escalationTriggered = false;
             var escalationApplicable = false;
+            var rejectionApplicable = false;
             console.log("###");
             console.log(escalationDate);
             console.log("###");
@@ -1048,6 +1049,9 @@ app.post('/instance/:id', (req, res) => {
                 escalationApplicable = true;
                 escalationDate.setMinutes(escalationDate.getMinutes() + (data2).steps[0].minutes1)
 
+            }
+            if ((data2).steps[0].rej1 == true) {
+                rejectionApplicable = true;
             }
             console.log("###");
             console.log(escalationDate);
@@ -1066,7 +1070,8 @@ app.post('/instance/:id', (req, res) => {
                 escalationTriggered,
                 escalationApplicable,
                 escalationStatus: 'notTriggered',
-                date: new Date()
+                date: new Date(),
+                rejectionApplicable
             })
 
 
@@ -1094,6 +1099,44 @@ whatsNext = () => {
 
 }
 
+app.get('/rejectionSteps/:wid', (req, res) => {
+    var wid = req.params.wid;
+    workitem.findById(wid, (err, res2) => {
+        var processId = res2.processId;
+        var stepId = res2.stepId;
+        process1.findById(processId, (err, res3) => {
+            var steps = res3.steps;
+            var rejArr = {};
+            for (var i = 0; i < steps.length; i++) {
+                console.log(stepId + "####" + steps[i]._id);
+                if (stepId == steps[i]._id) {
+                    break;
+                } else {
+                    if (steps[i].step1 == "Human Task") {
+                        rejArr["lbl1_" + steps[i]._id] = {
+                            stepId: steps[i]._id,
+                            stepName: steps[i].lbl1,
+                            stepType: steps[i].step1,
+                            stepForm: steps[i].frm1,
+                            stepNumber: "lbl1"
+
+                        }
+                    }
+                    if (steps[i].lbl2 != undefined && steps[i].lbl2 !== 'undefined' && steps[i].lbl2.length > 0 && steps[i].step2 == "Human Task") {
+                        rejArr["lbl2_" + steps[i]._id] = {
+                            stepId: steps[i]._id,
+                            stepName: steps[i].lbl2,
+                            stepType: steps[i].step2,
+                            stepForm: steps[i].frm2,
+                            stepNumber: "lbl2"
+                        }
+                    }
+                }
+            }
+            res.send(rejArr)
+        })
+    })
+})
 
 app.get('/searchObjects/:id', (req, res) => {
     var instanceId = req.params.id;
@@ -1106,6 +1149,152 @@ app.get('/searchObjects/:id', (req, res) => {
 
 var oldObjects = [];
 
+app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
+    var workitemId = req.params.wid;
+    var rejectStep = req.params.rejectToStep
+    var userSearch = jsonwebtoken.verify(token, "alphabetagamma").userId
+    user.findById(userSearch, (err, res123) => {
+        workitem.findByIdAndUpdate(workitemId, {
+            status: "rejected",
+            user: res123.user.username,
+            date: new Date()
+        }).then(
+            (doc) => {
+                workitem.find({ "instanceId": doc.instanceId, "status": "scheduled" }).then((docs) => {
+
+                    console.log("#R#R#R#");
+                    console.log(docs);
+                    console.log("#R#R#R#");
+
+                    if (docs.length != 0) {
+                        for (var d = 0; d < docs.length; d++) {
+                            console.log("###RR###"+docs[d]._id);
+                            workitem.findByIdAndUpdate(docs[d]._id, {
+                                status: "parallelReject",
+                                user: res123.user.username,
+                                date: new Date()
+                            },(err,res44)=>{
+                                console.log("#T#T#T");
+                                console.log(err);
+                                console.log(res44);
+                                console.log("#T#T#T");
+                            });
+                        }
+
+
+                    };
+                });
+
+
+                process1.findById(doc.processId, (err, doc1) => {
+                    
+                    jumpTo = String(rejectStep).substr((String(rejectStep).indexOf("_") + 1));
+                    jumpToLbl = String(rejectStep).substr(0, String(rejectStep).indexOf("_"));
+                    console.log(jumpTo+"#"+jumpToLbl+"#"+String(rejectStep));
+                    for (var i = 0; i < doc1.steps.length; i++) {
+                        console.log("SEARCHING"+doc1.steps[i]._id);
+                        if (doc1.steps[i]._id == jumpTo) {
+                            console.log("GOTCHA");
+                            var status = "";
+                            var date = new Date();
+                            var escalationDate = date;
+                            var escalationTriggered = false;
+                            var escalationApplicable = false;
+                            var rejectionApplicable = false;
+
+                            if (String(rejectStep).indexOf("lbl1") != -1) {
+                                if (doc1.steps[i].days1 > 0) {
+                                    escalationApplicable = true;
+                                    escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days1)
+                                }
+                                if (doc1.steps[i].hours1 > 0) {
+                                    escalationApplicable = true;
+                                    escalationDate.setHours(escalationDate.getHours() + doc1.steps[i].hours1)
+                                }
+                                if (doc1.steps[i].minutes1 > 0) {
+                                    escalationApplicable = true;
+                                    escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes1)
+
+                                }
+                                if ((doc1).steps[i].rej1 == true) {
+                                    rejectionApplicable = true;
+                                }
+
+
+
+                                var wi1 = new workitem({
+                                    processName: doc.processName,
+                                    processId: doc.processId,
+                                    instanceId: doc.instanceId,
+                                    status: "scheduled",
+                                    stepName: doc1.steps[i].lbl1,
+                                    stepType: (doc1).steps[i].step1,
+                                    stepId: (doc1).steps[i]._id,
+                                    formId: (doc1).steps[i].frm1,
+                                    participant: (doc1).steps[i].part1,
+                                    escalationDate,
+                                    escalationTriggered,
+                                    escalationApplicable,
+                                    escalationStatus: 'notTriggered',
+                                    date: new Date(),
+                                    rejectionApplicable
+                                })
+                                wi1.save().then((doc) => {
+                                    console.log("SAVED1" + doc);
+                                    res.send({})
+
+                                })
+
+                            } else {
+                                if (doc1.steps[i].days2 > 0) {
+                                    escalationApplicable = true;
+                                    escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days2)
+                                }
+                                if (doc1.steps[i].hours2 > 0) {
+                                    escalationApplicable = true;
+                                    escalationDate.setHours(escalationDate.getHours() + doc1.steps[i].hours2)
+                                }
+                                if (doc1.steps[i].minutes2 > 0) {
+                                    escalationApplicable = true;
+                                    escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes2)
+
+                                }
+                                if ((doc1).steps[i].rej2 == true) {
+                                    rejectionApplicable = true;
+                                }
+
+
+
+                                var wi1 = new workitem({
+                                    processName: doc.processName,
+                                    processId: doc.processId,
+                                    instanceId: doc.instanceId,
+                                    status: "scheduled",
+                                    stepName: doc1.steps[i].lbl2,
+                                    stepType: (doc1).steps[i].step2,
+                                    stepId: (doc1).steps[i]._id,
+                                    formId: (doc1).steps[i].frm2,
+                                    participant: (doc1).steps[i].part2,
+                                    escalationDate,
+                                    escalationTriggered,
+                                    escalationApplicable,
+                                    escalationStatus: 'notTriggered',
+                                    date: new Date(),
+                                    rejectionApplicable
+                                })
+                                wi1.save().then((doc) => {
+                                    res.send({})
+                                })
+
+                            }
+
+                        }
+                    }
+                });
+            });
+    });
+});
+
 //PENDING
 app.post('/instance/:id/:wid', (req, res) => {
     instanceWorkitemExecutor(req.params.id, req.params.wid, req.body.objects, req.cookies.token, res, "actual")
@@ -1115,7 +1304,9 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
     console.log("**/instance entered**");
 
     workitem.findById(wid, (err, resWI) => {
-        if (resWI.status != "finished") {
+        if (resWI.status != "finished" &&
+            resWI.status != "rejected" &&
+            resWI.status != "parallelReject") {
             instanceId = id;
             workitemId = wid;
             objects = JSON.parse(objects);
@@ -1179,6 +1370,8 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                 var escalationDate = date;
                                                 var escalationTriggered = false;
                                                 var escalationApplicable = false;
+                                                var rejectionApplicable = false;
+
                                                 if (doc1.steps[i].days1 > 0) {
                                                     escalationApplicable = true;
                                                     escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days1)
@@ -1192,6 +1385,10 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                     escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes1)
 
                                                 }
+                                                if ((doc1).steps[i].rej1 == true) {
+                                                    rejectionApplicable = true;
+                                                }
+
                                                 var wi1 = new workitem({
                                                     processName: doc1.processName,
                                                     processId: doc.processId,
@@ -1206,7 +1403,8 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                     escalationTriggered,
                                                     escalationApplicable,
                                                     escalationStatus: 'notTriggered',
-                                                    date: new Date()
+                                                    date: new Date(),
+                                                    rejectionApplicable
                                                 })
                                                 wi1.save().then((doc) => {
                                                     console.log("SAVED1" + doc);
@@ -1220,6 +1418,7 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                     var escalationDate = date;
                                                     var escalationTriggered = false;
                                                     var escalationApplicable = false;
+                                                    var rejectionApplicable = false;
                                                     if (doc1.steps[i].days2 > 0) {
                                                         escalationApplicable = true;
                                                         escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days2)
@@ -1233,6 +1432,11 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                         escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes2)
 
                                                     }
+
+                                                    if ((doc1).steps[i].rej2 == true) {
+                                                        rejectionApplicable = true;
+                                                    }
+
                                                     var wi2 = new workitem({
                                                         processName: doc1.processName,
                                                         processId: doc.processId,
@@ -1247,7 +1451,8 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                         escalationTriggered,
                                                         escalationApplicable,
                                                         escalationStatus: 'notTriggered',
-                                                        date: new Date()
+                                                        date: new Date(),
+                                                        rejectionApplicable
                                                     })
                                                     wi2.save().then((doc) => {
                                                         console.log("SAVED2" + doc);
@@ -1290,7 +1495,13 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
 
 
         } else {
-            res.send({ status: "ERROR", message: "Work Item already submitted by " + resWI.user + " at " + resWI.date + " .Your changes will be discarded!You will be redirected to the Workitems list." });
+            var stmes = "already submitted by"
+            if (resWI.status == "rejected") {
+                stmes = "rejected by"
+            } else if (resWI.status == "parallelReject") {
+                stmes = "of a parallel step rejected by"
+            }
+            res.send({ status: "ERROR", message: "Work Item " + stmes + " " + resWI.user + " at " + resWI.date + " .Your changes will be discarded!You will be redirected to the Workitems list." });
 
 
         }

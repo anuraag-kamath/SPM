@@ -13,6 +13,7 @@ var submitExists = false;
 var rejectExists = false;
 onLoad = (formId, processId, workitemId, instanceId1, role) => {
 
+
     console.log("AM");
     fetch('/objects', {
         credentials: 'include'
@@ -184,7 +185,6 @@ loadContents = (res, role) => {
             },
             body: jsonBody
         }).then((prom) => prom.text()).then((res) => {
-            alert("comment added" + JSON.parse(res)._id);
             loadComments();
             document.getElementById('newComment').value = "";
         })
@@ -489,10 +489,10 @@ document.addEventListener('click', (ev) => {
             document.getElementById("commentsDiv").style.display = "none";
         };
         if (String(ev.target.id).indexOf("comments_button") != -1) {
-            if(document.getElementById("commentsDiv").style.display=="none"){
+            if (document.getElementById("commentsDiv").style.display == "none") {
                 document.getElementById("commentsDiv").style.display = "block";
 
-            }else{
+            } else {
                 document.getElementById("commentsDiv").style.display = "none";
 
             }
@@ -504,129 +504,145 @@ document.addEventListener('click', (ev) => {
 eventPage = (type, id) => {
     document.getElementById(id).addEventListener('click', (ev) => {
         ev.preventDefault();
-        var tempCount = 0;
-        var jsonBody = "{";
-        var problemField = "";
 
-        for (var i = 0; i < tempArr.length; i++) {
-            if (tempArr[i].tagName == "FORM") {
-                if (tempCount != 0) {
-                    jsonBody += ",";
-                }
-                tempCount++;
-                var bind_element = tempArr[i].binding;
-                jsonBody += '"' + bind_element + '":{';
-
-                for (var j = 0; j < objs.length; j++) {
-
-                    if (bind_element == objs[j].schemaName) {
-                        var schema = objs[j].schemaStructure;
-                        var le = 0;
-                        for (key in schema) {
-                            le++;
-                            if (schema[key].control == "radio") {
-
-                                var ts = schema[key].options.split(",")
-                                var checkedEl = "";
-                                for (k in ts) {
-                                    console.log(tempArr[i].id + "_" + key + "_" + k);
-                                    if (document.getElementById(tempArr[i].id + "_" + key + "_" + k).checked) {
-                                        checkedEl = k;
-                                    }
-                                }
-                                jsonBody += '"' + key + '":"' + checkedEl + '"'
-
-
-
-                            } else {
-
-                                if (document.getElementById(tempArr[i].id + "_" + key).checkValidity() == false) {
-                                    alert("Focussing on the problematic field");
-                                    problemField = tempArr[i].id + "_" + key;
-                                    break;
-
-                                }
-
-                                jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
-
-                            }
-                            if (le != (Object.keys(schema).length)) {
-                                jsonBody += ",";
-                            }
-                        }
-                    }
-
-
-                }
-                jsonBody += "}";
-
-            } else if (tempArr[i].tagName == "TABLE") {
-                if (tempCount != 0) {
-                    jsonBody += ",";
-                }
-                tempCount++;
-
-                tbodyC = document.getElementById("tbody" + tempArr[i].id).childNodes;
-                jsonBody += '"' + tempArr[i].binding + '":[';
-
-
-                for (var l = 0; l < tbodyC.length; l++) {
-                    var tempJson = "{";
-                    for (var m = 0; m < tbodyC[l].childNodes.length; m++) {
-                        tempJson += '"' + tbodyC[l].childNodes[m].getAttribute('value') + '":"' + tbodyC[l].childNodes[m].innerText + '"';
-                        if (m != tbodyC[l].childNodes.length - 1) {
-                            tempJson += ",";
-                        }
-                    }
-                    tempJson += "}"
-                    if (l != (tbodyC.length - 1)) {
-                        tempJson += ","
-
-                    }
-                    jsonBody += tempJson;
-
-                }
-                jsonBody += "]"
-
-
-            }
-
-        }
-        if (problemField.length > 0) {
-            console.log(problemField);
-            document.getElementById(problemField).focus();
-        } else {
-            jsonBody += "}"
-            var wi = "";
-            if (workitemId.length > 0) {
-                wi = "/" + workitemId;
-            }
-            var sendJson = {
-                "processId": processId,
-                "instanceId1": instanceId1,
-                "objects": jsonBody
-            };
-            //alert(instanceId1);
-            fetch('/instance/' + instanceId1 + wi, {
-                method: "POST",
-                headers: {
-                    'content-type': 'application/json'
-
-                },
-                credentials: 'include',
-                body: JSON.stringify(sendJson)
-            }).then((prom) => {
-                return prom.text()
-            }).then((res) => {
-                if(JSON.parse(res).status!="OK"){
-                    alert(JSON.parse(res).message);
-                }
+        if (type == "reject") {
+            fetch('/rejectWorkItem/' + workitemId + '/' + document.getElementById('rejectSelect').value, {
+                credentials: "include",
+                method: "GET"
+            }).then((prom) => prom.text()).then((rr) => {
                 window.location.hash = "workitems"
-            })
 
+            })
+        } else {
+
+            var tempCount = 0;
+            var jsonBody = "{";
+            var problemField = "";
+
+            for (var i = 0; i < tempArr.length; i++) {
+                if (tempArr[i].tagName == "FORM") {
+                    if (tempCount != 0) {
+                        jsonBody += ",";
+                    }
+                    tempCount++;
+                    var bind_element = tempArr[i].binding;
+                    jsonBody += '"' + bind_element + '":{';
+
+                    for (var j = 0; j < objs.length; j++) {
+
+                        if (bind_element == objs[j].schemaName) {
+                            var schema = objs[j].schemaStructure;
+                            var le = 0;
+                            for (key in schema) {
+                                le++;
+                                if (schema[key].control == "radio") {
+
+                                    var ts = schema[key].options.split(",")
+                                    var checkedEl = "";
+                                    for (k in ts) {
+                                        console.log(tempArr[i].id + "_" + key + "_" + k);
+                                        if (document.getElementById(tempArr[i].id + "_" + key + "_" + k).checked) {
+                                            checkedEl = k;
+                                        }
+                                    }
+                                    jsonBody += '"' + key + '":"' + checkedEl + '"'
+
+
+
+                                } else {
+
+                                    if (document.getElementById(tempArr[i].id + "_" + key).checkValidity() == false) {
+                                        alert("Focussing on the problematic field");
+                                        problemField = tempArr[i].id + "_" + key;
+                                        break;
+
+                                    }
+
+                                    jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
+
+                                }
+                                if (le != (Object.keys(schema).length)) {
+                                    jsonBody += ",";
+                                }
+                            }
+                        }
+
+
+                    }
+                    jsonBody += "}";
+
+                } else if (tempArr[i].tagName == "TABLE") {
+                    if (tempCount != 0) {
+                        jsonBody += ",";
+                    }
+                    tempCount++;
+
+                    tbodyC = document.getElementById("tbody" + tempArr[i].id).childNodes;
+                    jsonBody += '"' + tempArr[i].binding + '":[';
+
+
+                    for (var l = 0; l < tbodyC.length; l++) {
+                        var tempJson = "{";
+                        for (var m = 0; m < tbodyC[l].childNodes.length; m++) {
+                            tempJson += '"' + tbodyC[l].childNodes[m].getAttribute('value') + '":"' + tbodyC[l].childNodes[m].innerText + '"';
+                            if (m != tbodyC[l].childNodes.length - 1) {
+                                tempJson += ",";
+                            }
+                        }
+                        tempJson += "}"
+                        if (l != (tbodyC.length - 1)) {
+                            tempJson += ","
+
+                        }
+                        jsonBody += tempJson;
+
+                    }
+                    jsonBody += "]"
+
+
+                }
+
+            }
+            if (problemField.length > 0) {
+                console.log(problemField);
+                document.getElementById(problemField).focus();
+            } else {
+                jsonBody += "}"
+                var wi = "";
+                if (workitemId.length > 0) {
+                    wi = "/" + workitemId;
+                }
+                var sendJson = {
+                    "processId": processId,
+                    "instanceId1": instanceId1,
+                    "objects": jsonBody
+                };
+                //alert(instanceId1);
+                fetch('/instance/' + instanceId1 + wi, {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json'
+
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(sendJson)
+                }).then((prom) => {
+                    return prom.text()
+                }).then((res) => {
+                    if (JSON.parse(res).status != "OK") {
+                        if (JSON.parse(res).message != undefined && JSON.parse(res).message !== 'undefined')
+                            alert(JSON.parse(res).message);
+                    }
+                    window.location.hash = "workitems"
+                })
+
+            }
         }
     });
+
 }
+
+var rejectionOptions = "";
 
 if (location.hash.substr(1).indexOf("frm") != -1) {
     formId = location.hash.substr(4).split("$")[1];
@@ -648,22 +664,54 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
         instanceId1 = res.instanceId;
 
         role = res.participant;
+        rejectionApplicable = res.rejectionApplicable;
+
+        if (workitemId.length > 0) {
+            fetch('/rejectionSteps/' + workitemId, {
+                credentials: "include",
+                method: "GET"
+            }).then((prom) => prom.text()).then((steps) => {
+                console.log("###");
+                console.log(steps);
+                steps = JSON.parse(steps);
+                console.log("HERE I AM ")
+                console.log(steps);
+                var keys = Object.keys(steps)
+                rejectionOptions = "<option value=''></option>"
+                if (keys.length > 0) {
+
+                    for (var i = 0; i < keys.length; i++) {
+                        rejectionOptions += "<option value='" + steps[keys[i]].stepNumber + "_" + steps[keys[i]].stepId + "'>" + steps[keys[i]].stepName + "</option>"
+                    }
+                } else {
+
+
+
+                }
+                fetch('/roles?ids=' + role, {
+                    credentials: 'include'
+                }).then((prom) => prom.text()).then((res123) => {
+                    console.log(res);
+                    console.log(res.instanceId + "!!@@");
+                    instanceId1 = res.instanceId;
+                    onLoad(formId, processId, workitemId, res.instanceId, res123);
+                })
+                console.log("###");
+            })
+
+
+        }
+
 
         console.log("Instance ID after loading existing process:-" + instanceId1);
         //alert(instanceId1);
 
-        fetch('/roles?ids=' + role, {
-            credentials: 'include'
-        }).then((prom) => prom.text()).then((res123) => {
-            console.log(res);
-            console.log(res.instanceId + "!!@@");
-            instanceId1 = res.instanceId;
-            onLoad(formId, processId, workitemId, res.instanceId, res123);
-        })
 
     })
 
 }
+
+
 
 loadObjects = () => {
     console.log("***************");
@@ -912,10 +960,20 @@ putMe = (node) => {
 
     //     }
     // }
-
+    var divDown = document.createElement("DIV");
+    divDown.style.display = "flex";
     var but1 = document.createElement('BUTTON');
     var but2 = document.createElement('BUTTON');
     var but3 = document.createElement('BUTTON');
+    var sel = document.createElement("SELECT");
+    sel.className = "form-control"
+    sel.id = "rejectSelect";
+    // sel.style.position = "fixed";
+    sel.style.width = "100px"
+
+    // sel.style.bottom = "15px";
+
+
     but1.id = "Submit" + new Date().getTime();
     but2.id = "Reject";
     but3.id = "Close";
@@ -925,32 +983,56 @@ putMe = (node) => {
     but2.className = "btn btn-primary";
     but3.innerText = "Close";
     but3.className = "btn btn-primary";
-    but1.style.position = "fixed";
-    but1.style.bottom = "15px";
-    but1.style.left = "15px";
-    but2.style.position = "fixed";
-    but2.style.bottom = "15px";
-    but2.style.left = "400px";
+    divDown.style.position = "fixed";
+    divDown.style.bottom = "15px";
+    divDown.style.left = "15px";
+
+    // but1.style.position = "fixed";
+    // but1.style.bottom = "15px";
+    // but1.style.left = "15px";
     but3.style.position = "fixed";
-    but3.style.bottom = "15px";
     but3.style.right = "15px";
-    if (submitExists == false) {
-        document.getElementById('app').appendChild(but1);
-        eventPage("submit", but1.id)
-        document.getElementById('app').appendChild(but3);
-        document.getElementById('Close').addEventListener('click', (ev) => {
-            fetch('/workitems/' + workitemId, {
-                credentials: "include",
-                method: "PUT"
-            }).then((prom) => prom.text()).then((res) => {
-                window.location.hash = "workitems"
-            })
-        })
-    }
-    if (rejectExists == false) {
-        //document.getElementById('app').appendChild(but2);
+
+    // but2.style.bottom = "15px";
+    // but2.style.left = "350px";
+    // but3.style.position = "fixed";
+    // but3.style.bottom = "15px";
+    but3.style.right = "15px";
+    //        document.getElementById('app').appendChild(but1);
+    //eventPage("submit", but1.id)
+    //        document.getElementById('app').appendChild(but3);
+    divDown.appendChild(but1);
+    if (rejectionOptions.length > 0 && rejectionApplicable == true) {
+        sel.innerHTML = rejectionOptions
+        divDown.appendChild(sel);
+        divDown.appendChild(but2);
 
     }
+    divDown.appendChild(but3);
+
+    // document.getElementById('app').appendChild(sel);
+    // document.getElementById('app').appendChild(but2);
+    //        document.getElementById('rejectSelect').style.left = (400 - document.getElementById('Reject').getBoundingClientRect().width - 80) + "px";
+
+    console.log("#@!");
+    console.log(divDown);
+    console.log("#@!");
+    document.getElementById('app').appendChild(divDown);
+
+    if (rejectionOptions.length > 0 && rejectionApplicable == true) {
+        eventPage("reject", but2.id)
+
+    }
+
+    eventPage("submit", but1.id)
+    document.getElementById('Close').addEventListener('click', (ev) => {
+        fetch('/workitems/' + workitemId, {
+            credentials: "include",
+            method: "PUT"
+        }).then((prom) => prom.text()).then((res) => {
+            window.location.hash = "workitems"
+        })
+    })
 
 
 
