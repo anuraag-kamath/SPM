@@ -35,13 +35,13 @@ document.getElementById('sendActivationLink').addEventListener('click', (ev) => 
             headers: {
                 "content-type": "application/json"
             },
-            body:bodyJSON
+            body: bodyJSON
         }).then((prom) => prom.text()).then((res) => {
-                res = JSON.parse(res);
-                document.getElementById('mess').innerText = res.message;
-                document.getElementById('mess').style.visibility = "visible"
-                removeLoadBar();
-            })
+            res = JSON.parse(res);
+            document.getElementById('mess').innerText = res.message;
+            document.getElementById('mess').style.visibility = "visible"
+            removeLoadBar();
+        })
 
     }
     else {
@@ -74,7 +74,7 @@ loginRegister = (type) => {
         return prom.text();
     }).then((res) => {
         console.log("********");
-        console.log(res);
+        res = JSON.parse(res)
         console.log("********");
         if (res.error != undefined && res.error != "undefined" && res.error.length > 0) {
             document.getElementById('mess').innerText = res.error;

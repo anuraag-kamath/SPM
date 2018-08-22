@@ -187,6 +187,29 @@ app.post('/login', (req, res) => {
 
 })
 
+app.get('/activate/:activationId/:userId', (req, res) => {
+    activationId = req.params.activationId;
+    user.findById(req.params.userId, (err, res1) => {
+        if (res1.user.activationId == activationId) {
+            res1.user.activated = true;
+            user.findByIdAndUpdate(req.params.userId, res1, (err, res2) => {
+                res.writeHeader(200, { "Content-Type": "text/html" });
+                res.write("Activated! <a href='/login'>Click here to login!</a>");
+                res.end();
+
+            })
+
+        } else {
+            res.writeHeader(200, { "Content-Type": "text/html" });
+            res.write("Invalid Content! <a href='/login'>Click here to login!</a>");
+            res.end();
+
+
+        }
+    })
+})
+
+
 app.post('/resendActivationLink', (req, res) => {
     console.log("IN HERE");
 
@@ -207,6 +230,63 @@ app.post('/resendActivationLink', (req, res) => {
     })
 
 
+
+
+
+})
+
+app.post('/register', (req, res) => {
+    console.log("**/register entered**");
+    var username = req.body.username;
+    var password = req.body.password;
+    var email = req.body.email;
+
+    user.find({ "user.username": username }).then((doc) => {
+        if (doc.length > 0) {
+            if (doc[0].user.activated !== 'undefined' && doc[0].user.activated == false) {
+                res.send({ error: "User not yet activated" });
+
+            } else {
+                res.send({ error: "Username already exists" });
+
+            }
+            logger("API", "register", "", doc[0].user.username, "failure", "", req.connection.remoteAddress, "POST");
+
+        }
+        else {
+            logger("API", "register", "", "", "success", "", req.connection.remoteAddress, "POST");
+
+
+            bcrypt.hash(password, 10).then((res2) => {
+                var usr = new user({
+                    user: {
+                        username: username,
+                        password: res2,
+                        roles: ["index", "admin"],
+                        deactivated: false,
+                        activated: false,
+                        email: email,
+                        activationId: Math.random() * (new Date().getTime())
+                    }
+                })
+                usr.save().then((res8) => {
+
+                    console.log(res8.user.email);
+
+                    sendMail(res8.user.email, 'Account Activation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
+
+
+
+                    logger("API", "login", "", "", "success", res8._id, req.connection.remoteAddress, "POST");
+
+                    res.send({ error: "Check your mail to verify the email address!" })
+                });
+            })
+        }
+    })
+
+
+    console.log("**/register exited**");
 
 
 
@@ -412,63 +492,6 @@ app.delete('/deleteUser/:id', (req, res) => {
 })
 
 
-app.post('/register', (req, res) => {
-    console.log("**/register entered**");
-    var username = req.body.username;
-    var password = req.body.password;
-    var email = req.body.email;
-
-    user.find({ "user.username": username }).then((doc) => {
-        if (doc.length > 0) {
-            if (doc[0].user.activated !== 'undefined' && doc[0].user.activated == false) {
-                res.send({ error: "User not yet activated" });
-
-            } else {
-                res.send({ error: "Username already exists" });
-
-            }
-            logger("API", "register", "", doc[0].user.username, "failure", "", req.connection.remoteAddress, "POST");
-
-        }
-        else {
-            logger("API", "register", "", "", "success", "", req.connection.remoteAddress, "POST");
-
-
-            bcrypt.hash(password, 10).then((res2) => {
-                var usr = new user({
-                    user: {
-                        username: username,
-                        password: res2,
-                        roles: ["index", "admin"],
-                        deactivated: false,
-                        activated: false,
-                        email: email,
-                        activationId: Math.random() * (new Date().getTime())
-                    }
-                })
-                usr.save().then((res8) => {
-
-                    console.log(res8.user.email);
-
-                    sendMail(res8.user.email, 'Account Activation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
-
-
-
-                    logger("API", "login", "", "", "success", res8._id, req.connection.remoteAddress, "POST");
-
-                    res.send({ error: "Check your mail to verify the email address!" })
-                });
-            })
-        }
-    })
-
-
-    console.log("**/register exited**");
-
-
-
-})
-
 
 
 sendMail = (senderMailId, subject, html) => {
@@ -504,27 +527,6 @@ sendMail = (senderMailId, subject, html) => {
 }
 
 
-app.get('/activate/:activationId/:userId', (req, res) => {
-    activationId = req.params.activationId;
-    user.findById(req.params.userId, (err, res1) => {
-        if (res1.user.activationId == activationId) {
-            res1.user.activated = true;
-            user.findByIdAndUpdate(req.params.userId, res1, (err, res2) => {
-                res.writeHeader(200, { "Content-Type": "text/html" });
-                res.write("Activated! <a href='/login'>Click here to login!</a>");
-                res.end();
-
-            })
-
-        } else {
-            res.writeHeader(200, { "Content-Type": "text/html" });
-            res.write("Invalid Content! <a href='/login'>Click here to login!</a>");
-            res.end();
-
-
-        }
-    })
-})
 
 app.get('/whoami', (req, res) => {
 
