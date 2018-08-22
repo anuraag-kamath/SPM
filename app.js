@@ -5,6 +5,8 @@ var fetch = require('node-fetch')
 
 var { ObjectID } = require('mongodb');
 
+var fs = require('fs')
+
 var { process1 } = require('./schemas/process')
 var { processMaster } = require('./schemas/processMaster')
 
@@ -188,15 +190,53 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/activate/:activationId/:userId', (req, res) => {
+    userId = req.params.userId;
     activationId = req.params.activationId;
+    channel = req.query.channel
     user.findById(req.params.userId, (err, res1) => {
 
         if (res1.user.activationId == activationId) {
             console.log(res1.user.activated);
-            if (res1.user.activated == false) {
-                res.writeHeader(200, { "Content-Type": "text/html" });
-                res.write("<html><head><href rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'</head><body><input type='text' class='form-control' placeholder='username' id='username'><input type='password' class='form-control' placeholder='Enter password' id='password1'><input type='password' class='form-control' placeholder='Confirm password' id='password2'><button  class='form-control' onclick=''>Create Account</button></body></html>");
-                res.end();
+            if (res1.user.activated == false && channel == "username") {
+                var username = req.body.userId
+                var password = req.body.password
+                user.find({ "user.username": username }).then((users) => {
+                    if (users.length > 0) {
+                        res.send({ error: "User Id is already taken!" })
+                    } else {
+                        bcrypt.hash(password, 10).then((res2) => {
+                            password = res2;
+                            user.findByIdAndUpdate(userId, {
+                                "user.username": username,
+                                "username": password,
+                                "activated": true
+                            }, (err, res43) => {
+                                res.writeHeader(200, { "Content-Type": "text/html" });
+                                res.write("Activated! <a href='/login'>Click here to login!</a>");
+                                res.end();
+                            })
+                        });
+
+                    }
+                })
+
+
+
+            } else if (res1.user.activated == false && channel == "adminCreated") {
+                fs.readFile('activation.html', function (err, data) {
+
+                    data.replace("##userId##",res1._id);
+                    data.replace("##emailId##",res1.user.emailId);
+                    data.replace("##activationId##",res1.user.activationId);
+
+                    res.writeHead(200, { 'Content-Type': 'text/html' });
+                    res.write(data);
+                    res.end();
+                });
+
+                // res.writeHeader(200, { "Content-Type": "text/html" });
+                // res.write("<html><head><href rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'</head><body><input type='text' class='form-control' placeholder='username' id='username'><input type='password' class='form-control' placeholder='Enter password' id='password1'><input type='password' class='form-control' placeholder='Confirm password' id='password2'><button  class='form-control' onclick=''>Create Account</button></body></html>");
+                // res.end();
 
             } else {
                 console.log(res1.user.activated);
@@ -316,8 +356,11 @@ app.post('/register', (req, res) => {
                 usr.save().then((res8) => {
 
                     console.log(res8.user.email);
+                    //xyz123
 
-                    sendMail(res8.user.email, 'Account Activation and Username creation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account and create a new username and password!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
+
+
+                    sendMail(res8.user.email, 'Account Activation and Username creation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account and create a new username and password!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "?channel=adminCreated'>Click me!</a><hr><br><br>");
 
 
 
