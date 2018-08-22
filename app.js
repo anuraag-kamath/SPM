@@ -224,9 +224,9 @@ app.get('/activate/:activationId/:userId', (req, res) => {
             } else if (res1.user.activated == false && channel == "adminCreated") {
                 fs.readFile('activation.html', function (err, data) {
 
-                    data.replace("##userId##",res1._id);
-                    data.replace("##emailId##",res1.user.emailId);
-                    data.replace("##activationId##",res1.user.activationId);
+                    data=data.toString().replace("##userId##",res1._id);
+                    data=data.toString().replace("##emailId##",res1.user.emailId);
+                    data=data.toString().replace("##activationId##",res1.user.activationId);
 
                     res.writeHead(200, { 'Content-Type': 'text/html' });
                     res.write(data);
