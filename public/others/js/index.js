@@ -51,11 +51,15 @@ loadPage = (page, message, popUp) => {
             button.innerText = "CLOSE"
             button.className = "right"
             button.id = "closePop"
+
             document.getElementById('pop-up').appendChild(button);
-            document.getElementById('pop-up').innerHTML += res;
-            document.getElementById('left-menu-div').style.display = "none";
-            document.getElementById('header').style.display = "none";
-            document.getElementById('saveDiv').style.display = "none";
+            if (page == "process") {
+
+                document.getElementById('pop-up').innerHTML += res;
+                document.getElementById('left-menu-div').style.display = "none";
+                document.getElementById('header').style.display = "none";
+                document.getElementById('saveDiv').style.display = "none";
+            }
 
             // if (document.getElementById('currentStyle') != undefined && document.getElementById('currentStyle') != "undefined") {
             //     document.getElementsByTagName("head")[0].removeChild(document.getElementById("currentStyle"))
@@ -148,6 +152,9 @@ document.getElementById('logout').addEventListener('click', (ev) => {
 
 
 hashCheck = () => {
+    document.getElementById('app').style.display = "block";
+    document.getElementById('pop-up').style.display = "none";
+
     document.getElementById("smallScreenOptions").style.display = "none";
 
     if (location.hash == "#listWorkitems" || location.hash == "#workitems") {
@@ -159,7 +166,7 @@ hashCheck = () => {
         loadPage("listProcess", "List of Processes", "N");
 
     } else if (location.hash.indexOf("newpro") != -1) {
-        calledFrom=null
+        calledFrom = null
         processId = "";
         loadPage("process", "Process Definition", "N")
     } else if (location.hash.indexOf("frmbdr") != -1) {
@@ -175,13 +182,14 @@ hashCheck = () => {
     } else if (location.hash.indexOf("listObjects") != -1) {
         loadPage("listObjects", "List of Objects", "N")
     } else if (location.hash.indexOf("pro") != -1) {
-        calledFrom=null
+        calledFrom = null
         processId = "";
 
         loadPage("process", "Process Definition", "N")
     } else if (location.hash.indexOf("listInstances") != -1) {
         loadPage("listInstances", "List of Instances", "N")
-    } else {
+    }
+    else {
         if (location.hash.indexOf("frm") == -1) {
             var wi_id = location.hash.substr(1);
 
@@ -197,18 +205,29 @@ hashCheck = () => {
 
                     })
                 } else {
+                    calledFrom = null;
+
                     loadPage("formViewer", "Form Viewer", "N");
 
                 }
             })
 
         } else {
+            calledFrom = null;
             loadPage("formViewer", "Form Viewer", "N");
 
         }
 
     }
 }
+
+// formPreview = (formId) => {
+//     calledFrom = "formPreview"
+//     formId = formId
+//     console.log(formId+"##");
+//     loadPage("formViewer", "Form Viewer", "Y");
+
+// }
 
 var onLoadLocationHash = window.location.hash;
 

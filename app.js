@@ -190,15 +190,25 @@ app.post('/login', (req, res) => {
 app.get('/activate/:activationId/:userId', (req, res) => {
     activationId = req.params.activationId;
     user.findById(req.params.userId, (err, res1) => {
+
         if (res1.user.activationId == activationId) {
-            res1.user.activated = true;
-            user.findByIdAndUpdate(req.params.userId, res1, (err, res2) => {
+            console.log(res1.user.activated);
+            if (res1.user.activated == false) {
                 res.writeHeader(200, { "Content-Type": "text/html" });
-                res.write("Activated! <a href='/login'>Click here to login!</a>");
+                res.write("<input type='text' placeholder='username' id='username'><input type='password' placeholder='password' id='password1'><input type='password' placeholder='password' id='password2'><button>Create Account</button>");
                 res.end();
 
-            })
+            } else {
+                console.log(res1.user.activated);
+                res1.user.activated = true;
+                user.findByIdAndUpdate(req.params.userId, res1, (err, res2) => {
+                    res.writeHeader(200, { "Content-Type": "text/html" });
+                    res.write("Activated! <a href='/login'>Click here to login!</a>");
+                    res.end();
 
+                })
+
+            }
         } else {
             res.writeHeader(200, { "Content-Type": "text/html" });
             res.write("Invalid Content! <a href='/login'>Click here to login!</a>");
@@ -240,28 +250,62 @@ app.post('/register', (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     var email = req.body.email;
-
-    user.find({ "user.username": username }).then((doc) => {
+    var mode = req.query.channel;
+    user.find({ "user.email": email }).then((doc) => {
         if (doc.length > 0) {
-            if (doc[0].user.activated !== 'undefined' && doc[0].user.activated == false) {
-                res.send({ error: "User not yet activated" });
+            res.send({ error: "Email ID already registered" });
+
+        } else {
+            if (mode != "admin") {
+                user.find({ "user.username": username }).then((doc) => {
+                    if (doc.length > 0) {
+                        if (doc[0].user.activated !== 'undefined' && doc[0].user.activated == false) {
+                            res.send({ error: "User not yet activated" });
+
+                        } else {
+                            res.send({ error: "Username already exists" });
+
+                        }
+                        logger("API", "register", "", doc[0].user.username, "failure", "", req.connection.remoteAddress, "POST");
+
+                    }
+                    else {
+                        logger("API", "register", "", "", "success", "", req.connection.remoteAddress, "POST");
+
+
+                        bcrypt.hash(password, 10).then((res2) => {
+                            var usr = new user({
+                                user: {
+                                    username: username,
+                                    password: res2,
+                                    roles: ["index", "admin"],
+                                    deactivated: false,
+                                    activated: false,
+                                    email: email,
+                                    activationId: Math.random() * (new Date().getTime())
+                                }
+                            })
+                            usr.save().then((res8) => {
+
+                                console.log(res8.user.email);
+
+                                sendMail(res8.user.email, 'Account Activation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
+
+
+
+                                logger("API", "login", "", "", "success", res8._id, req.connection.remoteAddress, "POST");
+
+                                res.send({ error: "Check your mail to verify the email address!" })
+                            });
+                        })
+                    }
+                })
 
             } else {
-                res.send({ error: "Username already exists" });
-
-            }
-            logger("API", "register", "", doc[0].user.username, "failure", "", req.connection.remoteAddress, "POST");
-
-        }
-        else {
-            logger("API", "register", "", "", "success", "", req.connection.remoteAddress, "POST");
-
-
-            bcrypt.hash(password, 10).then((res2) => {
                 var usr = new user({
                     user: {
-                        username: username,
-                        password: res2,
+                        username: "",
+                        password: "",
                         roles: ["index", "admin"],
                         deactivated: false,
                         activated: false,
@@ -273,15 +317,16 @@ app.post('/register', (req, res) => {
 
                     console.log(res8.user.email);
 
-                    sendMail(res8.user.email, 'Account Activation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
+                    sendMail(res8.user.email, 'Account Activation and Username creation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account and create a new username and password!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
 
 
 
                     logger("API", "login", "", "", "success", res8._id, req.connection.remoteAddress, "POST");
 
-                    res.send({ error: "Check your mail to verify the email address!" })
+                    res.send({ error: "OK" })
                 });
-            })
+            }
+
         }
     })
 
@@ -885,6 +930,7 @@ app.get('/forms/:id', (req, res) => {
         })
     } else {
         form1.findById(id, (err, res2) => {
+            console.log(id);
             logger("API", "form", "", res2._id, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "GET");
 
             res.send(res2);
@@ -1168,12 +1214,12 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
 
                     if (docs.length != 0) {
                         for (var d = 0; d < docs.length; d++) {
-                            console.log("###RR###"+docs[d]._id);
+                            console.log("###RR###" + docs[d]._id);
                             workitem.findByIdAndUpdate(docs[d]._id, {
                                 status: "parallelReject",
                                 user: res123.user.username,
                                 date: new Date()
-                            },(err,res44)=>{
+                            }, (err, res44) => {
                                 console.log("#T#T#T");
                                 console.log(err);
                                 console.log(res44);
@@ -1187,12 +1233,12 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
 
 
                 process1.findById(doc.processId, (err, doc1) => {
-                    
+
                     jumpTo = String(rejectStep).substr((String(rejectStep).indexOf("_") + 1));
                     jumpToLbl = String(rejectStep).substr(0, String(rejectStep).indexOf("_"));
-                    console.log(jumpTo+"#"+jumpToLbl+"#"+String(rejectStep));
+                    console.log(jumpTo + "#" + jumpToLbl + "#" + String(rejectStep));
                     for (var i = 0; i < doc1.steps.length; i++) {
-                        console.log("SEARCHING"+doc1.steps[i]._id);
+                        console.log("SEARCHING" + doc1.steps[i]._id);
                         if (doc1.steps[i]._id == jumpTo) {
                             console.log("GOTCHA");
                             var status = "";

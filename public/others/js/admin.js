@@ -1,6 +1,6 @@
 
 var selectedUser = "";
-var selectedUserAction="";
+var selectedUserAction = "";
 loadUsers = () => {
     document.getElementById('users').innerHTML = "";
     fetch('/user', {
@@ -8,10 +8,10 @@ loadUsers = () => {
     }).then((prom) => prom.text()).then((res) => {
         if (JSON.parse(res).length > 0) {
             document.getElementById("noUsers").style.display = "none";
-            document.getElementById("userTable").style.display = "block"; 
+            document.getElementById("userTable").style.display = "block";
         } else {
             document.getElementById("noUsers").style.display = "block";
-            document.getElementById("userTable").style.display = "none"; 
+            document.getElementById("userTable").style.display = "none";
         }
         for (i in JSON.parse(res)) {
             var newRow = document.createElement("tr");
@@ -42,7 +42,7 @@ loadUsers = () => {
                 newDiv.innerHTML = '<select id="roleSelector" class=selectpicker form-control multiple></select><div><button id="editRole" class="btn btn-primary"><i class="fas fa-edit"></i>                </button><button id="cancelRole" style="margin-left:30px" class="btn btn-primary"><i class="fas fa-times"></i>                </button></div>'
                 document.getElementById('pop-up').innerHTML = "";
                 document.getElementById('pop-up').appendChild(newDiv);
-                document.getElementById('cancelRole').addEventListener('click',(ev)=>{
+                document.getElementById('cancelRole').addEventListener('click', (ev) => {
                     popupClose();
                 })
                 fetch('/roles', {
@@ -205,7 +205,7 @@ document.getElementById('addUser').addEventListener('click', (ev) => {
     var newDiv = document.createElement("DIV");
     document.getElementById('pop-up').style.display = "block"
     newDiv.style.height = "100px";
-    newDiv.style.width = "100px";
+    newDiv.style.width = "400px";
     document.getElementById('pop-up').style.position = "absolute";
     newDiv.style.margin = "auto auto";
 
@@ -214,7 +214,7 @@ document.getElementById('addUser').addEventListener('click', (ev) => {
 
 
 
-    newDiv.innerHTML = '<input class="form-control" type="text" id="new_username"><input type="password" class="form-control" id="new_password"><button id="new_addUser" class="btn btn-primary">Add User</button>'
+    newDiv.innerHTML = '<input class="form-control" type="text" id="new_email" type="email" placeholder="Email ID to invite"><button id="new_addUser" class="btn btn-primary">Add User</button><button id="cancel_addUser" style="float:right" class="btn btn-primary">Cancel</button><hr><div id="mess"></div>'
 
 
     document.getElementById('pop-up').innerHTML = "";
@@ -224,8 +224,8 @@ document.getElementById('addUser').addEventListener('click', (ev) => {
 
 
     document.getElementById('new_addUser').addEventListener('click', (ev) => {
-        var jsonBody = '{"username":"' + document.getElementById('new_username').value + '","password":"' + document.getElementById('new_password').value + '"}'
-        fetch('/register', {
+        var jsonBody = '{"email":"' + document.getElementById('new_email').value + '"}'
+        fetch('/register?channel=admin', {
             method: "POST",
             credentials: 'include',
             headers: {
@@ -234,14 +234,27 @@ document.getElementById('addUser').addEventListener('click', (ev) => {
             },
             body: jsonBody
         }).then((prom) => prom.text()).then((res) => {
-            loadUsers();
+            var mess = JSON.parse(res).error;
+            console.log(mess);
+            if (mess.indexOf("OK")!=-1) {
+                console.log("REC");
+                document.getElementById('app').style.display = "block";
+                document.getElementById('pop-up').style.display = "none";
+                loadUsers();
+
+            } else {
+                document.getElementById('mess').innerText=mess;
+            }
         })
-        document.getElementById('app').style.display = "block";
-        document.getElementById('pop-up').style.display = "none";
 
 
     })
 
+    document.getElementById('cancel_addUser').addEventListener('click', (ev) => {
+        document.getElementById('app').style.display = "block";
+        document.getElementById('pop-up').style.display = "none";
+
+    });
 
 })
 

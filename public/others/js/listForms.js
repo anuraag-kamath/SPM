@@ -12,7 +12,7 @@ listForms = () => {
 
     }).then(
         function (response) {
-            return (response.text());
+            return (response.text()); 
         } 
     ).then(
         function (res) {
@@ -26,6 +26,8 @@ listForms = () => {
 
                     row.innerHTML = "<td class='smallScreen'>" + (i + 1) + "</td><td>" + alpha[i].name + "</td><td class='smallScreen'><i id=edit_" + alpha[i]._id + " class='edit fas fa-edit'></i></td><td class='smallScreen'><i id=delete_" + alpha[i]._id + " class='edit fas fa-ban editUsers'></i></td>"
                     document.getElementById('form-body').appendChild(row);
+
+
                     document.getElementById("delete_" + alpha[i]._id).addEventListener("click", (ev) => {
                         fetch('/process?searchForm=' + String(ev.target.id).replace("delete_", "")).then((prom) => prom.text()).then((res) => {
                             console.log(res);
