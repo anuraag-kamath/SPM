@@ -618,6 +618,9 @@ eventPage = (type, id) => {
             }).then((prom) => {
                 return prom.text()
             }).then((res) => {
+                if(JSON.parse(res).status!="OK"){
+                    alert(JSON.parse(res).message);
+                }
                 window.location.hash = "workitems"
             })
 

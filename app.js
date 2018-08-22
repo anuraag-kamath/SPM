@@ -187,6 +187,30 @@ app.post('/login', (req, res) => {
 
 })
 
+app.post('/resendActivationLink', (req, res) => {
+    console.log("IN HERE");
+
+    var email = req.body.email;
+
+    user.find({ "user.email": email }).then((users) => {
+        if (users.length > 0) {
+            if (users[0].user.activated == false) {
+                sendMail(users[0].user.email, 'Account Activation', "<h3>Dear " + users[0].user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/activate/" + users[0].user.activationId + "/" + users[0]._id + "'>Click me!</a><hr><br><br>");
+                res.send({ status: "OK", message: "Check your mail to verify the email address!" })
+
+            } else {
+                res.send({ status: "OK", message: "user already activated!" })
+            }
+        } else {
+            res.send({ status: "ERROR", message: "user not yet registered!" })
+        }
+    })
+
+
+
+
+
+})
 
 
 
@@ -303,7 +327,7 @@ app.get('/comments/:instanceId', (req, res) => {
 
 app.post('/comments/:instanceId', (req, res) => {
     logger("API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
-    console.log("COMMENT SAVED for"+req.params.instanceId);
+    console.log("COMMENT SAVED for" + req.params.instanceId);
     var com = new comments({
         comment: req.body.comment,
         user: jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId,
@@ -314,7 +338,7 @@ app.post('/comments/:instanceId', (req, res) => {
     })
     com.save().then(
         (res1) => {
-            console.log("COMMENT SAVED"+res1);
+            console.log("COMMENT SAVED" + res1);
             res.send(res1);
         }
     );
@@ -444,6 +468,8 @@ app.post('/register', (req, res) => {
 
 
 })
+
+
 
 sendMail = (senderMailId, subject, html) => {
     var transporter = nodemailer.createTransport({
@@ -1085,179 +1111,188 @@ app.post('/instance/:id/:wid', (req, res) => {
 
 instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
     console.log("**/instance entered**");
-    console.log("#####A" + wid + "#####");
-    instanceId = id;
-    workitemId = wid;
-    objects = JSON.parse(objects);
-    instance.findById(instanceId, (err, doc21) => {
-        oldObjects = doc21.objects;
-        instance.findByIdAndUpdate(instanceId, {
-            objects: []
-        }, (err, res10) => {
-            addObjects(objects, instanceId);
-        })
-    })
-    var userSearch = "";
-    if (mode == "internal") {
-        userSearch = "5b7a73a6ab3b0a4167cab95b";
-    } else {
-        userSearch = jsonwebtoken.verify(token, "alphabetagamma").userId
-    }
-    user.findById(userSearch, (err, res123) => {
-        console.log("##XYZ5" + workitemId);
-        workitem.findByIdAndUpdate(workitemId, {
-            status: "finished",
-            user: res123.user.username,
-            date: new Date()
-        }).then(
-            (doc) => {
-                workitem.find({ "instanceId": doc.instanceId, "status": "scheduled" }).then((docs) => {
-                    console.log("XYZ2" + docs);
 
-                    if (docs.length == 0) {
-                        process1.findById(doc.processId, (err, doc1) => {
+    workitem.findById(wid, (err, resWI) => {
+        if (resWI.status != "finished") {
+            instanceId = id;
+            workitemId = wid;
+            objects = JSON.parse(objects);
+            instance.findById(instanceId, (err, doc21) => {
+                oldObjects = doc21.objects;
+                instance.findByIdAndUpdate(instanceId, {
+                    objects: []
+                }, (err, res10) => {
+                    addObjects(objects, instanceId);
+                })
+            })
+            var userSearch = "";
+            if (mode == "internal") {
+                userSearch = "5b7a73a6ab3b0a4167cab95b";
+            } else {
+                userSearch = jsonwebtoken.verify(token, "alphabetagamma").userId
+            }
+            user.findById(userSearch, (err, res123) => {
+                console.log("##XYZ5" + workitemId);
+                workitem.findByIdAndUpdate(workitemId, {
+                    status: "finished",
+                    user: res123.user.username,
+                    date: new Date()
+                }).then(
+                    (doc) => {
+                        workitem.find({ "instanceId": doc.instanceId, "status": "scheduled" }).then((docs) => {
+                            console.log("XYZ2" + docs);
 
-                            for (var i = 0; i < doc1.steps.length; i++) {
-                                console.log("COMPARING!!!" + doc1.steps[i]._id + "##" + wid);
-                                console.log("###XYZ1####");
-                                console.log(doc1);
-                                console.log(wid);
-                                console.log("###XYZ1####");
+                            if (docs.length == 0) {
+                                process1.findById(doc.processId, (err, doc1) => {
 
-                                if (doc1.steps[i]._id == doc.stepId) {
-                                    console.log("MATCH FOUND!!!!" + "##" + wid);
-                                    var status = "";
-                                    i = i + 1;
-                                    console.log("###XYZ####");
-                                    console.log(doc1);
-                                    console.log(wid);
-                                    console.log("###XYZ####");
-                                    if (i == doc1.steps.length) {
-                                        status = "finished";
+                                    for (var i = 0; i < doc1.steps.length; i++) {
+                                        console.log("COMPARING!!!" + doc1.steps[i]._id + "##" + wid);
+                                        console.log("###XYZ1####");
+                                        console.log(doc1);
+                                        console.log(wid);
+                                        console.log("###XYZ1####");
 
-                                        instance.findByIdAndUpdate(instanceId, {
-                                            status
-                                        }, (err, doc21) => {
+                                        if (doc1.steps[i]._id == doc.stepId) {
+                                            console.log("MATCH FOUND!!!!" + "##" + wid);
+                                            var status = "";
+                                            i = i + 1;
+                                            console.log("###XYZ####");
+                                            console.log(doc1);
+                                            console.log(wid);
+                                            console.log("###XYZ####");
+                                            if (i == doc1.steps.length) {
+                                                status = "finished";
 
-                                        });
+                                                instance.findByIdAndUpdate(instanceId, {
+                                                    status
+                                                }, (err, doc21) => {
 
-                                    }
-                                    else {
-                                        console.log("CAME INSIDE ELS" + "##" + wid);
-                                        status = doc1.steps[i]._id;
-                                        var date = new Date();
-                                        var escalationDate = date;
-                                        var escalationTriggered = false;
-                                        var escalationApplicable = false;
-                                        if (doc1.steps[i].days1 > 0) {
-                                            escalationApplicable = true;
-                                            escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days1)
-                                        }
-                                        if (doc1.steps[i].hours1 > 0) {
-                                            escalationApplicable = true;
-                                            escalationDate.setHours(escalationDate.getHours() + doc1.steps[i].hours1)
-                                        }
-                                        if (doc1.steps[i].minutes1 > 0) {
-                                            escalationApplicable = true;
-                                            escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes1)
-
-                                        }
-                                        var wi1 = new workitem({
-                                            processName: doc1.processName,
-                                            processId: doc.processId,
-                                            instanceId: instanceId,
-                                            status: "scheduled",
-                                            stepName: doc1.steps[i].lbl1,
-                                            stepType: (doc1).steps[i].step1,
-                                            stepId: (doc1).steps[i]._id,
-                                            formId: (doc1).steps[i].frm1,
-                                            participant: (doc1).steps[i].part1,
-                                            escalationDate,
-                                            escalationTriggered,
-                                            escalationApplicable,
-                                            escalationStatus: 'notTriggered',
-                                            date: new Date()
-                                        })
-                                        wi1.save().then((doc) => {
-                                            console.log("SAVED1" + doc);
-                                            if (doc.stepType == "Service Task") {
-                                                executeServiceTask(doc._id, doc.instanceId, doc.stepId, "1", doc.processId);
-                                            }
-                                        })
-                                        if (doc1.steps[i].lbl2 != undefined && doc1.steps[i].lbl2.length > 0) {
-
-                                            var date = new Date();
-                                            var escalationDate = date;
-                                            var escalationTriggered = false;
-                                            var escalationApplicable = false;
-                                            if (doc1.steps[i].days2 > 0) {
-                                                escalationApplicable = true;
-                                                escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days2)
-                                            }
-                                            if (doc1.steps[i].hours2 > 0) {
-                                                escalationApplicable = true;
-                                                escalationDate.setHours(escalationDate.getHours() + doc1.steps[i].hours2)
-                                            }
-                                            if (doc1.steps[i].minutes2 > 0) {
-                                                escalationApplicable = true;
-                                                escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes2)
+                                                });
 
                                             }
-                                            var wi2 = new workitem({
-                                                processName: doc1.processName,
-                                                processId: doc.processId,
-                                                instanceId: instanceId,
-                                                status: "scheduled",
-                                                stepName: doc1.steps[i].lbl2,
-                                                stepType: (doc1).steps[i].step2,
-                                                stepId: (doc1).steps[i]._id,
-                                                formId: (doc1).steps[i].frm2,
-                                                participant: (doc1).steps[i].part2,
-                                                escalationDate,
-                                                escalationTriggered,
-                                                escalationApplicable,
-                                                escalationStatus: 'notTriggered',
-                                                date: new Date()
-                                            })
-                                            wi2.save().then((doc) => {
-                                                console.log("SAVED2" + doc);
+                                            else {
+                                                console.log("CAME INSIDE ELS" + "##" + wid);
+                                                status = doc1.steps[i]._id;
+                                                var date = new Date();
+                                                var escalationDate = date;
+                                                var escalationTriggered = false;
+                                                var escalationApplicable = false;
+                                                if (doc1.steps[i].days1 > 0) {
+                                                    escalationApplicable = true;
+                                                    escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days1)
+                                                }
+                                                if (doc1.steps[i].hours1 > 0) {
+                                                    escalationApplicable = true;
+                                                    escalationDate.setHours(escalationDate.getHours() + doc1.steps[i].hours1)
+                                                }
+                                                if (doc1.steps[i].minutes1 > 0) {
+                                                    escalationApplicable = true;
+                                                    escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes1)
 
-                                                if (doc.stepType == "Service Task") {
-                                                    executeServiceTask(doc._id, doc.instanceId, doc.stepId, "2", doc.processId);
+                                                }
+                                                var wi1 = new workitem({
+                                                    processName: doc1.processName,
+                                                    processId: doc.processId,
+                                                    instanceId: instanceId,
+                                                    status: "scheduled",
+                                                    stepName: doc1.steps[i].lbl1,
+                                                    stepType: (doc1).steps[i].step1,
+                                                    stepId: (doc1).steps[i]._id,
+                                                    formId: (doc1).steps[i].frm1,
+                                                    participant: (doc1).steps[i].part1,
+                                                    escalationDate,
+                                                    escalationTriggered,
+                                                    escalationApplicable,
+                                                    escalationStatus: 'notTriggered',
+                                                    date: new Date()
+                                                })
+                                                wi1.save().then((doc) => {
+                                                    console.log("SAVED1" + doc);
+                                                    if (doc.stepType == "Service Task") {
+                                                        executeServiceTask(doc._id, doc.instanceId, doc.stepId, "1", doc.processId);
+                                                    }
+                                                })
+                                                if (doc1.steps[i].lbl2 != undefined && doc1.steps[i].lbl2.length > 0) {
+
+                                                    var date = new Date();
+                                                    var escalationDate = date;
+                                                    var escalationTriggered = false;
+                                                    var escalationApplicable = false;
+                                                    if (doc1.steps[i].days2 > 0) {
+                                                        escalationApplicable = true;
+                                                        escalationDate.setDate(escalationDate.getDate() + doc1.steps[i].days2)
+                                                    }
+                                                    if (doc1.steps[i].hours2 > 0) {
+                                                        escalationApplicable = true;
+                                                        escalationDate.setHours(escalationDate.getHours() + doc1.steps[i].hours2)
+                                                    }
+                                                    if (doc1.steps[i].minutes2 > 0) {
+                                                        escalationApplicable = true;
+                                                        escalationDate.setMinutes(escalationDate.getMinutes() + doc1.steps[i].minutes2)
+
+                                                    }
+                                                    var wi2 = new workitem({
+                                                        processName: doc1.processName,
+                                                        processId: doc.processId,
+                                                        instanceId: instanceId,
+                                                        status: "scheduled",
+                                                        stepName: doc1.steps[i].lbl2,
+                                                        stepType: (doc1).steps[i].step2,
+                                                        stepId: (doc1).steps[i]._id,
+                                                        formId: (doc1).steps[i].frm2,
+                                                        participant: (doc1).steps[i].part2,
+                                                        escalationDate,
+                                                        escalationTriggered,
+                                                        escalationApplicable,
+                                                        escalationStatus: 'notTriggered',
+                                                        date: new Date()
+                                                    })
+                                                    wi2.save().then((doc) => {
+                                                        console.log("SAVED2" + doc);
+
+                                                        if (doc.stepType == "Service Task") {
+                                                            executeServiceTask(doc._id, doc.instanceId, doc.stepId, "2", doc.processId);
+                                                        }
+
+                                                    })
+
                                                 }
 
-                                            })
+                                                process1.findByIdAndUpdate(doc.processId, {
+                                                    status
+                                                }, (err, doc2) => {
 
+                                                })
+                                            }
+                                            break;
                                         }
-
-                                        process1.findByIdAndUpdate(doc.processId, {
-                                            status
-                                        }, (err, doc2) => {
-
-                                        })
                                     }
-                                    break;
+                                    if (mode == "actual") {
+                                        res.send({ status: "OK" });
+
+                                    }
+                                })
+                            } else {
+                                if (mode == "actual") {
+                                    res.send({ status: "OK" });
+
                                 }
                             }
-                            if (mode == "actual") {
-                                res.send("OK");
-
-                            }
                         })
-                    } else {
-                        if (mode == "actual") {
-                            res.send("OK");
 
-                        }
+
                     }
-                })
+                )
+
+            });
 
 
-            }
-        )
+        } else {
+            res.send({ status: "ERROR", message: "Work Item already submitted by " + resWI.user + " at " + resWI.date + " .Your changes will be discarded!You will be redirected to the Workitems list." });
 
-    });
 
+        }
+    })
 
 
     console.log("**/instance exited**");
@@ -2581,7 +2616,7 @@ app.get('/user', (req, res) => {
 
 app.get('/user/:id', (req, res) => {
     console.log(req.params.id);
-    req.params.id=req.params.id.replace("_","")
+    req.params.id = req.params.id.replace("_", "")
     user.findById(req.params.id, (err, docs) => {
         res.send({
             user: docs.user.username

@@ -10,13 +10,45 @@ document.getElementById('register').addEventListener('click', (ev) => {
     loadBar();
 
     ev.preventDefault();
-    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198206993').value.length > 0 && document.getElementById('reg_email').value.length > 0 ) {
+    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198206993').value.length > 0 && document.getElementById('reg_email').value.length > 0) {
         loginRegister("register");
 
     }
     else {
         document.getElementById('mess').innerText = "Username and Password are mandatory fields";
         document.getElementById('mess').style.visibility = "visible"
+        removeLoadBar();
+
+    }
+})
+
+document.getElementById('sendActivationLink').addEventListener('click', (ev) => {
+    loadBar();
+
+    ev.preventDefault();
+    var bodyJSON = '{"email":"' + document.getElementById('reg_email').value + '"}'
+
+    if (document.getElementById('reg_email').value.length > 0) {
+        fetch('/resendActivationLink', {
+            credentials: "include",
+            method: "POST",
+            headers: {
+                "content-type": "application/json"
+            },
+            body:bodyJSON
+        }).then((prom) => prom.text()).then((res) => {
+                res = JSON.parse(res);
+                document.getElementById('mess').innerText = res.message;
+                document.getElementById('mess').style.visibility = "visible"
+                removeLoadBar();
+            })
+
+    }
+    else {
+        document.getElementById('mess').innerText = "Registered Email address is mandatory for re-sending activation link";
+        document.getElementById('mess').style.visibility = "visible"
+        removeLoadBar();
+
     }
 })
 
@@ -39,7 +71,7 @@ loginRegister = (type) => {
         body: JSON.stringify(jsonBody)
     }).then((prom) => {
         console.log(prom);
-        return prom.json()
+        return prom.text();
     }).then((res) => {
         console.log("********");
         console.log(res);
@@ -52,26 +84,26 @@ loginRegister = (type) => {
         else if (res.token != undefined) {
             localStorage.setItem('spm_token', res.token);
             console.log(document.cookie.token);
-            if(window.location.href.indexOf('login')==-1){
+            if (window.location.href.indexOf('login') == -1) {
                 console.log("REFRESHING");
                 window.location.reload();
 
-            }else{
-                window.location.href=res.url;
+            } else {
+                window.location.href = res.url;
             }
- 
-        } else if (res.deactivated==true){
+
+        } else if (res.deactivated == true) {
             document.getElementById('mess').innerText = "User deactivated";
             document.getElementById('mess').style.visibility = "visible"
-            
-        } else if (res.notactivated==true){
+
+        } else if (res.notactivated == true) {
             document.getElementById('mess').innerText = "User not yet activated!";
             document.getElementById('mess').style.visibility = "visible"
-            
-        }else if(res.registeredButNotActivated == true){
+
+        } else if (res.registeredButNotActivated == true) {
             document.getElementById('mess').innerText = "Check your inbox for the activation link!";
             document.getElementById('mess').style.visibility = "visible"
-        }else {
+        } else {
             document.getElementById('mess').innerText = "Invalid username/password";
             document.getElementById('mess').style.visibility = "visible"
 
