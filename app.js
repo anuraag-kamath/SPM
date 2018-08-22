@@ -249,7 +249,7 @@ activateDeactivate = (req, res) => {
                 // res.write("<html><head><href rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'</head><body><input type='text' class='form-control' placeholder='username' id='username'><input type='password' class='form-control' placeholder='Enter password' id='password1'><input type='password' class='form-control' placeholder='Confirm password' id='password2'><button  class='form-control' onclick=''>Create Account</button></body></html>");
                 // res.end();
 
-            } else {
+            } else if (res1.user.activated == false){
                 console.log(res1.user.activated);
                 res1.user.activated = true;
                 user.findByIdAndUpdate(req.params.userId, res1, (err, res2) => {
@@ -259,6 +259,10 @@ activateDeactivate = (req, res) => {
 
                 })
 
+            }else{
+                res.writeHeader(200, { "Content-Type": "text/html" });
+                    res.write("User already activated! <a href='/login'>Click here to login!</a>");
+                    res.end();
             }
         } else {
             res.writeHeader(200, { "Content-Type": "text/html" });
