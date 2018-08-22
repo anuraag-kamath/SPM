@@ -11,14 +11,21 @@
                     headers: {
                         "content-type": "application/json"
                     },
-                    body: {
-                        userId,
-                        activationId
+                    method: "POST",
+                    body: '{"username":"' + document.getElementById('username').value + '","password":"' + document.getElementById('password1').value + '"}'
+                }).then((prom) => prom.text()).then((res23) => {
+                    console.log(res23);
+                    if (res23.indexOf("Activated!") != -1) {
+                        document.getElementById('content').innerHTML = "Activated! <a href='/login'>Click here to login!</a>"
+
+                    } else {
+                        
+                        document.getElementById("message").innerText = JSON.parse(res23).error;
+
                     }
                 })
 
 
-                document.body = "Activated! <a href='/login'>Click here to login!</a>"
             } else {
                 document.getElementById("message").innerText = "Passwords have to match and should be greater than 0 characters!";
             }
@@ -27,16 +34,18 @@
 </head>
 
 <body>
-    <input type="text" class="form-control" value="##emailId##" id="emailId" disabled>
-    <input type='text' class='form-control' placeholder='username' id='username'>
-    <input type='password' class='form-control' placeholder='Enter password' id='password1'>
-    <input type='password' class='form-control' placeholder='Confirm password' id='password2'>
-    <input type="hidden" id="activationId" value="##activationId##">
-    <input type="hidden" id="userId" value="##userId##">
-    <div style="margin-top:20px;text-align: center">
-        <button class='btn btn-primary' onClick='alpha()'>Create Account</button>
+    <div id="content">
+        <input type="text" class="form-control" value="##emailId##" id="emailId" disabled>
+        <input type='text' class='form-control' placeholder='username' id='username'>
+        <input type='password' class='form-control' placeholder='Enter password' id='password1'>
+        <input type='password' class='form-control' placeholder='Confirm password' id='password2'>
+        <input type="hidden" id="activationId" value="##activationId##">
+        <input type="hidden" id="userId" value="##userId##">
+        <div style="margin-top:20px;text-align: center">
+            <button class='btn btn-primary' onClick='alpha()'>Create Account</button>
+        </div>
+        <p id="message"></p>
     </div>
-    <p id="message"></p>
 </body>
 
 </html>

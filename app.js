@@ -189,6 +189,17 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/activate/:activationId/:userId', (req, res) => {
+    activateDeactivate(req, res)
+
+})
+
+
+app.post('/activate/:activationId/:userId', (req, res) => {
+    activateDeactivate(req, res)
+})
+
+activateDeactivate = (req, res) => {
+    console.log("INSIDE");
     userId = req.params.userId;
     activationId = req.params.activationId;
     channel = req.query.channel
@@ -197,8 +208,10 @@ app.get('/activate/:activationId/:userId', (req, res) => {
         if (res1.user.activationId == activationId) {
             console.log(res1.user.activated);
             if (res1.user.activated == false && channel == "username") {
-                var username = req.body.userId
+                var username = req.body.username
                 var password = req.body.password
+                console.log(username);
+                console.log(password);
                 user.find({ "user.username": username }).then((users) => {
                     if (users.length > 0) {
                         res.send({ error: "User Id is already taken!" })
@@ -207,8 +220,8 @@ app.get('/activate/:activationId/:userId', (req, res) => {
                             password = res2;
                             user.findByIdAndUpdate(userId, {
                                 "user.username": username,
-                                "username": password,
-                                "activated": true
+                                "user.password": password,
+                                "user.activated": true
                             }, (err, res43) => {
                                 res.writeHeader(200, { "Content-Type": "text/html" });
                                 res.write("Activated! <a href='/login'>Click here to login!</a>");
@@ -223,10 +236,9 @@ app.get('/activate/:activationId/:userId', (req, res) => {
 
             } else if (res1.user.activated == false && channel == "adminCreated") {
                 fs.readFile('activation.html', function (err, data) {
-
-                    data=data.toString().replace("##userId##",res1._id);
-                    data=data.toString().replace("##emailId##",res1.user.emailId);
-                    data=data.toString().replace("##activationId##",res1.user.activationId);
+                    data = data.toString().replace("##userId##", res1._id);
+                    data = data.toString().replace("##emailId##", res1.user.email);
+                    data = data.toString().replace("##activationId##", res1.user.activationId);
 
                     res.writeHead(200, { 'Content-Type': 'text/html' });
                     res.write(data);
@@ -256,7 +268,7 @@ app.get('/activate/:activationId/:userId', (req, res) => {
 
         }
     })
-})
+}
 
 
 app.post('/resendActivationLink', (req, res) => {
