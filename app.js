@@ -231,7 +231,7 @@ activateDeactivate = (req, res) => {
     channel = req.query.channel
     user.findById(req.params.userId, (err, res1) => {
 
-        if (res1.user.activationId == activationId) {
+        if (res1!=undefined && res1!=='undefined' && res1.user.activationId == activationId) {
             console.log(res1.user.activated);
             if (res1.user.activated == false && channel == "username") {
                 var username = req.body.username
