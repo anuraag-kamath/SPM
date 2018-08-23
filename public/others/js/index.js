@@ -110,7 +110,11 @@ loadPage = (page, message, popUp) => {
             })
 
         } else {
+
             document.getElementById('app').innerHTML = "";
+            if(String(res).indexOf("not authorized")){
+                removeLoadBar();
+            }
             document.getElementById('app').innerHTML = res;
             document.getElementById('title').innerText = message;
             if (document.getElementById('currentStyle') != undefined && document.getElementById('currentStyle') != "undefined") {
@@ -131,12 +135,27 @@ loadPage = (page, message, popUp) => {
             link.id = "currentStyle";
 
             document.getElementsByTagName("head")[0].appendChild(link);
+
+            // if (page == "listObjects" && document.getElementById('listObjectsScript') != undefined && document.getElementById('listObjectsScript') != "undefined") {
+
+            // } else {
+            //     if (document.getElementById('listObjectsScript') != undefined && document.getElementById('listObjectsScript') != "undefined") {
+            //         document.getElementsByTagName("head")[0].removeChild(document.getElementById("listObjectsScript"))
+
+            //     }
             var script = document.createElement("script");
             script.src = "js/" + page + ".js";
             script.id = "currentScript"
+            console.log("#1");
             document.getElementsByTagName("head")[0].appendChild(script);
+            console.log("#2");
+            console.log("#3");
+
 
         }
+
+    }).catch((err) => {
+        console.log("ERRR");
     })
 }
 

@@ -1,21 +1,59 @@
 document.getElementById('login').addEventListener('click', (ev) => {
-    loadBar();
-    ev.preventDefault();
-    loginRegister("login");
+    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198220280').value.length > 0) {
+        loadBar();
+        ev.preventDefault();
+        document.getElementById('login').disabled = true;
+        document.getElementById('register').disabled = true;
+        document.getElementById('sendActivationLink').disabled = true;
+        loginRegister("login");
+    } else {
+        document.getElementById('mess').innerText = "Username and Password are mandatory fields";
+        document.getElementById('mess').style.visibility = "visible"
+        removeLoadBar();
+
+    }
+
 
 })
+
+document.getElementById("1531198206993").addEventListener('focus', (ev) => {
+    document.getElementById('mess').innerText = "";
+    document.getElementById('mess').style.visibility = "hidden"
+});
+
+document.getElementById("1531198220280").addEventListener('focus', (ev) => {
+    document.getElementById('mess').innerText = "";
+    document.getElementById('mess').style.visibility = "hidden"
+});
+
+
+document.getElementById("reg_email").addEventListener('focus', (ev) => {
+    document.getElementById('mess').innerText = "";
+    document.getElementById('mess').style.visibility = "hidden"
+});
 
 
 document.getElementById('register').addEventListener('click', (ev) => {
     loadBar();
 
     ev.preventDefault();
-    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198206993').value.length > 0 && document.getElementById('reg_email').value.length > 0) {
-        loginRegister("register");
+    if (document.getElementById('1531198206993').value.length > 0 && document.getElementById('1531198220280').value.length > 0 && document.getElementById('reg_email').value.length > 0) {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(document.getElementById('reg_email').value) == false) {
+            document.getElementById('mess').innerText = "Invalid Email ID";
+            document.getElementById('mess').style.visibility = "visible"
+            removeLoadBar();
+        } else {
+            document.getElementById('login').disabled = true;
+            document.getElementById('register').disabled = true;
+            document.getElementById('sendActivationLink').disabled = true;
+
+            loginRegister("register");
+
+        }
 
     }
     else {
-        document.getElementById('mess').innerText = "Username and Password are mandatory fields";
+        document.getElementById('mess').innerText = "Username, Password and email id are mandatory fields";
         document.getElementById('mess').style.visibility = "visible"
         removeLoadBar();
 
@@ -24,6 +62,10 @@ document.getElementById('register').addEventListener('click', (ev) => {
 
 document.getElementById('sendActivationLink').addEventListener('click', (ev) => {
     loadBar();
+    document.getElementById('login').disabled = true;
+    document.getElementById('register').disabled = true;
+    document.getElementById('sendActivationLink').disabled = true;
+
 
     ev.preventDefault();
     var bodyJSON = '{"email":"' + document.getElementById('reg_email').value + '"}'
@@ -40,6 +82,10 @@ document.getElementById('sendActivationLink').addEventListener('click', (ev) => 
             res = JSON.parse(res);
             document.getElementById('mess').innerText = res.message;
             document.getElementById('mess').style.visibility = "visible"
+            document.getElementById('login').disabled = false;
+            document.getElementById('register').disabled = false;
+            document.getElementById('sendActivationLink').disabled = false;
+
             removeLoadBar();
         })
 
@@ -76,6 +122,9 @@ loginRegister = (type) => {
         console.log("********");
         res = JSON.parse(res)
         console.log("********");
+        document.getElementById('login').disabled = false;
+        document.getElementById('register').disabled = false;
+        document.getElementById('sendActivationLink').disabled = false;
         if (res.error != undefined && res.error != "undefined" && res.error.length > 0) {
             document.getElementById('mess').innerText = res.error;
             document.getElementById('mess').style.visibility = "visible"
@@ -83,6 +132,9 @@ loginRegister = (type) => {
         }
         else if (res.token != undefined) {
             localStorage.setItem('spm_token', res.token);
+            document.getElementById('login').disabled = true;
+            document.getElementById('register').disabled = true;
+            document.getElementById('sendActivationLink').disabled = true;
             console.log(document.cookie.token);
             if (window.location.href.indexOf('login') == -1) {
                 console.log("REFRESHING");

@@ -31,7 +31,13 @@ var instance = mongoose.model('instance', {
     },
     status: {
         type: String
-    }
+    },
+    workedUponUsers: [{
+        userId: {
+            type: String
+        }
+    }],
+    
 })
 
 

@@ -8,9 +8,9 @@ loadUsers = () => {
     }).then((prom) => prom.text()).then((res) => {
         if (JSON.parse(res).length > 0) {
             document.getElementById("noUsers").style.display = "none";
-            document.getElementById("userTable").style.display = "block";
+            document.getElementById("userTable").style.display = "table";
         } else {
-            document.getElementById("noUsers").style.display = "block";
+            document.getElementById("noUsers").style.display = "table";
             document.getElementById("userTable").style.display = "none";
         }
         for (i in JSON.parse(res)) {
@@ -25,7 +25,11 @@ loadUsers = () => {
                 add = "<td> <i id='deactivate_" + JSON.parse(res)[i]._id + "' class='fas fa-toggle-on editUsers'></i>          </td>";
 
             }
-            newRow.innerHTML = "<td>" + JSON.parse(res)[i].user.username + "</td><td  id=roles" + JSON.parse(res)[i]._id + " data-toggle='tooltip' title=" + JSON.parse(res)[i].user.roles + ">" + JSON.parse(res)[i].user.roles + "</td><td><i  id='edit_" + JSON.parse(res)[i]._id + "' class='fas fa-user-edit editUsers'></i></td>"
+            var username = JSON.parse(res)[i].user.username;
+            if (username.length == 0) {
+                username = "#User invited!#"
+            }
+            newRow.innerHTML = "<td>" + username + "<br><strong style='font-size:0.6em'>" + JSON.parse(res)[i].user.email + "</strong></td><td  id=roles" + JSON.parse(res)[i]._id + " data-toggle='tooltip' title=" + JSON.parse(res)[i].user.roles + ">" + JSON.parse(res)[i].user.roles + "</td><td><i  id='edit_" + JSON.parse(res)[i]._id + "' class='fas fa-user-edit editUsers'></i></td>"
                 + add
                 + "<td><i id='delete_" + JSON.parse(res)[i]._id + "' class='fas fa-ban editUsers'></i>                </td>";
             document.getElementById('users').appendChild(newRow);
@@ -36,12 +40,13 @@ loadUsers = () => {
                 var newDiv = document.createElement("DIV");
                 document.getElementById('pop-up').style.display = "block"
                 newDiv.style.height = "100px";
-                newDiv.style.width = "100px";
+                newDiv.style.width = "300px";
                 document.getElementById('pop-up').style.position = "absolute";
                 newDiv.style.margin = "auto auto";
-                newDiv.innerHTML = '<select id="roleSelector" class=selectpicker form-control multiple></select><div><button id="editRole" class="btn btn-primary"><i class="fas fa-edit"></i>                </button><button id="cancelRole" style="margin-left:30px" class="btn btn-primary"><i class="fas fa-times"></i>                </button></div>'
+                newDiv.innerHTML = '<select id="roleSelector" class=selectpicker form-control multiple></select><div><button id="editRole" class="btn btn-primary"><i class="fas fa-edit"></i>                </button><button id="cancelRole" class="btn btn-primary"><i class="fas fa-times"></i>                </button></div>'
                 document.getElementById('pop-up').innerHTML = "";
                 document.getElementById('pop-up').appendChild(newDiv);
+                document.getElementById('cancelRole').style.float = "right"
                 document.getElementById('cancelRole').addEventListener('click', (ev) => {
                     popupClose();
                 })
@@ -221,33 +226,38 @@ document.getElementById('addUser').addEventListener('click', (ev) => {
     document.getElementById('pop-up').appendChild(newDiv);
     document.getElementById('app').style.display = "none";
 
-
+    document.getElementById('new_email').addEventListener('focus',(ev)=>{
+        document.getElementById('mess').innerText="";
+    })
 
     document.getElementById('new_addUser').addEventListener('click', (ev) => {
-        var jsonBody = '{"email":"' + document.getElementById('new_email').value + '"}'
-        fetch('/register?channel=admin', {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                'content-type': 'application/json'
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(document.getElementById('new_email').value) == false || document.getElementById('new_email').value.length==0) {
+            document.getElementById('mess').innerText = "Email should of valid!";
+        } else {
+            var jsonBody = '{"email":"' + document.getElementById('new_email').value + '"}'
+            fetch('/register?channel=admin', {
+                method: "POST",
+                credentials: 'include',
+                headers: {
+                    'content-type': 'application/json'
 
-            },
-            body: jsonBody
-        }).then((prom) => prom.text()).then((res) => {
-            var mess = JSON.parse(res).error;
-            console.log(mess);
-            if (mess.indexOf("OK")!=-1) {
-                console.log("REC");
-                document.getElementById('app').style.display = "block";
-                document.getElementById('pop-up').style.display = "none";
-                loadUsers();
+                },
+                body: jsonBody
+            }).then((prom) => prom.text()).then((res) => {
+                var mess = JSON.parse(res).error;
+                console.log(mess);
+                if (mess.indexOf("OK") != -1) {
+                    console.log("REC");
+                    document.getElementById('app').style.display = "block";
+                    document.getElementById('pop-up').style.display = "none";
+                    loadUsers();
 
-            } else {
-                document.getElementById('mess').innerText=mess;
-            }
-        })
+                } else {
+                    document.getElementById('mess').innerText = mess;
+                }
+            })
 
-
+        }
     })
 
     document.getElementById('cancel_addUser').addEventListener('click', (ev) => {

@@ -58,7 +58,7 @@ addChild = (name, type, control, pattern, required, options) => {
         StringSelected = "selected";
 
     }
-    if (typeof (required) !== 'undefined' && required == "true") {
+    if (typeof (required) !== 'undefined' && required == true) {
         required = "checked"
     }
     else {
@@ -152,7 +152,7 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
             }
 
             console.log(options);
-            var temp = '"' + document.getElementById(elName).value + '":{"type":"' + document.getElementById(elType).value + '","control":"' + document.getElementById(elControl).value + '","options":"' + options.toString() + '","pattern":"' + encodeURI(document.getElementById(elPattern).value) + '","required":"' + encodeURI(document.getElementById(elRequired).checked) + '"}';
+            var temp = '"' + document.getElementById(elName).value + '":{"type":"' + document.getElementById(elType).value + '","control":"' + document.getElementById(elControl).value + '","options":"' + options.toString() + '","pattern":"' + encodeURI(document.getElementById(elPattern).value) + '","required":' + encodeURI(document.getElementById(elRequired).checked) + '}';
             json += temp;
             if (i != nodes.length - 1) {
                 json += ","
@@ -170,6 +170,12 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
         method = "PUT";
 
     }
+    console.log(method);
+    // var script = document.createElement("script");
+    // script.src = "js/listObjects.js";
+    // script.id = "listObjectsScript"
+    // console.log("#1");
+    // document.getElementsByTagName("head")[0].appendChild(script);
     fetch('/objects' + ext, {
         method: method,
         headers: {
@@ -180,7 +186,17 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
     }).then((prom) => {
         return prom.text();
     }).then((res) => {
-        window.location.hash = "listObjects";
+        loadBar();
+        document.getElementById("saveObj").disabled = true;
+        setTimeout(() => {
+            removeLoadBar()
+
+            window.location.hash = "listObjects";
+
+        }, 3000)
+
+    }).catch((err) => {
+
     })
 
 })
@@ -190,6 +206,8 @@ var lochash = window.location.hash;
 if (lochash.substr(7).length > 0) {
     objectId = window.location.hash.substr(7);
     loadObject(objectId)
+    removeLoadBar();
+
 }
 else {
     removeLoadBar();

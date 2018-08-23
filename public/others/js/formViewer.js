@@ -533,6 +533,7 @@ eventPage = (type, id) => {
                         if (bind_element == objs[j].schemaName) {
                             var schema = objs[j].schemaStructure;
                             var le = 0;
+                            var oneAdded = false;
                             for (key in schema) {
                                 le++;
                                 if (schema[key].control == "radio") {
@@ -545,12 +546,17 @@ eventPage = (type, id) => {
                                             checkedEl = k;
                                         }
                                     }
-                                    jsonBody += '"' + key + '":"' + checkedEl + '"'
+                                    if (oneAdded == true) {
 
+                                        jsonBody += ',"' + key + '":"' + checkedEl + '"'
+                                    } else {
+                                        jsonBody += '"' + key + '":"' + checkedEl + '"'
+                                        oneAdded = true;
+                                    }
 
 
                                 } else {
-
+                                    console.log("#@#@##" + document.getElementById(tempArr[i].id + "_" + key).checkValidity() + "@@" + tempArr[i].id + "_" + key);
                                     if (document.getElementById(tempArr[i].id + "_" + key).checkValidity() == false) {
                                         alert("Focussing on the problematic field");
                                         problemField = tempArr[i].id + "_" + key;
@@ -558,12 +564,21 @@ eventPage = (type, id) => {
 
                                     }
 
-                                    jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
+                                    if (document.getElementById(tempArr[i].id + "_" + key).value.length > 0) {
+                                        if (oneAdded == true) {
+                                            jsonBody += ',"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
+
+                                        } else {
+                                            jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
+                                            oneAdded=true;
+                                        }
+                                    }
+
 
                                 }
-                                if (le != (Object.keys(schema).length)) {
-                                    jsonBody += ",";
-                                }
+                                // if (le != (Object.keys(schema).length)) {
+                                //     jsonBody += ",";
+                                // }
                             }
                         }
 
@@ -584,6 +599,7 @@ eventPage = (type, id) => {
                     for (var l = 0; l < tbodyC.length; l++) {
                         var tempJson = "{";
                         for (var m = 0; m < tbodyC[l].childNodes.length; m++) {
+
                             tempJson += '"' + tbodyC[l].childNodes[m].getAttribute('value') + '":"' + tbodyC[l].childNodes[m].innerText + '"';
                             if (m != tbodyC[l].childNodes.length - 1) {
                                 tempJson += ",";
@@ -603,6 +619,8 @@ eventPage = (type, id) => {
                 }
 
             }
+            console.log(jsonBody);
+
             if (problemField.length > 0) {
                 console.log(problemField);
                 document.getElementById(problemField).focus();

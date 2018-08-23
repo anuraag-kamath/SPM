@@ -57,6 +57,12 @@ var workitem = mongoose.model('workitem', {
     },
     rejectionApplicable: {
         type: Boolean
+    },
+    restrictUsers: {
+        userId:
+            { type: String }
+    }, differentEye: {
+        type: Boolean
     }
 })
 

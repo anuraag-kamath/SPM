@@ -46,6 +46,29 @@ const port = process.env.PORT || 9099;
 var cors = require('cors')
 
 //newImports
+var { y545_v0 } = require('./userSchemas/y545_v0')
+var { t555_v0 } = require('./userSchemas/t555_v0')
+var { t3232_v0 } = require('./userSchemas/t3232_v0')
+var { t454_v0 } = require('./userSchemas/t454_v0')
+var { t556_v0 } = require('./userSchemas/t556_v0')
+var { l2_v0 } = require('./userSchemas/l2_v0')
+var { z1_v0 } = require('./userSchemas/z1_v0')
+var { k2_v0 } = require('./userSchemas/k2_v0')
+var { j1_v0 } = require('./userSchemas/j1_v0')
+var { t4555_v0 } = require('./userSchemas/t4555_v0')
+var { t23_v0 } = require('./userSchemas/t23_v0')
+var { d33_v0 } = require('./schemas/d33_v0')
+var { s3444_v0 } = require('./schemas/s3444_v0')
+var { s3442_v0 } = require('./schemas/s3442_v0')
+var { s3441_v0 } = require('./schemas/s3441_v0')
+var { s126_v0 } = require('./schemas/s126_v0')
+var { s125_v0 } = require('./schemas/s125_v0')
+var { s124_v0 } = require('./schemas/s124_v0')
+var { s123_v0 } = require('./schemas/s123_v0')
+var { s122_v0 } = require('./schemas/s122_v0')
+var { s121_v0 } = require('./schemas/s121_v0')
+var { s32fv1_v0 } = require('./schemas/s32fv1_v0')
+var { s32fv_v0 } = require('./schemas/s32fv_v0')
 var { s34_v0 } = require('./schemas/s34_v0')
 var { obj2_v0 } = require('./schemas/obj2_v0')
 var { obj1_v1 } = require('./schemas/obj1_v1')
@@ -86,10 +109,13 @@ logger = (activity, subActivity, subsubActivity, activityId, status, userId, ipA
     console.log(activity);
     if (userId.length > 0) {
         user.findById(userId, (err, res1) => {
-            act = new userActivity({
-                activity, subActivity, subsubActivity, activityId, status, userId, user: res1.user.username, ipAddress, method, logDate: new Date()
-            });
-            act.save();
+            if (res1!=undefined && res1!=='undefined' && res1.user != undefined && res1.user !== 'undefined') {
+                act = new userActivity({
+                    activity, subActivity, subsubActivity, activityId, status, userId, user: res1.user.username, ipAddress, method, logDate: new Date()
+                });
+                act.save();
+
+            }
 
 
         })
@@ -249,7 +275,7 @@ activateDeactivate = (req, res) => {
                 // res.write("<html><head><href rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'</head><body><input type='text' class='form-control' placeholder='username' id='username'><input type='password' class='form-control' placeholder='Enter password' id='password1'><input type='password' class='form-control' placeholder='Confirm password' id='password2'><button  class='form-control' onclick=''>Create Account</button></body></html>");
                 // res.end();
 
-            } else if (res1.user.activated == false){
+            } else if (res1.user.activated == false) {
                 console.log(res1.user.activated);
                 res1.user.activated = true;
                 user.findByIdAndUpdate(req.params.userId, res1, (err, res2) => {
@@ -259,10 +285,10 @@ activateDeactivate = (req, res) => {
 
                 })
 
-            }else{
+            } else {
                 res.writeHeader(200, { "Content-Type": "text/html" });
-                    res.write("User already activated! <a href='/login'>Click here to login!</a>");
-                    res.end();
+                res.write("User already activated! <a href='/login'>Click here to login!</a>");
+                res.end();
             }
         } else {
             res.writeHeader(200, { "Content-Type": "text/html" });
@@ -421,6 +447,7 @@ app.use((req, res, next) => {
                 objectViewer: ["/css/objectViewer.css", "/js/objectViewer.js", "/objectViewer.html"],
                 objectBuilder: ["/css/object-builder.css", "/js/object-builder.js", "/object-builder.html"],
                 listForms: ["/css/listForms.css", "/js/listForms.js", "/listForms.html"],
+                listInstances: ["/css/listInstances.css", "/js/listInstances.js", "/listInstances.html"],
                 index: ["/css/index.css", "/js/index.js", "/index.html", '/'],
                 header: ["/css/header.css", "/js/header.js", "/header.html"],
                 formBuilder: ["/css/main.css", "/js/main.js", "/formBuilder.html"],
@@ -668,29 +695,35 @@ app.post('/objects', (req, res) => {
 
     req.body.schemaName = req.body.schemaName + "_v0"
 
-    fs.appendFile('./schemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
-    })
+
 
     var obj1 = new obj((req.body));
+    console.log("HERE");
     obj1.save().then((doc) => {
-        logger("API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
-
-        res.send(`${doc}`);
-    })
-
-    fs.readFile('./app.js', (err, data) => {
-
-
-
-        data = String(data).replace("//newImports", "//newImports\nvar {" + req.body.schemaName + "}=require('./schemas/" + req.body.schemaName + "')");
-
-        data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.post('/" + req.body.schemaName + "', (req, res) => {\n\tconsole.log(req.body);\n\tvar obj1 = new " + req.body.schemaName + "(req.body);\n\tconsole.log(obj1)\n\obj1.save().then((doc) => {\n\t\tres.send(`${doc}`);\n\t})\n})")
-        data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "', (req, res) => {\n\t" + req.body.schemaName + ".find({}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-        data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "/:id', (req, res) => {\n\t" + req.body.schemaName + ".find({_id:ObjectId(req.params.id)}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-        fs.writeFile('./app.js', data, (err) => {
-
+        console.log("SAVED!!!");
+        fs.appendFile('./userSchemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
         })
+        logger("API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
+        fs.readFile('./app.js', (err, data) => {
+
+
+
+            data = String(data).replace("//newImports", "//newImports\nvar {" + req.body.schemaName + "}=require('./userSchemas/" + req.body.schemaName + "')");
+
+            data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.post('/" + req.body.schemaName + "', (req, res) => {\n\tconsole.log(req.body);\n\tvar obj1 = new " + req.body.schemaName + "(req.body);\n\tconsole.log(obj1)\n\obj1.save().then((doc) => {\n\t\tres.send(`${doc}`);\n\t})\n})")
+            data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "', (req, res) => {\n\t" + req.body.schemaName + ".find({}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
+            data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "/:id', (req, res) => {\n\t" + req.body.schemaName + ".find({_id:ObjectId(req.params.id)}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
+            fs.writeFile('./app.js', data, (err) => {
+                res.send(`${doc}`);
+
+            })
+        })
+    }).catch((err) => {
+        console.log("ERR");
+        console.log(err);
     })
+
+
     console.log("**/objects exited**");
 
 
@@ -1128,6 +1161,14 @@ app.post('/instance/:id', (req, res) => {
     objects = JSON.parse(req.body.objects);
     oldObjects = [];
     addObjects(objects, req.params.id);
+    instance.findByIdAndUpdate(instanceId, {
+        $push: {
+            workedUponUsers: {
+                userId: jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId
+            }
+        }
+    }, (err, resinst) => {
+    })
     instance.findById(instanceId, (err, data) => {
         process1.findById(data.processId, (err, data2) => {
 
@@ -1138,6 +1179,7 @@ app.post('/instance/:id', (req, res) => {
             var escalationTriggered = false;
             var escalationApplicable = false;
             var rejectionApplicable = false;
+            //var differentEye=false;
             console.log("###");
             console.log(escalationDate);
             console.log("###");
@@ -1157,6 +1199,9 @@ app.post('/instance/:id', (req, res) => {
             if ((data2).steps[0].rej1 == true) {
                 rejectionApplicable = true;
             }
+            // if ((data2).steps[0].difEye1 == true) {
+            //     differentEye = true;
+            // }
             console.log("###");
             console.log(escalationDate);
             console.log("###");
@@ -1257,6 +1302,7 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
     var workitemId = req.params.wid;
     var rejectStep = req.params.rejectToStep
     var userSearch = jsonwebtoken.verify(token, "alphabetagamma").userId
+
     user.findById(userSearch, (err, res123) => {
         workitem.findByIdAndUpdate(workitemId, {
             status: "rejected",
@@ -1269,6 +1315,14 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
                     console.log("#R#R#R#");
                     console.log(docs);
                     console.log("#R#R#R#");
+                    instance.findByIdAndUpdate(doc.instanceId, {
+                        $push: {
+                            workedUponUsers: {
+                                userId: jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId
+                            }
+                        }
+                    }, (err, resinst) => {
+                    })
 
                     if (docs.length != 0) {
                         for (var d = 0; d < docs.length; d++) {
@@ -1305,6 +1359,7 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
                             var escalationTriggered = false;
                             var escalationApplicable = false;
                             var rejectionApplicable = false;
+                            // var differentEye = false;
 
                             if (String(rejectStep).indexOf("lbl1") != -1) {
                                 if (doc1.steps[i].days1 > 0) {
@@ -1323,6 +1378,9 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
                                 if ((doc1).steps[i].rej1 == true) {
                                     rejectionApplicable = true;
                                 }
+                                // if ((doc1).steps[i].difEye1 == true) {
+                                //     differentEye = true;
+                                // }
 
 
 
@@ -1366,6 +1424,9 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
                                 if ((doc1).steps[i].rej2 == true) {
                                     rejectionApplicable = true;
                                 }
+                                // if ((doc1).steps[i].difEye2 == true) {
+                                //     differentEye = true;
+                                // }
 
 
 
@@ -1414,6 +1475,19 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
             instanceId = id;
             workitemId = wid;
             objects = JSON.parse(objects);
+            if (mode == "internal") {
+                user1 = "5b7a73a6ab3b0a4167cab95b";
+            } else {
+                user1 = jsonwebtoken.verify(token, "alphabetagamma").userId
+            }
+            instance.findByIdAndUpdate(instanceId, {
+                $push: {
+                    workedUponUsers: {
+                        userId: user1
+                    }
+                }
+            }, (err, resinst) => {
+            })
             instance.findById(instanceId, (err, doc21) => {
                 oldObjects = doc21.objects;
                 instance.findByIdAndUpdate(instanceId, {
@@ -1475,6 +1549,7 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                 var escalationTriggered = false;
                                                 var escalationApplicable = false;
                                                 var rejectionApplicable = false;
+                                                // var differentEye = true;
 
                                                 if (doc1.steps[i].days1 > 0) {
                                                     escalationApplicable = true;
@@ -1987,13 +2062,12 @@ app.get('/workitems', (req, res) => {
         console.log("STEPID LENGTH" + searchStep);
         if (searchStep != undefined && searchStep.length > 0) {
             search += roles + ']},{"instanceId":"' + req.query.instanceId + '"},{"stepId": { "$in": [' + searchStep + '] } }]}'
-
         } else {
             search += roles + ']},{"status":"scheduled"}]}'
-
         }
         console.log(search);
         workitem.find(JSON.parse(search)).then((data) => {
+
             logger("API", "workitem", "", "", "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "GET");
 
             res.send(data)
@@ -2071,6 +2145,719 @@ app.put('/workitems/:id', (req, res) => {
 
 
 //newSettersGetters
+
+app.get('/y545_v0/:id', (req, res) => {
+    y545_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/y545_v0', (req, res) => {
+    y545_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/y545_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new y545_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/t555_v0/:id', (req, res) => {
+    t555_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/t555_v0', (req, res) => {
+    t555_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/t555_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new t555_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/t3232_v0/:id', (req, res) => {
+    t3232_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/t3232_v0', (req, res) => {
+    t3232_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/t3232_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new t3232_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/t454_v0/:id', (req, res) => {
+    t454_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/t454_v0', (req, res) => {
+    t454_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/t454_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new t454_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/t556_v0/:id', (req, res) => {
+    t556_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/t556_v0', (req, res) => {
+    t556_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/t556_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new t556_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/l2_v0/:id', (req, res) => {
+    l2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/l2_v0', (req, res) => {
+    l2_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/l2_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new l2_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/z1_v0/:id', (req, res) => {
+    z1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/z1_v0', (req, res) => {
+    z1_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/z1_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new z1_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/k2_v0/:id', (req, res) => {
+    k2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/k2_v0', (req, res) => {
+    k2_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/k2_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new k2_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/j1_v0/:id', (req, res) => {
+    j1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/j1_v0', (req, res) => {
+    j1_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/j1_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new j1_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/t4555_v0/:id', (req, res) => {
+    t4555_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/t4555_v0', (req, res) => {
+    t4555_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/t4555_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new t4555_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/t23_v0/:id', (req, res) => {
+    t23_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/t23_v0', (req, res) => {
+    t23_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/t23_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new t23_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/d33_v0/:id', (req, res) => {
+    d33_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/d33_v0', (req, res) => {
+    d33_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/d33_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new d33_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s3444_v0/:id', (req, res) => {
+    s3444_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s3444_v0', (req, res) => {
+    s3444_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s3444_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s3444_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s3442_v0/:id', (req, res) => {
+    s3442_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s3442_v0', (req, res) => {
+    s3442_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s3442_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s3442_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s3441_v0/:id', (req, res) => {
+    s3441_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s3441_v0', (req, res) => {
+    s3441_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s3441_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s3441_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s126_v0/:id', (req, res) => {
+    s126_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s126_v0', (req, res) => {
+    s126_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s126_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s126_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s125_v0/:id', (req, res) => {
+    s125_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s125_v0', (req, res) => {
+    s125_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s125_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s125_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s124_v0/:id', (req, res) => {
+    s124_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s124_v0', (req, res) => {
+    s124_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s124_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s124_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s123_v0/:id', (req, res) => {
+    s123_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s123_v0', (req, res) => {
+    s123_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s123_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s123_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s122_v0/:id', (req, res) => {
+    s122_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s122_v0', (req, res) => {
+    s122_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s122_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s122_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s121_v0/:id', (req, res) => {
+    s121_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s121_v0', (req, res) => {
+    s121_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s121_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s121_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s32fv1_v0/:id', (req, res) => {
+    s32fv1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s32fv1_v0', (req, res) => {
+    s32fv1_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s32fv1_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s32fv1_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s32fv_v0/:id', (req, res) => {
+    s32fv_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s32fv_v0', (req, res) => {
+    s32fv_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s32fv_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s32fv_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/sdsad33323_v0/:id', (req, res) => {
+    sdsad33323_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/sdsad33323_v0', (req, res) => {
+    sdsad33323_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/sdsad33323_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new sdsad33323_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/sdsad_v0/:id', (req, res) => {
+    sdsad_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/sdsad_v0', (req, res) => {
+    sdsad_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/sdsad_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new sdsad_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/sdsad_v0/:id', (req, res) => {
+    sdsad_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/sdsad_v0', (req, res) => {
+    sdsad_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/sdsad_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new sdsad_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s2334_v0/:id', (req, res) => {
+    s2334_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s2334_v0', (req, res) => {
+    s2334_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s2334_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s2334_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/r3_v0/:id', (req, res) => {
+    r3_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/r3_v0', (req, res) => {
+    r3_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/r3_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new r3_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/w2_v0/:id', (req, res) => {
+    w2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/w2_v0', (req, res) => {
+    w2_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/w2_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new w2_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s23_v0/:id', (req, res) => {
+    s23_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s23_v0', (req, res) => {
+    s23_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s23_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s23_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
+
+app.get('/s1_v0/:id', (req, res) => {
+    s1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.get('/s1_v0', (req, res) => {
+    s1_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
+});
+
+app.post('/s1_v0', (req, res) => {
+    console.log(req.body);
+    var obj1 = new s1_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
+})
 
 app.get('/s34_v0/:id', (req, res) => {
     s34_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
