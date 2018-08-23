@@ -1,3 +1,0 @@
-var mongoose=require('mongoose');
-var s23_v0=mongoose.model("s23_v0",{"s23_v0":[{"s3":{"type":"String","control":"text","options":"","pattern":"","required":false},"s234":{"type":"Date","control":"text","options":"","pattern":"","required":false},"s34":{"type":"Date","control":"text","options":"","pattern":"","required":true},"s45":{"type":"Date","control":"text","options":"","pattern":"","required":true},"s555":{"type":"Date","control":"text","options":"","pattern":"","required":false}}],"instanceId":{"type":"String"}});
-module.exports={s23_v0}

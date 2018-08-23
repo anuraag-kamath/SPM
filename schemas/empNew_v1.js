@@ -1,3 +1,0 @@
-var mongoose=require('mongoose');
-var empNew_v1=mongoose.model("empNew_v1",{"empNew_v1":[{"name":{"type":"String","control":"text","pattern":"%5E%28%5Ba-zA-Z0-9_%5C-%5C.%5D%2B%29%40%28%5Ba-zA-Z0-9_%5C-%5C.%5D%2B%29%5C.%28%5Ba-zA-Z%5D%7B2%2C5%7D%29%24"},"age":{"type":"Number","control":"text","pattern":""},"dOB":{"type":"Date","control":"text","pattern":""}}],"instanceId":{"type":"String"}});
-module.exports={empNew_v1}
