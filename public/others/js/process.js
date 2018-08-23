@@ -534,10 +534,11 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
                     document.getElementById('participant_div').style.display = "flex";
                     document.getElementById('escalation_div').style.display = "flex";
-                    document.getElementById('st-sample').style.display = "block";
                     document.getElementById('form_div').style.display = "flex";
                     document.getElementById('st_act_div').style.display = "none";
                     document.getElementById('st_act').style.display = "none";
+                    document.getElementById('st-sample').style.display = "none";
+
                     document.getElementById('rejection_div').style.display = "flex";
 
 
@@ -553,10 +554,11 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
                     document.getElementById('participant_div').style.display = "none";
                     document.getElementById('escalation_div').style.display = "none";
-                    document.getElementById('st-sample').style.display = "none";
 
                     document.getElementById('form_div').style.display = "none";
                     document.getElementById('st_act').style.display = "block";
+                    document.getElementById('st-sample').style.display = "flex";
+
                     document.getElementById('st_act_div').style.display = "block";
 
                     document.getElementById('rejection_div').style.display = "none";
@@ -576,17 +578,20 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                         document.getElementById('st-input').value = cur.input;
                         document.getElementById('st-output').value = cur.output;
                         console.log(currentElement);
-                        for (var i = 0; i < cur.headers.length; i++) {
+                        console.log("$$$");
+                        console.log(cur.headers);
+                        console.log("$$$");
+                        for (var i = 0; i < JSON.parse(cur.headers).length; i++) {
                             console.log("##");
-                            console.log(cur.headers[i].split("#"));
+                            console.log(JSON.parse(cur.headers)[i].split("#"));
                             console.log("#");
-                            addHeader(cur.headers[i].split("#")[0], cur.headers[i].split("#")[1])
+                            addHeader(JSON.parse(cur.headers)[i].split("#")[0], JSON.parse(cur.headers)[i].split("#")[1])
                         }
-                        for (var i = 0; i < cur.queryParams.length; i++) {
+                        for (var i = 0; i < JSON.parse(cur.queryParams).length; i++) {
                             console.log("##");
-                            console.log(cur.queryParams[i].split("#"));
+                            console.log(JSON.parse(cur.queryParams)[i].split("#"));
                             console.log("#");
-                            addQueryParams(cur.queryParams[i].split("#")[0], cur.queryParams[i].split("#")[1])
+                            addQueryParams(JSON.parse(cur.queryParams)[i].split("#")[0], JSON.parse(cur.queryParams)[i].split("#")[1])
                         }
 
                     }
@@ -683,6 +688,7 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                 document.getElementById('form_div').style.display = "flex";
                 document.getElementById('st_act').style.display = "none";
                 document.getElementById('st_act_div').style.display = "none";
+                document.getElementById('st-sample').style.display = "none";
 
                 document.getElementById('rejection_div').style.display = "flex";
 
@@ -700,6 +706,7 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                 document.getElementById('form_div').style.display = "none";
                 document.getElementById('st_act').style.display = "block";
                 document.getElementById('st_act_div').style.display = "block";
+                document.getElementById('st-sample').style.display = "flex";
 
                 document.getElementById('rejection_div').style.display = "none";
 
@@ -717,17 +724,19 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                     document.getElementById('st-input').value = cur.input;
                     document.getElementById('st-output').value = cur.output;
                     console.log(currentElement);
-                    for (var i = 0; i < cur.headers.length; i++) {
+                    console.log(cur)
+                    console.log(cur.headers);
+                    for (var i = 0; i < JSON.parse(cur.headers).length; i++) {
                         console.log("##");
-                        console.log(cur.headers[i].split("#"));
+                        console.log(JSON.parse(cur.headers)[i].split("#"));
                         console.log("#");
-                        addHeader(cur.headers[i].split("#")[0], cur.headers[i].split("#")[1])
+                        addHeader(JSON.parse(cur.headers)[i].split("#")[0], JSON.parse(cur.headers)[i].split("#")[1])
                     }
-                    for (var i = 0; i < cur.queryParams.length; i++) {
+                    for (var i = 0; i < JSON.parse(cur.queryParams).length; i++) {
                         console.log("##");
-                        console.log(cur.queryParams[i].split("#"));
+                        console.log(JSON.parse(cur.queryParams)[i].split("#"));
                         console.log("#");
-                        addQueryParams(cur.queryParams[i].split("#")[0], cur.queryParams[i].split("#")[1])
+                        addQueryParams(JSON.parse(cur.queryParams)[i].split("#")[0], JSON.parse(cur.queryParams)[i].split("#")[1])
                     }
 
                 }

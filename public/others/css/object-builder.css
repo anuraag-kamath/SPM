@@ -4,9 +4,10 @@
 }
 
  label {
-    //margin: auto;
+    margin: auto;
     margin-top: 10px;
     margin-right: 20px;
+    float: right
 }
 
  h3 {
@@ -24,4 +25,4 @@
     display: block;
     margin: auto;
     margin-top: 20px;
-}
+} 

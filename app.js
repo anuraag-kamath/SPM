@@ -24,6 +24,9 @@ var { userActivity } = require('./schemas/userActivity');
 
 var { comments } = require('./schemas/comments');
 
+var { user } = require('./schemas/user');
+var { roles } = require('./schemas/roles');
+
 var bcrypt = require('bcrypt');
 var jsonwebtoken = require('jsonwebtoken');
 var cookieParser = require('cookie-parser');
@@ -46,62 +49,9 @@ const port = process.env.PORT || 9099;
 var cors = require('cors')
 
 //newImports
-var { y545_v0 } = require('./userSchemas/y545_v0')
-var { t555_v0 } = require('./userSchemas/t555_v0')
-var { t3232_v0 } = require('./userSchemas/t3232_v0')
-var { t454_v0 } = require('./userSchemas/t454_v0')
-var { t556_v0 } = require('./userSchemas/t556_v0')
-var { l2_v0 } = require('./userSchemas/l2_v0')
-var { z1_v0 } = require('./userSchemas/z1_v0')
-var { k2_v0 } = require('./userSchemas/k2_v0')
-var { j1_v0 } = require('./userSchemas/j1_v0')
-var { t4555_v0 } = require('./userSchemas/t4555_v0')
-var { t23_v0 } = require('./userSchemas/t23_v0')
-var { d33_v0 } = require('./schemas/d33_v0')
-var { s3444_v0 } = require('./schemas/s3444_v0')
-var { s3442_v0 } = require('./schemas/s3442_v0')
-var { s3441_v0 } = require('./schemas/s3441_v0')
-var { s126_v0 } = require('./schemas/s126_v0')
-var { s125_v0 } = require('./schemas/s125_v0')
-var { s124_v0 } = require('./schemas/s124_v0')
-var { s123_v0 } = require('./schemas/s123_v0')
-var { s122_v0 } = require('./schemas/s122_v0')
-var { s121_v0 } = require('./schemas/s121_v0')
-var { s32fv1_v0 } = require('./schemas/s32fv1_v0')
-var { s32fv_v0 } = require('./schemas/s32fv_v0')
-var { s34_v0 } = require('./schemas/s34_v0')
-var { obj2_v0 } = require('./schemas/obj2_v0')
-var { obj1_v1 } = require('./schemas/obj1_v1')
-var { obj1_v0 } = require('./schemas/obj1_v0')
-var { r_v1 } = require('./schemas/r_v1')
-var { r_v0 } = require('./schemas/r_v0')
-var { b_v1 } = require('./schemas/b_v1')
-var { b_v0 } = require('./schemas/b_v0')
-var { a_v1 } = require('./schemas/a_v1')
-var { a_v0 } = require('./schemas/a_v0')
-var { s2_v0 } = require('./schemas/s2_v0')
-var { s1_v0 } = require('./schemas/s1_v0')
-var { emp123_v0 } = require('./schemas/emp123_v0')
-var { empNew_v10 } = require('./schemas/empNew_v10')
-var { empNew_v9 } = require('./schemas/empNew_v9')
-var { empNew_v8 } = require('./schemas/empNew_v8')
-var { empNew_v7 } = require('./schemas/empNew_v7')
-var { empNew_v6 } = require('./schemas/empNew_v6')
-var { empNew_v5 } = require('./schemas/empNew_v5')
-var { empNew_v4 } = require('./schemas/empNew_v4')
-var { empNew_v3 } = require('./schemas/empNew_v3')
-var { empNew_v2 } = require('./schemas/empNew_v2')
-var { empNew_v1 } = require('./schemas/empNew_v1')
-var { empNew_v0 } = require('./schemas/empNew_v0')
-var { emp_v3 } = require('./schemas/emp_v3')
-var { emp_v2 } = require('./schemas/emp_v2')
-var { emp_v1 } = require('./schemas/emp_v1')
-var { emp_v0 } = require('./schemas/emp_v0')
-var { sample123_v0 } = require('./schemas/sample123_v0')
-var { employee_v0 } = require('./schemas/employee_v0')
-
-var { user } = require('./schemas/user.js')
-var { roles } = require('./schemas/roles')
+var {test_v0}=require('./userSchemas/test_v0')
+var {employee_v1}=require('./userSchemas/employee_v1')
+var {employee_v0}=require('./userSchemas/employee_v0')
 
 app.use(bodyparser.json());
 
@@ -109,7 +59,7 @@ logger = (activity, subActivity, subsubActivity, activityId, status, userId, ipA
     console.log(activity);
     if (userId.length > 0) {
         user.findById(userId, (err, res1) => {
-            if (res1!=undefined && res1!=='undefined' && res1.user != undefined && res1.user !== 'undefined') {
+            if (res1 != undefined && res1 !== 'undefined' && res1.user != undefined && res1.user !== 'undefined') {
                 act = new userActivity({
                     activity, subActivity, subsubActivity, activityId, status, userId, user: res1.user.username, ipAddress, method, logDate: new Date()
                 });
@@ -231,7 +181,7 @@ activateDeactivate = (req, res) => {
     channel = req.query.channel
     user.findById(req.params.userId, (err, res1) => {
 
-        if (res1!=undefined && res1!=='undefined' && res1.user.activationId == activationId) {
+        if (res1 != undefined && res1 !== 'undefined' && res1.user.activationId == activationId) {
             console.log(res1.user.activated);
             if (res1.user.activated == false && channel == "username") {
                 var username = req.body.username
@@ -692,36 +642,45 @@ app.get('/whoami', (req, res) => {
 
 app.post('/objects', (req, res) => {
     console.log("**/objects entered**");
-
-    req.body.schemaName = req.body.schemaName + "_v0"
-
-
-
-    var obj1 = new obj((req.body));
-    console.log("HERE");
-    obj1.save().then((doc) => {
-        console.log("SAVED!!!");
-        fs.appendFile('./userSchemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
-        })
-        logger("API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
-        fs.readFile('./app.js', (err, data) => {
+    obj.find({ schemaName: req.body.schemaName+"_v0" }).then((objs) => {
+        console.log(req.body.schemaName);
+        console.log(objs);
+        if (objs.length > 0) {
+            res.send({ error: "Object with same root element exists! Please change the root element name" });
+        } else {
+            req.body.schemaName = req.body.schemaName + "_v0"
 
 
 
-            data = String(data).replace("//newImports", "//newImports\nvar {" + req.body.schemaName + "}=require('./userSchemas/" + req.body.schemaName + "')");
+            var obj1 = new obj((req.body));
+            console.log("HERE");
+            obj1.save().then((doc) => {
+                console.log("SAVED!!!");
+                fs.appendFile('./userSchemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
+                })
+                logger("API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "POST");
+                fs.readFile('./app.js', (err, data) => {
 
-            data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.post('/" + req.body.schemaName + "', (req, res) => {\n\tconsole.log(req.body);\n\tvar obj1 = new " + req.body.schemaName + "(req.body);\n\tconsole.log(obj1)\n\obj1.save().then((doc) => {\n\t\tres.send(`${doc}`);\n\t})\n})")
-            data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "', (req, res) => {\n\t" + req.body.schemaName + ".find({}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-            data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "/:id', (req, res) => {\n\t" + req.body.schemaName + ".find({_id:ObjectId(req.params.id)}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-            fs.writeFile('./app.js', data, (err) => {
-                res.send(`${doc}`);
 
+
+                    data = String(data).replace("//newImports", "//newImports\nvar {" + req.body.schemaName + "}=require('./userSchemas/" + req.body.schemaName + "')");
+
+                    data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.post('/" + req.body.schemaName + "', (req, res) => {\n\tconsole.log(req.body);\n\tvar obj1 = new " + req.body.schemaName + "(req.body);\n\tconsole.log(obj1)\n\obj1.save().then((doc) => {\n\t\tres.send(`${doc}`);\n\t})\n})")
+                    data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "', (req, res) => {\n\t" + req.body.schemaName + ".find({}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
+                    data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "/:id', (req, res) => {\n\t" + req.body.schemaName + ".find({_id:ObjectId(req.params.id)}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
+                    fs.writeFile('./app.js', data, (err) => {
+                        res.send(`${doc}`);
+
+                    })
+                })
+            }).catch((err) => {
+                console.log("ERR");
+                console.log(err);
             })
-        })
-    }).catch((err) => {
-        console.log("ERR");
-        console.log(err);
+
+        }
     })
+
 
 
     console.log("**/objects exited**");
@@ -745,7 +704,7 @@ app.put('/objects/:id', (req, res) => {
 
             logger("API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, "alphabetagamma").userId, req.connection.remoteAddress, "PUT");
 
-            fs.appendFile('./schemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
+            fs.appendFile('./userSchemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
             })
 
 
@@ -753,14 +712,14 @@ app.put('/objects/:id', (req, res) => {
 
 
 
-                data = String(data).replace("//newImports", "//newImports\nvar {" + req.body.schemaName + "}=require('./schemas/" + req.body.schemaName + "')");
+                data = String(data).replace("//newImports", "//newImports\nvar {" + req.body.schemaName + "}=require('./userSchemas/" + req.body.schemaName + "')");
 
                 data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.post('/" + req.body.schemaName + "', (req, res) => {\n\tconsole.log(req.body);\n\tvar obj1 = new " + req.body.schemaName + "(req.body);\n\tconsole.log(obj1)\n\obj1.save().then((doc) => {\n\t\tres.send(`${doc}`);\n\t})\n})")
                 data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "', (req, res) => {\n\t" + req.body.schemaName + ".find({}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
                 data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "/:id', (req, res) => {\n\t" + req.body.schemaName + ".find({_id:ObjectId(req.params.id)}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
                 fs.writeFile('./app.js', data, (err) => {
 
-                    res.send();
+                    res.send({});
                 })
 
             })
@@ -2144,1438 +2103,6 @@ app.put('/workitems/:id', (req, res) => {
 
 
 
-//newSettersGetters
-
-app.get('/y545_v0/:id', (req, res) => {
-    y545_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/y545_v0', (req, res) => {
-    y545_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/y545_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new y545_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/t555_v0/:id', (req, res) => {
-    t555_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/t555_v0', (req, res) => {
-    t555_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/t555_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new t555_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/t3232_v0/:id', (req, res) => {
-    t3232_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/t3232_v0', (req, res) => {
-    t3232_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/t3232_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new t3232_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/t454_v0/:id', (req, res) => {
-    t454_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/t454_v0', (req, res) => {
-    t454_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/t454_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new t454_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/t556_v0/:id', (req, res) => {
-    t556_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/t556_v0', (req, res) => {
-    t556_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/t556_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new t556_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/l2_v0/:id', (req, res) => {
-    l2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/l2_v0', (req, res) => {
-    l2_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/l2_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new l2_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/z1_v0/:id', (req, res) => {
-    z1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/z1_v0', (req, res) => {
-    z1_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/z1_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new z1_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/k2_v0/:id', (req, res) => {
-    k2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/k2_v0', (req, res) => {
-    k2_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/k2_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new k2_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/j1_v0/:id', (req, res) => {
-    j1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/j1_v0', (req, res) => {
-    j1_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/j1_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new j1_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/t4555_v0/:id', (req, res) => {
-    t4555_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/t4555_v0', (req, res) => {
-    t4555_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/t4555_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new t4555_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/t23_v0/:id', (req, res) => {
-    t23_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/t23_v0', (req, res) => {
-    t23_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/t23_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new t23_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/d33_v0/:id', (req, res) => {
-    d33_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/d33_v0', (req, res) => {
-    d33_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/d33_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new d33_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s3444_v0/:id', (req, res) => {
-    s3444_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s3444_v0', (req, res) => {
-    s3444_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s3444_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s3444_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s3442_v0/:id', (req, res) => {
-    s3442_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s3442_v0', (req, res) => {
-    s3442_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s3442_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s3442_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s3441_v0/:id', (req, res) => {
-    s3441_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s3441_v0', (req, res) => {
-    s3441_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s3441_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s3441_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s126_v0/:id', (req, res) => {
-    s126_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s126_v0', (req, res) => {
-    s126_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s126_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s126_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s125_v0/:id', (req, res) => {
-    s125_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s125_v0', (req, res) => {
-    s125_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s125_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s125_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s124_v0/:id', (req, res) => {
-    s124_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s124_v0', (req, res) => {
-    s124_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s124_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s124_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s123_v0/:id', (req, res) => {
-    s123_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s123_v0', (req, res) => {
-    s123_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s123_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s123_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s122_v0/:id', (req, res) => {
-    s122_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s122_v0', (req, res) => {
-    s122_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s122_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s122_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s121_v0/:id', (req, res) => {
-    s121_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s121_v0', (req, res) => {
-    s121_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s121_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s121_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s32fv1_v0/:id', (req, res) => {
-    s32fv1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s32fv1_v0', (req, res) => {
-    s32fv1_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s32fv1_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s32fv1_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s32fv_v0/:id', (req, res) => {
-    s32fv_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s32fv_v0', (req, res) => {
-    s32fv_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s32fv_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s32fv_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/sdsad33323_v0/:id', (req, res) => {
-    sdsad33323_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/sdsad33323_v0', (req, res) => {
-    sdsad33323_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/sdsad33323_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new sdsad33323_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/sdsad_v0/:id', (req, res) => {
-    sdsad_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/sdsad_v0', (req, res) => {
-    sdsad_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/sdsad_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new sdsad_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/sdsad_v0/:id', (req, res) => {
-    sdsad_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/sdsad_v0', (req, res) => {
-    sdsad_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/sdsad_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new sdsad_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s2334_v0/:id', (req, res) => {
-    s2334_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s2334_v0', (req, res) => {
-    s2334_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s2334_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s2334_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/r3_v0/:id', (req, res) => {
-    r3_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/r3_v0', (req, res) => {
-    r3_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/r3_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new r3_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/w2_v0/:id', (req, res) => {
-    w2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/w2_v0', (req, res) => {
-    w2_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/w2_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new w2_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s23_v0/:id', (req, res) => {
-    s23_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s23_v0', (req, res) => {
-    s23_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s23_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s23_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s1_v0/:id', (req, res) => {
-    s1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s1_v0', (req, res) => {
-    s1_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s1_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s1_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s34_v0/:id', (req, res) => {
-    s34_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s34_v0', (req, res) => {
-    s34_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s34_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s34_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-
-app.get('/obj2_v0/:id', (req, res) => {
-    obj2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/obj2_v0', (req, res) => {
-    obj2_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/obj2_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new obj2_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/obj1_v1/:id', (req, res) => {
-    obj1_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/obj1_v1', (req, res) => {
-    obj1_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/obj1_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new obj1_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/obj1_v0/:id', (req, res) => {
-    obj1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/obj1_v0', (req, res) => {
-    obj1_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/obj1_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new obj1_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/r_v1/:id', (req, res) => {
-    r_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/r_v1', (req, res) => {
-    r_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/r_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new r_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/r_v0/:id', (req, res) => {
-    r_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/r_v0', (req, res) => {
-    r_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/r_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new r_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/b_v1/:id', (req, res) => {
-    b_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/b_v1', (req, res) => {
-    b_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/b_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new b_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/b_v0/:id', (req, res) => {
-    b_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/b_v0', (req, res) => {
-    b_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/b_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new b_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/a_v1/:id', (req, res) => {
-    a_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/a_v1', (req, res) => {
-    a_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/a_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new a_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/a_v0/:id', (req, res) => {
-    a_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/a_v0', (req, res) => {
-    a_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/a_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new a_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s2_v0/:id', (req, res) => {
-    s2_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s2_v0', (req, res) => {
-    s2_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s2_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s2_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/s1_v0/:id', (req, res) => {
-    s1_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/s1_v0', (req, res) => {
-    s1_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/s1_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new s1_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/emp123_v0/:id', (req, res) => {
-    emp123_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/emp123_v0', (req, res) => {
-    emp123_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/emp123_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new emp123_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-
-app.get('/empNew_v10/:id', (req, res) => {
-    empNew_v10.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v10', (req, res) => {
-    empNew_v10.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v10', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v10(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v9/:id', (req, res) => {
-    empNew_v9.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v9', (req, res) => {
-    empNew_v9.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v9', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v9(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v8/:id', (req, res) => {
-    empNew_v8.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v8', (req, res) => {
-    empNew_v8.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v8', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v8(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v7/:id', (req, res) => {
-    empNew_v7.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v7', (req, res) => {
-    empNew_v7.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v7', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v7(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v6/:id', (req, res) => {
-    empNew_v6.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v6', (req, res) => {
-    empNew_v6.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v6', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v6(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v5/:id', (req, res) => {
-    empNew_v5.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v5', (req, res) => {
-    empNew_v5.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v5', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v5(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v4/:id', (req, res) => {
-    empNew_v4.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v4', (req, res) => {
-    empNew_v4.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v4', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v4(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v3/:id', (req, res) => {
-    empNew_v3.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v3', (req, res) => {
-    empNew_v3.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v3', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v3(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v2/:id', (req, res) => {
-    empNew_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v2', (req, res) => {
-    empNew_v2.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v2', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v2(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/empNew_v1/:id', (req, res) => {
-    empNew_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v1', (req, res) => {
-    empNew_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-
-
-app.get('/empNew_v0/:id', (req, res) => {
-    empNew_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/empNew_v0', (req, res) => {
-    empNew_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/empNew_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new empNew_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/emp_v3/:id', (req, res) => {
-    emp_v3.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/emp_v3', (req, res) => {
-    emp_v3.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/emp_v3', (req, res) => {
-    console.log(req.body);
-    var obj1 = new emp_v3(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/emp_v2/:id', (req, res) => {
-    emp_v2.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/emp_v2', (req, res) => {
-    emp_v2.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/emp_v2', (req, res) => {
-    console.log(req.body);
-    var obj1 = new emp_v2(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/emp_v1/:id', (req, res) => {
-    emp_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/emp_v1', (req, res) => {
-    emp_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/emp_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new emp_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/emp_v0/:id', (req, res) => {
-    emp_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/emp_v0', (req, res) => {
-    emp_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/emp_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new emp_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/sample123_v0/:id', (req, res) => {
-    sample123_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/sample123_v0', (req, res) => {
-    sample123_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/sample123_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new sample123_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/employee_v0/:id', (req, res) => {
-    employee_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/employee_v0', (req, res) => {
-    employee_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/employee_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new employee_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-
-app.get('/particular/:id', (req, res) => {
-    particular.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/particular', (req, res) => {
-    particular.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/particular', (req, res) => {
-    console.log(req.body);
-    var obj1 = new particular(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
 
 app.get('/roles/:id', (req, res) => {
 
@@ -3656,60 +2183,6 @@ app.post('/roles', (req, res) => {
     })
 })
 
-app.get('/alpha/:id', (req, res) => {
-    alpha.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/alpha', (req, res) => {
-    alpha.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/alpha', (req, res) => {
-    console.log(req.body);
-    var obj1 = new alpha(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/leaves', (req, res) => {
-    leaves.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/leaves', (req, res) => {
-    console.log(req.body);
-    var obj1 = new leaves(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/employee', (req, res) => {
-    employee.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/employee', (req, res) => {
-    console.log(req.body);
-    var obj1 = new employee(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
 
 app.get('/user', (req, res) => {
     user.find({}).then((docs) => {
@@ -3766,38 +2239,78 @@ app.put('/user', (req, res) => {
     })
 })
 
-app.get('/beta', (req, res) => {
-    beta.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
+//newSettersGetters
+
+app.get('/test_v0/:id', (req, res) => {
+	test_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
 });
 
-app.post('/beta', (req, res) => {
-    console.log(req.body);
-    var obj1 = new beta(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/test', (req, res) => {
-    test.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
+app.get('/test_v0', (req, res) => {
+	test_v0.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
 });
 
-app.post('/test', (req, res) => {
-    console.log(req.body);
-    var obj1 = new test(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
+app.post('/test_v0', (req, res) => {
+	console.log(req.body);
+	var obj1 = new test_v0(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
 })
 
+app.get('/employee_v1/:id', (req, res) => {
+	employee_v1.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/employee_v1', (req, res) => {
+	employee_v1.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/employee_v1', (req, res) => {
+	console.log(req.body);
+	var obj1 = new employee_v1(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
+
+
+
+app.get('/employee_v0/:id', (req, res) => {
+	employee_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.get('/employee_v0', (req, res) => {
+	employee_v0.find({}).then((docs) => {
+		console.log(docs);
+		res.send(docs);
+	})
+});
+
+app.post('/employee_v0', (req, res) => {
+	console.log(req.body);
+	var obj1 = new employee_v0(req.body);
+	console.log(obj1)
+obj1.save().then((doc) => {
+		res.send(`${doc}`);
+	})
+})
 
 
 app.use((req, res, next) => {

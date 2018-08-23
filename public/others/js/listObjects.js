@@ -17,7 +17,7 @@ listObjects = () => {
                 for (var i = 0; i < alpha.length; i++) {
                     var row = document.createElement("tr");
 
-                    row.innerHTML = "<td class='smallScreen'>" + (i + 1) + "</td><td>" + alpha[i].schemaName + "</td><td class='smallScreen'>" + "N/A" + "</td><td><i  id=show_" + alpha[i]._id + " class='far fa-eye'></i></td><td class='smallScreen'><i id=edit_" + alpha[i]._id + " class='edit fas fa-edit'></i></td><td class='delete smallScreen'><i id=delete_" + alpha[i]._id + " class='fas fa-ban editUsers'></td>"
+                    row.innerHTML = "<td class='smallScreen'>" + (i + 1) + "</td><td>" + alpha[i].schemaName + "</td><td class='smallScreen'>" + "N/A" + "</td><td><i  id=show_" + alpha[i]._id + " class='far fa-eye'></i></td><td class='smallScreen'><i id=edit_" + alpha[i]._id + " class='edit fas fa-edit'></i></td><td style='display:none' class='delete smallScreen'><i id=delete_" + alpha[i]._id + " class='fas fa-ban editUsers'></td>"
                     document.getElementById('objects-body').appendChild(row);
                     document.getElementById("show_" + alpha[i]._id).addEventListener('click', (event) => {
                         window.location.hash = "#obj" + String(event.target.id).replace("show_", "");

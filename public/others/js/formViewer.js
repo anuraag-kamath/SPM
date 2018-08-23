@@ -270,8 +270,8 @@ loadContents = (res, role) => {
                                         var ts = schema[key].options
                                         var checkedEl = "";
                                         for (k in ts[0]) {
-                                            if (document.getElementById(tempArr[i].id + "_" + key + "_" + k).checked) {
-                                                checkedEl = k;
+                                            if (document.getElementById(tempArr[i].id + "_" + key + "_" + ts[k]).checked) {
+                                                checkedEl = ts[k];
                                             }
                                         }
                                         jsonBody += '"' + key + '":"' + checkedEl + '"'
@@ -541,12 +541,21 @@ eventPage = (type, id) => {
                                     var ts = schema[key].options.split(",")
                                     var checkedEl = "";
                                     for (k in ts) {
-                                        console.log(tempArr[i].id + "_" + key + "_" + k);
-                                        if (document.getElementById(tempArr[i].id + "_" + key + "_" + k).checked) {
-                                            checkedEl = k;
+                                        console.log(tempArr[i].id + "_" + key + "_" + ts[k]);
+                                        if (document.getElementById(tempArr[i].id + "_" + key + "_" + ts[k]).checked) {
+                                            checkedEl = ts[k];
                                         }
                                     }
-                                    if (oneAdded == true) {
+                                    console.log("####");
+                                    console.log(checkedEl);
+                                    console.log(document.getElementById(tempArr[i].id + "_" + key + "_0"));
+                                    console.log("####");
+                                    if (checkedEl.length == 0 && document.getElementById(tempArr[i].id + "_" + key +"_"+ ts[0]).required == true) {
+                                        alert("Focussing on the problematic field");
+                                        problemField = tempArr[i].id + "_" + key +"_"+ts[0];
+                                        break;
+                                    }
+                                    else if (oneAdded == true) {
 
                                         jsonBody += ',"' + key + '":"' + checkedEl + '"'
                                     } else {
@@ -564,15 +573,15 @@ eventPage = (type, id) => {
 
                                     }
 
-                                    if (document.getElementById(tempArr[i].id + "_" + key).value.length > 0) {
-                                        if (oneAdded == true) {
-                                            jsonBody += ',"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
 
-                                        } else {
-                                            jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
-                                            oneAdded=true;
-                                        }
+                                    if (oneAdded == true) {
+                                        jsonBody += ',"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
+
+                                    } else {
+                                        jsonBody += '"' + key + '":"' + document.getElementById(tempArr[i].id + "_" + key).value + '"'
+                                        oneAdded = true;
                                     }
+
 
 
                                 }
@@ -782,7 +791,13 @@ loadObjects = () => {
                                         if (key != "_id") {
                                             console.log(tempArr[i].id + "_" + key);
                                             console.log(res2[j]);
+                                            console.log("WHAT IS THIS???");
                                             if (document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]) != undefined && document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]).type == "radio") {
+                                               console.log("Meh");
+                                               console.log(key);
+                                               console.log(document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]));
+                                               console.log(res2[j][key]);
+                                               
                                                 document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]).checked = true;
                                             } else {
                                                 console.log(new Date(res2[j][key]));
@@ -854,7 +869,8 @@ bindObject = (bindObjName, currentEl, role) => {
                         if (typeof (schema[key].pattern) !== 'undefined' && schema[key].pattern.length > 0) {
                             newEl.pattern = decodeURI(schema[key].pattern);
                         }
-                        if (typeof (schema[key].required) !== 'undefined' && schema[key].required == "true") {
+                        console.log(key + "#" + schema[key].required);
+                        if (typeof (schema[key].required) !== 'undefined' && schema[key].required == true) {
                             newEl.required = true;
                         }
                         if (readOnly == "readonly") {
@@ -871,6 +887,7 @@ bindObject = (bindObjName, currentEl, role) => {
                         console.log(ts);
                         var alpha = document.createElement("DIV");
 
+
                         for (k in ts) {
                             var newDiv = document.createElement("LABEL");
                             newDiv.className = "radio-inline";
@@ -878,10 +895,18 @@ bindObject = (bindObjName, currentEl, role) => {
                             //newEl.className = "form-control";
                             newEl.type = "radio";
                             newEl.name = key;
-                            newEl.value = k;
-                            newEl.id = document.getElementById(currentEl).id + "_" + key + "_" + k;
+                            console.log(key);
+                            console.log(k);
+                            console.log(ts);
+                            newEl.value = ts[k];
+                            console.log(key + "#" + schema[key].required);
+
+                            if (typeof (schema[key].required) !== 'undefined' && schema[key].required == true) {
+                                newEl.required = true;
+                            }
+                            newEl.id = document.getElementById(currentEl).id + "_" + key + "_" + ts[k];
                             if (readOnly == "readonly") {
-                                newEl.readOnly = true;
+                                newEl.disabled = true;
                             }
 
 

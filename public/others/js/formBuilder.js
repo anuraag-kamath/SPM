@@ -9,11 +9,11 @@ onLoad = () => {
 
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
-        //////console.log(res);
+        ////////console.log(res);
         objs = JSON.parse(res);
         document.getElementById('ctr-bind').innerHTML += "<option value=''></option>";
         for (var ob in JSON.parse(res)) {
-            ////console.log(objs[ob].schemaName);
+            //////console.log(objs[ob].schemaName);
             document.getElementById('ctr-bind').innerHTML += "<option value='" + objs[ob].schemaName + "'>" + objs[ob].schemaName + "</option>";
         }
 
@@ -22,9 +22,9 @@ onLoad = () => {
 
         formId = window.location.hash.substr(7);
         if (formId != undefined && formId != "undefined" && formId.length > 0) {
-            console.log("ABCD");
+            //console.log("ABCD");
 
-            ////console.log(formId);
+            //////console.log(formId);
         }
         else {
             removeLoadBar();
@@ -37,21 +37,21 @@ onLoad = () => {
             }).then((prom) => {
                 return prom.text()
             }).then((res) => {
-                ////console.log("***");
-                ////console.log(res);
-                ////console.log("***");
+                //////console.log("***");
+                //////console.log(res);
+                //////console.log("***");
                 var tempArr = (JSON.parse(res).structure)
 
                 document.getElementById("formName").value = (JSON.parse(res).name);
 
                 //document.getElementById('main-section').appendChild(alpha);
-                ////console.log(tempArr);
-                console.log("contents of a form");
-                console.log(tempArr);
+                //////console.log(tempArr);
+                //console.log("contents of a form");
+                //console.log(tempArr);
                 for (var i = 1; i < tempArr.length; i++) {
                     var beta = document.createElement(tempArr[i].tagName);
                     beta.id = tempArr[i].id;
-                    beta.name = tempArr[i].name;
+                    beta.setAttribute("name",tempArr[i].name);
                     beta.className = tempArr[i].class;
                     if (tempArr[i].tagName != "DIV" && tempArr[i].tagName != "FORM" && tempArr[i].tagName != "TABLE") beta.innerText = tempArr[i].text;
                     beta.style.display = tempArr[i].display;
@@ -71,7 +71,7 @@ onLoad = () => {
                     beta.style.border = tempArr[i].border;
                     beta.style.float = tempArr[i].float;
                     beta.style.color = tempArr[i].color;
-                    ////console.log(tempArr[i]);
+                    //////console.log(tempArr[i]);
 
                     document.getElementById(tempArr[i].parentId).appendChild(beta);
                     if (beta.tagName == "MYDMS") {
@@ -87,7 +87,7 @@ onLoad = () => {
                             for (var i = 0; i < objs.length; i++) {
 
                                 if (document.getElementById(String(ev.target.id).replace("bt", "")).getAttribute('bind') == objs[i].schemaName) {
-                                    ////console.log(objs[i].structure);
+                                    //////console.log(objs[i].structure);
 
                                     schemaStructure = objs[i].schemaStructure;
                                 }
@@ -97,7 +97,7 @@ onLoad = () => {
 
                             //            document.getElementById('megaCheck').style.height = "100%"
                             //            document.getElementById('megaCheck').style.width = "100%"
-                            ////console.log(document.getElementById('megaCheck'));
+                            //////console.log(document.getElementById('megaCheck'));
                             document.getElementById('megaCheck').style.display = "block"
                             document.getElementById('contentModal1').innerHTML = "";
                             //   document.getElementById('main-section').style.display="none"
@@ -108,11 +108,11 @@ onLoad = () => {
                             var test = document.createElement("FORM");
                             test.id = "formModal";
                             var tis = new Date().getTime();
-                            ////console.log("WHO" + schemaStructure);
-                            ////console.log(schemaStructure);
+                            //////console.log("WHO" + schemaStructure);
+                            //////console.log(schemaStructure);
                             for (key in schemaStructure) {
 
-                                ////console.log(key + "#" + schemaStructure[key].type);
+                                //////console.log(key + "#" + schemaStructure[key].type);
                                 test.innerHTML += "<input type='input' id=" + key + tis + " class='form-control' placeholder='" + key + "'>";
 
                             }
@@ -126,11 +126,11 @@ onLoad = () => {
 
                             document.getElementById('modalAdd' + tis).addEventListener('click', (ev) => {
                                 ev.preventDefault();
-                                ////console.log(document.getElementById('formModal'));
+                                //////console.log(document.getElementById('formModal'));
                                 var tempRow = "<tr>";
                                 for (key in schemaStructure) {
                                     var temp = String(ev.target.id).replace("modalAdd", key)
-                                    ////console.log(document.getElementById(temp).value);
+                                    //////console.log(document.getElementById(temp).value);
                                     tempRow += "<td>" + document.getElementById(temp).value + "</td>"
                                 }
 
@@ -154,24 +154,24 @@ onLoad = () => {
 
                 }
 
-                console.log(document.getElementById('main-section'));
+                //console.log(document.getElementById('main-section'));
 
                 document.getElementById('right-section').innerHTML = "";
-                console.log(document.getElementById('main-section').childNodes);
+                //console.log(document.getElementById('main-section').childNodes);
                 checkForMe('main-section', 1, "none");
-                console.log(testArr);
-                // ////console.log("*******************");
+                //console.log(testArr);
+                // //////console.log("*******************");
                 removeLoadBar();
 
                 for (var it in testArr) {
-                    //console.log("display" + it + "#@");
+                    ////console.log("display" + it + "#@");
                     for (var it1 in testArr[it]) {
-                        ////console.log("*****************************");
-                        //console.log("display" + testArr[it][it1]);
+                        //////console.log("*****************************");
+                        ////console.log("display" + testArr[it][it1]);
 
                         //                        document.getElementById("display" + it1).style.display = "none";
-                        ////console.log("display"+testArr[it][it1]);
-                        ////console.log("*****************************");
+                        //////console.log("display"+testArr[it][it1]);
+                        //////console.log("*****************************");
                     }
                 }
 
@@ -186,7 +186,7 @@ finalNode = "";
 
 
 drag = (event) => {
-    ////console.log("DATA");
+    //////console.log("DATA");
     event.dataTransfer.setData("dr", event.target.id);
 }
 
@@ -198,10 +198,10 @@ onDragOver = (event) => {
 
     event.preventDefault();
 
-    // //console.log("***");
-    // //console.log(event.target.id);
-    // //console.log(document.getElementById(event.target.id).childNodes);
-    // //console.log("***");
+    // ////console.log("***");
+    // ////console.log(event.target.id);
+    // ////console.log(document.getElementById(event.target.id).childNodes);
+    // ////console.log("***");
     if (event.target.id != "" && event.target.id != "tempDiv1" &&
         document.getElementById(event.target.id).tagName != "FORM") {
 
@@ -216,13 +216,13 @@ onDragOver = (event) => {
 
         }
 
-        // //console.log(document.elementFromPoint(event.clientX,event.clientX).closest("div"));
+        // ////console.log(document.elementFromPoint(event.clientX,event.clientX).closest("div"));
         var cren = document.getElementById(event.target.id).childNodes;
         distance = -1;
         distanceX = event.x;
         distanceY = event.y;
         var tempEl = "";
-        ////console.log("#############################################");
+        //////console.log("#############################################");
         for (var i = 0; i < cren.length; i++) {
 
             if (cren[i].id != null && cren[i].id != "tempDiv1") {
@@ -241,10 +241,10 @@ onDragOver = (event) => {
                     // distanceY = tempY;
                     distance = Math.min(distance1, distance2, distance3)
                     tempEl = cren[i].id;
-                    //     //console.log("**2**");
-                    //     //console.log(document.getElementById(tempEl));
-                    //     //console.log(distance);
-                    //     //console.log("**2**");
+                    //     ////console.log("**2**");
+                    //     ////console.log(document.getElementById(tempEl));
+                    //     ////console.log(distance);
+                    //     ////console.log("**2**");
                 } else {
                     distance1 = Math.sqrt(Math.pow((point1X - distanceX), 2) + Math.pow((distanceY - point1Y), 2));
                     distance2 = Math.sqrt(Math.pow((point2X - distanceX), 2) + Math.pow((distanceY - point2Y), 2));
@@ -252,12 +252,12 @@ onDragOver = (event) => {
 
                     tempDistance = Math.min(distance1, distance2, distance3);
 
-                    // //console.log(tempX);
-                    // //console.log(tempY);
-                    ////console.log("**3**");
-                    ////console.log(document.getElementById(cren[i].id));
-                    ////console.log(tempDistance);
-                    ////console.log("**3**");
+                    // ////console.log(tempX);
+                    // ////console.log(tempY);
+                    //////console.log("**3**");
+                    //////console.log(document.getElementById(cren[i].id));
+                    //////console.log(tempDistance);
+                    //////console.log("**3**");
 
                     if (tempDistance < distance) {
                         // distanceX = tempX;
@@ -270,13 +270,13 @@ onDragOver = (event) => {
                 }
             }
         }
-        // //console.log("#############################################");
+        // ////console.log("#############################################");
 
-        // //console.log("********");
-        // //console.log(tempEl);
-        // //console.log(cren.length);
-        // //console.log(cren);
-        // //console.log("********");
+        // ////console.log("********");
+        // ////console.log(tempEl);
+        // ////console.log(cren.length);
+        // ////console.log(cren);
+        // ////console.log("********");
         if ((tempEl != "" && tempEl != currentElDrag) || cren.length == 0) {
             if (document.getElementById('tempDiv1') != null) {
                 document.getElementById('tempDiv1').parentNode.removeChild(document.getElementById('tempDiv1'))
@@ -287,9 +287,9 @@ onDragOver = (event) => {
 
                 nextNode = document.getElementById(tempEl).nextSibling;
             }
-            // //console.log(tempEl);
+            // ////console.log(tempEl);
 
-            // //console.log(nextNode);
+            // ////console.log(nextNode);
 
             if (cren.length == 0) {
                 var div = document.createElement('DIV');
@@ -298,10 +298,10 @@ onDragOver = (event) => {
                 // div.style.widows = "100px";
                 div.style.backgroundColor = "blue";
                 mode = "parent";
-                ////console.log(event.target.id);
+                //////console.log(event.target.id);
                 finalNode = document.getElementById(event.target.id);
                 document.getElementById(event.target.id).appendChild(div);
-                ////console.log("APPENDED 3");
+                //////console.log("APPENDED 3");
             }
             else if (nextNode == null) {
                 var div = document.createElement('DIV');
@@ -312,9 +312,9 @@ onDragOver = (event) => {
                 div.className = "col-1";
                 mode = "parent";
                 div.style.border = "2px solid grey"
-                // //console.log(event.target.id);
-                // //console.log(tempEl);
-                // //console.log("APPENDING DUMMY")
+                // ////console.log(event.target.id);
+                // ////console.log(tempEl);
+                // ////console.log("APPENDING DUMMY")
                 // if (document.getElementById('formName').value == 'ABCD') {
 
                 //     var dummyDiv = document.createElement('DIV');
@@ -328,7 +328,7 @@ onDragOver = (event) => {
                 finalNode = document.getElementById(tempEl).parentNode;
                 document.getElementById(tempEl).parentNode.appendChild(div);
 
-                ////console.log("APPENDED 1");
+                //////console.log("APPENDED 1");
             } else {
                 var div = document.createElement('DIV');
                 div.style.height = "100%";
@@ -342,7 +342,7 @@ onDragOver = (event) => {
                 finalNode = document.getElementById(tempEl).parentNode;
 
                 document.getElementById(tempEl).parentNode.insertBefore(div, nextNode);
-                ////console.log("APPENDED 2");
+                //////console.log("APPENDED 2");
             }
         }
     }
@@ -422,7 +422,7 @@ drop2 = (event) => {
         document.getElementById("app").style.opacity = 1;
         document.getElementById("pop-up").style.display = "none";
         source = dr20;
-        ////console.log(source);
+        //////console.log(source);
         target = dr21;
         if ((document.getElementById(source).tagName == "BUTTON" ||
             document.getElementById(source).tagName == "TABLE" ||
@@ -482,12 +482,12 @@ drop2 = (event) => {
             sourceParent.insertBefore(target, sourceNext)
         }
 
-        // //console.log("A:-" + sceneA);
-        // //console.log("B:-" + sceneB);
-        // //console.log("C:-" + sceneC);
-        // //console.log("D:-" + sceneD);
-        // //console.log("E:-" + sceneE);
-        // //console.log("F:-" + sceneF);
+        // ////console.log("A:-" + sceneA);
+        // ////console.log("B:-" + sceneB);
+        // ////console.log("C:-" + sceneC);
+        // ////console.log("D:-" + sceneD);
+        // ////console.log("E:-" + sceneE);
+        // ////console.log("F:-" + sceneF);
 
     });
 
@@ -499,7 +499,7 @@ drop = (event) => {
     if (document.getElementById('tempDiv1') != null) {
         document.getElementById('tempDiv1').parentNode.removeChild(document.getElementById('tempDiv1'))
     }
-    ////console.log("DROPPED");
+    //////console.log("DROPPED");
     ts = new Date().getTime();
     sourceElement = (event.dataTransfer.getData("dr"));
     id = new Date().getTime();
@@ -509,6 +509,7 @@ drop = (event) => {
     if (sourceElement == "container") {
         ;
         var newContainer = document.createElement("DIV");
+        newContainer.setAttribute("name","");
         newContainer.id = id;
         newContainer.style.backgroundColor = "red";
         newContainer.style.height = "100%";
@@ -520,14 +521,16 @@ drop = (event) => {
             finalNode.insertBefore(newContainer, nextNode);
         }
         //        parentNode1.appendChild(newContainer);
-        ////console.log("DID I ADD?" + newContainer.id);
-        ////console.log("ADDED");
+        //////console.log("DID I ADD?" + newContainer.id);
+        //////console.log("ADDED");
     } else if (sourceElement == "table") {
         var newTable = document.createElement("TABLE");
+        newTable.setAttribute("name","");
+ 
         newTable.id = "table_" + ts;
         newTable.innerHTML = "<th>Name</th><th>Age</th><tr><td>Anuraag</td><td>27</td></tr>"
         newTable.id = id;
-        newTable.setAttribute("bind",objs[0].schemaName)
+        newTable.setAttribute("bind", objs[0].schemaName)
 
         newTable.style.cursor = "pointer";
         newTable.className = "table";
@@ -550,7 +553,7 @@ drop = (event) => {
         }
         //        parentNode1.appendChild(newButton)
         document.getElementById('bt' + id).addEventListener('click', (ev) => {
-            ////console.log(schemaStructure);
+            //////console.log(schemaStructure);
             //            document.getElementById('megaCheck').style.height = "100%"
             //            document.getElementById('megaCheck').style.width = "100%"
             document.getElementById('megaCheck').style.display = "block"
@@ -564,7 +567,7 @@ drop = (event) => {
             test.id = "formModal";
             var tis = new Date().getTime();
             for (key in schemaStructure) {
-                ////console.log(key + "#" + schemaStructure[key].type);
+                //////console.log(key + "#" + schemaStructure[key].type);
                 test.innerHTML += "<input type='input' id=" + key + tis + " class='form-control' placeholder='" + key + "'>";
 
             }
@@ -578,11 +581,11 @@ drop = (event) => {
 
             document.getElementById('modalAdd' + tis).addEventListener('click', (ev) => {
                 ev.preventDefault();
-                ////console.log(document.getElementById('formModal'));
+                //////console.log(document.getElementById('formModal'));
                 var tempRow = "<tr>";
                 for (key in schemaStructure) {
                     var temp = String(ev.target.id).replace("modalAdd", key)
-                    ////console.log(document.getElementById(temp).value);
+                    //////console.log(document.getElementById(temp).value);
                     tempRow += "<td>" + document.getElementById(temp).value + "</td>"
                 }
 
@@ -598,13 +601,15 @@ drop = (event) => {
 
         });
         newTable.addEventListener('click', (event) => {
-            ////console.log("ABCD");
+            //////console.log("ABCD");
             //            newTable.innerHTML = "<th>alpha</th><th>beta</th><tr><td>Gamma</td><td>Theeta</td></tr>"
 
         })
         bindObject(objs[0].schemaName, ts);
     } else if (sourceElement == "button") {
         var newButton = document.createElement("BUTTON");
+        newButton.setAttribute("name","");
+
         newButton.ondrop = "drop1(event)"
         newButton.innerText = "Submit";
         newButton.id = id;
@@ -618,10 +623,12 @@ drop = (event) => {
         //        parentNode1.appendChild(newButton);
     } else if (sourceElement == "form") {
         var newForm = document.createElement("FORM");
+        newForm.setAttribute("name","");
+
         newForm.id = id;
         newForm.className = "form-group";
         newForm.style.width = "100%";
-        newForm.setAttribute("bind",objs[0].schemaName)
+        newForm.setAttribute("bind", objs[0].schemaName)
         //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newForm);
@@ -633,6 +640,8 @@ drop = (event) => {
         //        parentNode1.appendChild(newForm);
     } else if (sourceElement == "para") {
         var newPara = document.createElement("P");
+        newPara.setAttribute("name","");
+
         newPara.id = id;
         newPara.innerText = "This is the sample para. Change it using the text property below!"
         //newContainer.style.margin="20px";
@@ -644,9 +653,11 @@ drop = (event) => {
         //        parentNode1e.appendChild(newPara);
     } else if (sourceElement == "hr") {
         var newHr = document.createElement("HR");
+        newHr.setAttribute("name","");
+
         newHr.id = id;
         newHr.style.border = "1px solid black";
-        ////console.log("HR ADDED");
+        //////console.log("HR ADDED");
         //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newHr);
@@ -656,6 +667,8 @@ drop = (event) => {
         //       parentNode1.appendChild(newHr);
     } else if (sourceElement == "image") {
         var newImage = document.createElement("IMG");
+        newImage.setAttribute("name","");
+
         newImage.src = "/resources/sample.png";
         newImage.style.border = "1px solid black"
         newImage.id = id;
@@ -670,7 +683,7 @@ drop = (event) => {
         match = false;
         var test = event.target;
         while (test.id != 'main-section' && match == false) {
-            ////console.log(test.tagName);
+            //////console.log(test.tagName);
             if (test.tagName == "FORM") {
                 match = true;
             } else {
@@ -679,6 +692,8 @@ drop = (event) => {
         }
         if (match == true) {
             var newText = document.createElement("INPUT");
+            newText.setAttribute("name","");
+
             newText.id = id;
             newText.className = "form-control";
             //newContainer.style.margin="20px";
@@ -691,7 +706,9 @@ drop = (event) => {
         var newDMS = document.createElement("mydms");
         newDMS.id = id;
         newDMS.setAttribute("uniqueIdentifier", new Date().getTime());
-        ////console.log("HR ADDED");
+        newDMS.setAttribute("name","");
+
+        //////console.log("HR ADDED");
         //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newDMS);
@@ -705,7 +722,7 @@ drop = (event) => {
     showData(document.getElementById("main-section"));
     document.getElementById('right-section').innerHTML = "";
     checkForMe('main-section', 1, "none");
-    //console.log("I AM DONE");
+    ////console.log("I AM DONE");
     if (noClick != "Y") {
         document.getElementById('display' + ts).click();
 
@@ -717,21 +734,21 @@ drop = (event) => {
 }
 
 drop1 = (event) => {
-    ////console.log("Prevent");
+    //////console.log("Prevent");
     event.preventDefault();
 }
 
 
 
 showData = (node) => {
-    //////console.log("Parent" + node);
+    ////////console.log("Parent" + node);
     if (node.hasChildNodes) {
         node.childNodes.forEach((child) => {
-            //////console.log("Child:-" + child.id + "#" + child.name + "#" + child.tagName);
+            ////////console.log("Child:-" + child.id + "#" + child.name + "#" + child.tagName);
             showData(child);
         });
     }
-    if (node.id != '' && node.id != 'undefined') ////console.log(node.id + "#" + node.name + "#" + node.tagName);
+    if (node.id != '' && node.id != 'undefined') //////console.log(node.id + "#" + node.name + "#" + node.tagName);
         return node;
 }
 
@@ -751,13 +768,13 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     tesmp = tesmp.replace("display", "")
     tesmp = tesmp.replace("exp", "")
 
-    //console.log(tesmp);
-    //console.log(document.getElementById(tesmp));
+    ////console.log(tesmp);
+    ////console.log(document.getElementById(tesmp));
     if (cur.length > 0 && document.getElementById(cur) != undefined &&
         document.getElementById(cur).style != null) {
         // if (testArr[cur] != undefined && testArr[cur] != "undefined" && !(testArr[cur].includes(tesmp))) {
         //     for (var te = 0; te < testArr[cur].length; te++) {
-        //         console.log("EXPANDED");
+        //         //console.log("EXPANDED");
         //         var tempMargin = String(document.getElementById("display" + cur).style.margin).substr(0, String(document.getElementById("display" + cur).style.margin).indexOf("px"));
 
         //         document.getElementById("display" + testArr[cur][te]).style.display = "none";
@@ -774,17 +791,17 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
 
     }
     cur = tesmp;
+    ////console.log(cur);
+    ////console.log(testArr);
+    ////console.log(document.getElementById(cur).innerText);
     //console.log(cur);
-    //console.log(testArr);
-    //console.log(document.getElementById(cur).innerText);
-    console.log(cur);
     if ((String(expId).indexOf("exp") != -1)) {
-        //console.log("@@@@");
-        //console.log(testArr[cur]);
+        ////console.log("@@@@");
+        ////console.log(testArr[cur]);
 
         if (testArr[cur] != undefined && testArr[cur] != "undefined") {
             for (var te = 0; te < testArr[cur].length; te++) {
-                //console.log(document.getElementById(cur));
+                ////console.log(document.getElementById(cur));
                 var tempMargin = String(document.getElementById("display" + cur).style.margin).substr(0, String(document.getElementById("display" + cur).style.margin).indexOf("px"));
                 document.getElementById("display" + testArr[cur][te]).style.margin = tempMargin + 15 + "px";
                 document.getElementById("display" + testArr[cur][te]).style.display = "block";
@@ -794,7 +811,7 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
         }
 
     }
-    ////console.log("ERR" + cur + "#" + document.getElementById(cur));
+    //////console.log("ERR" + cur + "#" + document.getElementById(cur));
     curBorder = document.getElementById(cur).style.border;
     document.getElementById(tesmp).style.border = "10px solid green";
     if (document.getElementById("display" + cur) != null && document.getElementById("display" + cur).style != null) {
@@ -825,7 +842,7 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
 
     document.getElementById('ctr-color').value = document.getElementById(cur).style.color;
     document.getElementById('ctr-bind').value = document.getElementById(cur).getAttribute('bind');
-    document.getElementById('ctr-name').value = document.getElementById(cur).name;
+    document.getElementById('ctr-name').value = document.getElementById(cur).getAttribute("name");
     if (document.getElementById(cur).tagName == "FORM") {
         document.getElementById('prop-name').style.visibility = "visible";
         document.getElementById('prop-height').style.visibility = "visible";
@@ -1010,7 +1027,10 @@ document.getElementById('ctr-text').addEventListener('focusout', (ev) => {
 })
 
 document.getElementById('ctr-name').addEventListener('focusout', (ev) => {
-    document.getElementById(cur).name = ev.target.value;
+    document.getElementById(cur).setAttribute("name",ev.target.value);
+    document.getElementById('right-section').innerHTML = "";
+    checkForMe('main-section', 1, "none");
+
 })
 
 
@@ -1050,9 +1070,9 @@ document.getElementById('ctr-border').addEventListener('focusout', (ev) => {
 })
 
 function click(ev) {
-    ////console.log("listener added");
+    //////console.log("listener added");
     ev.preventDefault();
-    ////console.log("EVENTG" + keyValue[ev.target.id]);
+    //////console.log("EVENTG" + keyValue[ev.target.id]);
     eval(keyValue[ev.target.id]);
 
 }
@@ -1080,20 +1100,20 @@ bindObject = (bindObjName, currentEl) => {
             var ts = new Date().getTime();
 
             if (document.getElementById(currentEl).tagName == "FORM") {
-                //console.log("OBJ NAME");
-                //console.log(bindObjName);
+                ////console.log("OBJ NAME");
+                ////console.log(bindObjName);
                 var doc = document.createElement("DIV");
                 doc.id = ts;
-                ////console.log(objs[i].schemaStructure)
+                //////console.log(objs[i].schemaStructure)
                 var schema = objs[i].schemaStructure;
                 for (key in schema) {
                     if (schema[key].control == "text") {
                         var newEl = document.createElement("INPUT");
                         newEl.className = "form-control";
-                        console.log(schema[key].type);
-                        console.log("####");
-                        console.log(schema[key].type == "String");
-                        console.log("####");
+                        //console.log(schema[key].type);
+                        //console.log("####");
+                        //console.log(schema[key].type == "String");
+                        //console.log("####");
                         if (schema[key].type == "String") {
                             newEl.type = "text";
 
@@ -1120,15 +1140,15 @@ bindObject = (bindObjName, currentEl) => {
 
 
                         newEl.setAttribute("placeholder", key);
-                        console.log("NEWEL:-");
-                        console.log(newEl);
+                        //console.log("NEWEL:-");
+                        //console.log(newEl);
                         //document.getElementById(cur).appendChild(newEl);
                         doc.appendChild(newEl);
 
                     }
                     else if (schema[key].control == "radio") {
                         var ts = schema[key].options.split(",")
-                        console.log(ts);
+                        //console.log(ts);
                         var alpha = document.createElement("DIV");
 
                         for (k in ts) {
@@ -1144,9 +1164,9 @@ bindObject = (bindObjName, currentEl) => {
 
 
                             newDiv.innerHTML += ts[k]
-                            console.log("########################");
-                            console.log(newDiv);
-                            console.log("########################");
+                            //console.log("########################");
+                            //console.log(newDiv);
+                            //console.log("########################");
                             alpha.appendChild(newDiv);
 
 
@@ -1159,7 +1179,7 @@ bindObject = (bindObjName, currentEl) => {
 
                     else if (schema[key].control == "select") {
                         var ts = schema[key].options
-                        ////console.log(ts[0]);
+                        //////console.log(ts[0]);
                         var alpha = document.createElement("SELECT");
                         alpha.className = "form-control";
 
@@ -1181,10 +1201,10 @@ bindObject = (bindObjName, currentEl) => {
 
             } else {
                 var header = "";
-                ////console.log(document.getElementById(currentEl).innerHTML);
+                //////console.log(document.getElementById(currentEl).innerHTML);
                 schemaStructure = objs[i].schemaStructure;
                 for (key in objs[i].schemaStructure) {
-                    ////console.log(key + "#" + objs[i].schemaStructure[key].type);
+                    //////console.log(key + "#" + objs[i].schemaStructure[key].type);
                     header += "<th>" + key + "</th>";
 
 
@@ -1203,21 +1223,36 @@ bindObject = (bindObjName, currentEl) => {
 
 document.getElementById('right-section').addEventListener('contextmenu', (ev) => {
     ev.preventDefault();
-    var tesmp = ev.target.id;
+    if (ev.target.id != "right-section" && ev.target.id != "displaymain-section" && String(ev.target.id).length != 0) {
 
-    tesmp = tesmp.replace("display", "")
 
-    document.getElementById(tesmp).parentNode.removeChild(document.getElementById(tesmp));
-    document.getElementById('right-section').innerHTML = "";
-    checkForMe('main-section', 1, "none");
+        var txt;
+        //console.log(ev.target.id);
+        var r = confirm("Confirm deletion of the element?");
+        if (r == true) {
+            var tesmp = ev.target.id;
+
+            tesmp = tesmp.replace("display", "")
+
+            document.getElementById(tesmp).parentNode.removeChild(document.getElementById(tesmp));
+            document.getElementById('right-section').innerHTML = "";
+            checkForMe('main-section', 1, "none");
+        } else {
+        }
+    }
 });
 
 var tempArr = [];
 
 var parentMain = ""
 checkForMe = (mainNode, count, parent) => {
-    //console.log("AVCD");
+    ////console.log("AVCD");
+    if (document.getElementById("right-section").innerHTML.length == 0) {
+        var s3 = document.createElement("STRONG");
+        s3.innerText = "Right click to delete an element"
+        document.getElementById("right-section").appendChild(s3);
 
+    }
     if (hoverElement != "") {
         try {
             document.getElementById(hoverElement).removeChild(document.getElementById(divId));
@@ -1228,113 +1263,118 @@ checkForMe = (mainNode, count, parent) => {
     }
 
     if (mainNode != "megaCheck") {
+
         var parent_id = mainNode;
         var parent_name = "none"
         if (document.getElementById(parent) != undefined) {
-            parent_name = document.getElementById(parent).name;
+            parent_name = document.getElementById(parent).getAttribute("name");
         }
-        tempArr.push({
-            id: document.getElementById(mainNode).id,
-            name: document.getElementById(mainNode).name,
-            tagName: document.getElementById(mainNode).tagName,
-            parentId: parent,
-            parentName: parent_name,
-            class: document.getElementById(mainNode).className,
-            height: document.getElementById(mainNode).style.height,
-            width: document.getElementById(mainNode).style.width,
-            display: document.getElementById(mainNode).style.display,
-            overflow: document.getElementById(mainNode).style.overflow,
-            //            bgc: document.getElementById(mainNode).style.backgroundColor,
-            align: document.getElementById(mainNode).style.textAlign,
-            padding: document.getElementById(mainNode).style.padding,
-            margin: document.getElementById(mainNode).style.margin,
-            holder: document.getElementById(mainNode).getAttribute('placeholder'),
-            text: document.getElementById(mainNode).innerText,
-            src: document.getElementById(mainNode).getAttribute('src'),
-            background: document.getElementById(mainNode).style.background,
-            opacity: document.getElementById(mainNode).style.opacity,
-            position: document.getElementById(mainNode).style.position,
-            float: document.getElementById(mainNode).style.float,
-            color: document.getElementById(mainNode).style.color,
-            binding: document.getElementById(mainNode).getAttribute('bind'),
-            border: document.getElementById(mainNode).style.border
-        });
-        ////console.log(document.getElementById(mainNode).name + "#" + document.getElementById(mainNode).tagName + "#" + document.getElementById(mainNode).id + "--->" + "Parent->" + parent_name + "#" + parent + "STYLE->" + document.getElementById(mainNode).style);
-        var temp = document.createElement("DIV");
-        var h3 = document.createElement("H3")
-        h3.id = "exp" + mainNode;
-        h3.innerText = "+";
-        temp.id = "display" + mainNode;
-        temp.draggable = true;
-        temp.addEventListener('dragstart', (event) => {
-            event.dataTransfer.setData('dr', String(temp.id).replace('display', ''))
-        })
-        temp.ondragstart = "drag(event)";
-        var par = "";
-        for (var k = 1; k < count; k++) {
-            par += "-"
-        }
-
-        ////console.log("*********************");
-        ////console.log("Parent:-" + parent);
-        ////console.log("Current" + mainNode)
-        ////console.log("Current" + document.getElementById(mainNode).hasChildNodes())
-        ////console.log("*********************");
-        if (parent == "none") {
-            testArr[parent] = [];
-        } else if (testArr[parent] != undefined) {
-            testArr[parent].push(mainNode);
-        }
-        else {
-            testArr[parent] = [];
-        }
-        if (parent != "main-section" && parent != "none") {
-            // temp.style.display = "none";
-            console.log("**");
-            console.log(parent);
-            console.log(document.getElementById(mainNode).name);
-
-            var tempMargin = String(document.getElementById("display" + parent).style.marginLeft).substr(0, String(document.getElementById("display" + parent).style.marginLeft).indexOf("px"));
-            console.log(tempMargin);
-            console.log("**");
-
-            temp.style.marginLeft = (Number(tempMargin) + 15) + "px";
-        }
-        else {
-            temp.style.marginLeft = "0px"
-        }
-        temp.innerHTML = "";
-        //        temp.appendChild(h3);
-        //        temp.innerHTML += '<p id="exp"'+mainNode+'><strong><i class="fas fa-plus"></i></strong> '+document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name+"</p> <br>" + par + mainNode + "<hr>";
-        //temp.innerHTML += '<p id="exp' + mainNode + '"><div><strong id="exp"'+mainNode+'><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "</p><hr></div>";
-        //temp.innerHTML += '<strong id="exp' + mainNode + '"><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
-        temp.innerHTML += document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
-        document.getElementById('right-section').appendChild(temp);
-        // document.getElementById('exp' + mainNode).addEventListener('click', (ev) => {
-        //     if (document.getElementById(ev.target.id).innerText == "+") {
-        //         //console.log("PLUS EXISTS");
-        //         document.getElementById(ev.target.id).innerText = "-"
-        //     } else {
-        //         document.getElementById(ev.target.id).innerText = "+"
-        //         //console.log("MINUS EXISTS");
-
-        //     }
-        // })
-        mainNode = document.getElementById(mainNode);
-        var nodes = mainNode.childNodes;
-        var i = 0;
-        //  ////console.log(nodes)
-
-        while (nodes != undefined && i < nodes.length) {
-            if (nodes[i].id != undefined && nodes[i].id != '') {
-                checkForMe(nodes[i].id, count + 1, parent_id);
+        if (document.getElementById(parent) != undefined) { console.log(document.getElementById(parent).tagName); }
+        if (document.getElementById(parent) == undefined || (document.getElementById(parent) != undefined && document.getElementById(parent).tagName != "FORM" && document.getElementById(parent).tagName != "TABLE" && mainNode.indexOf("bt")==-1)) {
+            tempArr.push({
+                id: document.getElementById(mainNode).id,
+                name: document.getElementById(mainNode).getAttribute("name"),
+                tagName: document.getElementById(mainNode).tagName,
+                parentId: parent,
+                parentName: parent_name,
+                class: document.getElementById(mainNode).className,
+                height: document.getElementById(mainNode).style.height,
+                width: document.getElementById(mainNode).style.width,
+                display: document.getElementById(mainNode).style.display,
+                overflow: document.getElementById(mainNode).style.overflow,
+                //            bgc: document.getElementById(mainNode).style.backgroundColor,
+                align: document.getElementById(mainNode).style.textAlign,
+                padding: document.getElementById(mainNode).style.padding,
+                margin: document.getElementById(mainNode).style.margin,
+                holder: document.getElementById(mainNode).getAttribute('placeholder'),
+                text: document.getElementById(mainNode).innerText,
+                src: document.getElementById(mainNode).getAttribute('src'),
+                background: document.getElementById(mainNode).style.background,
+                opacity: document.getElementById(mainNode).style.opacity,
+                position: document.getElementById(mainNode).style.position,
+                float: document.getElementById(mainNode).style.float,
+                color: document.getElementById(mainNode).style.color,
+                binding: document.getElementById(mainNode).getAttribute('bind'),
+                border: document.getElementById(mainNode).style.border
+            });
+            //////console.log(document.getElementById(mainNode).name + "#" + document.getElementById(mainNode).tagName + "#" + document.getElementById(mainNode).id + "--->" + "Parent->" + parent_name + "#" + parent + "STYLE->" + document.getElementById(mainNode).style);
+            var temp = document.createElement("DIV");
+            var h3 = document.createElement("H3")
+            h3.id = "exp" + mainNode;
+            h3.innerText = "+";
+            temp.id = "display" + mainNode;
+            temp.draggable = true;
+            temp.addEventListener('dragstart', (event) => {
+                event.dataTransfer.setData('dr', String(temp.id).replace('display', ''))
+            })
+            temp.ondragstart = "drag(event)";
+            var par = "";
+            for (var k = 1; k < count; k++) {
+                par += "-"
             }
-            i += 1;
+
+            //////console.log("*********************");
+            //////console.log("Parent:-" + parent);
+            //////console.log("Current" + mainNode)
+            //////console.log("Current" + document.getElementById(mainNode).hasChildNodes())
+            //////console.log("*********************");
+            if (parent == "none") {
+                testArr[parent] = [];
+            } else if (testArr[parent] != undefined) {
+                testArr[parent].push(mainNode);
+            }
+            else {
+                testArr[parent] = [];
+            }
+            if (parent != "main-section" && parent != "none") {
+                // temp.style.display = "none";
+                //console.log("**");
+                //console.log(parent);
+                //console.log(document.getElementById(mainNode).name);
+
+                var tempMargin = String(document.getElementById("display" + parent).style.marginLeft).substr(0, String(document.getElementById("display" + parent).style.marginLeft).indexOf("px"));
+                //console.log(tempMargin);
+                //console.log("**");
+
+                temp.style.marginLeft = (Number(tempMargin) + 15) + "px";
+            }
+            else {
+                temp.style.marginLeft = "0px"
+            }
+            temp.innerHTML = "";
+            //        temp.appendChild(h3);
+            //        temp.innerHTML += '<p id="exp"'+mainNode+'><strong><i class="fas fa-plus"></i></strong> '+document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name+"</p> <br>" + par + mainNode + "<hr>";
+            //temp.innerHTML += '<p id="exp' + mainNode + '"><div><strong id="exp"'+mainNode+'><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "</p><hr></div>";
+            //temp.innerHTML += '<strong id="exp' + mainNode + '"><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
+            console.log(mainNode+"#"+document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).getAttribute("name"))
+            temp.innerHTML += document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).getAttribute("name") + "<hr>";
+            document.getElementById('right-section').appendChild(temp);
+            // document.getElementById('exp' + mainNode).addEventListener('click', (ev) => {
+            //     if (document.getElementById(ev.target.id).innerText == "+") {
+            //         ////console.log("PLUS EXISTS");
+            //         document.getElementById(ev.target.id).innerText = "-"
+            //     } else {
+            //         document.getElementById(ev.target.id).innerText = "+"
+            //         ////console.log("MINUS EXISTS");
+
+            //     }
+            // })
+            mainNode = document.getElementById(mainNode);
+            var nodes = mainNode.childNodes;
+            var i = 0;
+            //  //////console.log(nodes)
+
+            while (nodes != undefined && i < nodes.length) {
+                if (nodes[i].id != undefined && nodes[i].id != '') {
+                    checkForMe(nodes[i].id, count + 1, parent_id);
+                }
+                i += 1;
+            }
         }
+        // //////console.log("*******************");
+        //console.log("***");
+        //console.log(testArr);
     }
-    // ////console.log("*******************");
-    console.log("***");
-    console.log(testArr);
 }
 
 
@@ -1366,53 +1406,87 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
         tempArr = [];
         checkForMe('main-section', 1, "none");
 
-        ////console.log(tempArr);
+        //////console.log(tempArr);
 
 
         var jsonBody = '{"name":"' + document.getElementById('formName').value + '","structure":' + JSON.stringify(tempArr) + '}';
-        ////console.log(jsonBody);
+        //console.log(JSON.parse(jsonBody).structure);
+        var objs23 = [];
+        console.log(JSON.parse(jsonBody));
+        var duplicateObject = "";
+        for (var fin = 0; fin < JSON.parse(jsonBody).structure.length; fin++) {
+            //console.log("$$");
+            //console.log(JSON.parse(jsonBody).structure[fin].binding);
+            //console.log(JSON.parse(jsonBody).structure[fin].binding + "############");
 
-        //    body = '<html><head><link rel="stylesheet" href="css/bootstrap-4.0.0-dist/css/bootstrap.min.css">    <link rel="stylesheet" href="css/main.css"> </head><body>' + document.getElementById('main-section').innerHTML + '</body > '
-        //
-        //    var jsonBody = "{name:'sample',form:'" + body + "'}"
-        //    
-        //    ////console.log(jsonBody);
-        //
-        if (jsonBody.indexOf("Submit") == -1 && 1==2) {
-            alert("Submit button will be added by the system since the user has not added! And if reject is applicable, the same will also be added by the system");
+            if (JSON.parse(jsonBody).structure[fin].binding != null && JSON.parse(jsonBody).structure[fin].binding != "null") {
+                for (var fin1 = 0; fin1 < objs23.length; fin1++) {
+                    //console.log(JSON.parse(jsonBody).structure[fin].binding + "######" + objs23[fin1]);
+                    if (JSON.parse(jsonBody).structure[fin].binding.indexOf(objs23[fin1]) != -1) {
+                        duplicateObject = JSON.parse(jsonBody).structure[fin].binding;
+                        alert("same object cannot be bound with more than 1 element in the same form!");
+                        break;
+                    }
+                }
+                if (duplicateObject.length == 0) {
+                    objs23.push(JSON.parse(jsonBody).structure[fin].binding)
+
+                }
+            }
+            if (duplicateObject.length > 0) {
+                break;
+            }
         }
-        if (formId != undefined && formId.length > 0) {
-            fetch('/forms/' + formId, {
-                method: 'PUT',
-                headers: {
-                    'content-type': 'application/json'
 
-                },
-                credentials: 'include',
-                body: jsonBody
-            }).then((prom) => {
-                return prom.text();
-            }).then((res) => {
-                window.location.hash = "listForms"
+        if (duplicateObject.length > 0) {
 
-                ////console.log(res);
-            })
         } else {
-            fetch('/forms', {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json'
 
-                },
-                credentials: 'include',
-                body: jsonBody
-            }).then((prom) => {
-                return prom.text();
-            }).then((res) => {
-                window.location.hash = "listForms"
-                ////console.log(res);
-            })
+            //////console.log(jsonBody);
+
+            //    body = '<html><head><link rel="stylesheet" href="css/bootstrap-4.0.0-dist/css/bootstrap.min.css">    <link rel="stylesheet" href="css/main.css"> </head><body>' + document.getElementById('main-section').innerHTML + '</body > '
+            //
+            //    var jsonBody = "{name:'sample',form:'" + body + "'}"
+            //    
+            //    //////console.log(jsonBody);
+            //
+            if (jsonBody.indexOf("Submit") == -1 && 1 == 2) {
+                alert("Submit button will be added by the system since the user has not added! And if reject is applicable, the same will also be added by the system");
+            }
+            if (formId != undefined && formId.length > 0) {
+                fetch('/forms/' + formId, {
+                    method: 'PUT',
+                    headers: {
+                        'content-type': 'application/json'
+
+                    },
+                    credentials: 'include',
+                    body: jsonBody
+                }).then((prom) => {
+                    return prom.text();
+                }).then((res) => {
+                    window.location.hash = "listForms"
+
+                    //////console.log(res);
+                })
+            } else {
+                fetch('/forms', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+
+                    },
+                    credentials: 'include',
+                    body: jsonBody
+                }).then((prom) => {
+                    return prom.text();
+                }).then((res) => {
+                    window.location.hash = "listForms"
+                    //////console.log(res);
+                })
+            }
         }
+
 
     } else {
         alert("Form Name is mandatory");
@@ -1433,11 +1507,11 @@ document.getElementById('clearForm').addEventListener('click', (ev) => {
 
 
     //document.getElementById('main-section').appendChild(alpha);
-    ////console.log(tempArr);
+    //////console.log(tempArr);
     for (var i = 1; i < tempArr.length; i++) {
         var beta = document.createElement(tempArr[i].tagName);
         beta.id = tempArr[i].id;
-        beta.name = tempArr[i].name;
+        beta.setAttribute("name",tempArr[i].name);
         beta.className = tempArr[i].class;
         if (tempArr[i].tagName != "DIV" && tempArr[i].tagName != "FORM" && tempArr[i].tagName != "TABLE") beta.innerText = tempArr[i].text;
         beta.style.display = tempArr[i].display;
@@ -1457,7 +1531,7 @@ document.getElementById('clearForm').addEventListener('click', (ev) => {
         beta.style.border = tempArr[i].border;
         beta.style.float = tempArr[i].float;
         beta.style.color = tempArr[i].color;
-        ////console.log(tempArr[i]);
+        //////console.log(tempArr[i]);
 
         document.getElementById(tempArr[i].parentId).appendChild(beta);
 
@@ -1475,7 +1549,7 @@ document.getElementById('clearForm').addEventListener('click', (ev) => {
     //    var previewWindow = window.open('', "Preview Window");
     //    previewWindow.document.write('<html><head><link rel="stylesheet" href="css/bootstrap-4.0.0-dist/css/bootstrap.min.css">    <link rel="stylesheet" href="css/main.css"> </head><body>' + document.getElementById('main-section').innerHTML + '<script type="application/javascript" src="js/main.js"></body > ');
     //
-    //    ////console.log(tempArr);
+    //    //////console.log(tempArr);
 
 });
 
@@ -1501,8 +1575,8 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
         var new_button2 = document.createElement('BUTTON');
         new_button2.id = "2_" + buttonId;
         var new_text = document.createElement('P');
-        //console.log(document.getElementById(ev.target.id));
-        new_text.innerText = document.getElementById(ev.target.id).name;
+        ////console.log(document.getElementById(ev.target.id));
+        new_text.innerText = document.getElementById(ev.target.id).getAttribute("name");
         new_div.style.position = "absolute";
         new_div.style.float = "left";
         new_div.style.display = "flex";
@@ -1512,8 +1586,8 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
         new_div.appendChild(new_button1);
         new_div.appendChild(new_button2);
         new_div.appendChild(new_text);
-        ////console.log("********" + new Date().getTime());
-        ////console.log(hoverElement);
+        //////console.log("********" + new Date().getTime());
+        //////console.log(hoverElement);
         if (hoverElement != "") {
             try {
                 document.getElementById(hoverElement).removeChild(document.getElementById(divId));
@@ -1523,21 +1597,25 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
 
         }
         if (document.getElementById(ev.target.id) != null) {
+            //console.log(ev.target.id);
             hoverElement = ev.target.id;
-            document.getElementById(ev.target.id).appendChild(new_div);
-            document.getElementById("1_" + buttonId).addEventListener('click', (ev) => {
-                ev.preventDefault();
-                document.getElementById(hoverElement).parentNode.removeChild(document.getElementById(hoverElement))
-            })
-            document.getElementById("2_" + buttonId).addEventListener('click', (ev) => {
-                ev.preventDefault();
-                //document.getElementById(hoverElement).parentNode.removeChild(document.getElementById(hoverElement))
-                var copiedEl = document.getElementById(hoverElement);
-                clonedEl = copiedEl.cloneNode(true);
-                document.getElementById(hoverElement).parentNode.appendChild(clonedEl);
-                ////console.log("XXXXXXXXXXXXX");
-            })
+            if (String(ev.target.id) != "main-section" && 1 == 2) {
+                document.getElementById(ev.target.id).appendChild(new_div);
+                document.getElementById("1_" + buttonId).addEventListener('click', (ev) => {
+                    ev.preventDefault();
+                    document.getElementById(hoverElement).parentNode.removeChild(document.getElementById(hoverElement))
+                })
+                document.getElementById("2_" + buttonId).addEventListener('click', (ev) => {
+                    ev.preventDefault();
+                    //document.getElementById(hoverElement).parentNode.removeChild(document.getElementById(hoverElement))
+                    var copiedEl = document.getElementById(hoverElement);
+                    clonedEl = copiedEl.cloneNode(true);
+                    document.getElementById(hoverElement).parentNode.appendChild(clonedEl);
+                    //////console.log("XXXXXXXXXXXXX");
+                })
+            }
         }
+
 
 
     }
@@ -1564,7 +1642,7 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
 //     document.getElementById('events').appendChild(newDiv);
 //     document.getElementById(text.id).addEventListener('focusout', (ev) => {
 //         document.getElementById(cur).addEventListener(document.getElementById('sel1').value, (ev) => {
-//             ////console.log(document.getElementById('scr1').value);
+//             //////console.log(document.getElementById('scr1').value);
 //             eval(document.getElementById('scr1').value);
 //         })
 //     })
@@ -1572,7 +1650,7 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
 
 
 // document.getElementById('toggle').addEventListener('click', (ev) => {
-//     console.log(document.getElementsByClassName("left-section")[0].className);
+//     //console.log(document.getElementsByClassName("left-section")[0].className);
 //     if (document.getElementsByClassName("left-section")[0].className.indexOf("col-2") != -1) {
 //         document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-2", "col-1");
 //         document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-8", "col-9");
@@ -1584,10 +1662,10 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
 // })
 
 document.getElementById('left-section').addEventListener('click', (ev) => {
-    console.log(document.getElementsByClassName("left-section")[0].className.indexOf("col-1"));
-    console.log(ev.target.id);
+    //console.log(document.getElementsByClassName("left-section")[0].className.indexOf("col-1"));
+    //console.log(ev.target.id);
     if (document.getElementsByClassName("left-section")[0].className.indexOf("col-xs-1") != -1 && ev.target.id == "toggle") {
-        console.log("IN 1");
+        //console.log("IN 1");
         document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-xs-1", "col-2");
         document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-xs-9", "col-8");
         document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-xs-2", "col-2");
@@ -1598,7 +1676,7 @@ document.getElementById('left-section').addEventListener('click', (ev) => {
 
     }
     else if (document.getElementsByClassName("left-section")[0].className.indexOf("col-2") != -1 && ev.target.id == "toggle") {
-        console.log("IN 2");
+        //console.log("IN 2");
         document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-2", "col-xs-1");
         document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-8", "col-xs-9");
         document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-2", "col-xs-2");

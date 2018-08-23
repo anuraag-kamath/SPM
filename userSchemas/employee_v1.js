@@ -1,0 +1,3 @@
+var mongoose=require('mongoose');
+var employee_v1=mongoose.model("employee_v1",{"employee_v1":[{"name":{"type":"String","control":"text","options":"","pattern":"","required":true},"age":{"type":"Number","control":"text","options":"","pattern":"","required":true},"dob":{"type":"Date","control":"text","options":"","pattern":"","required":false},"gender":{"type":"String","control":"radio","options":"male,female","pattern":"","required":true}}],"instanceId":{"type":"String"}});
+module.exports={employee_v1}

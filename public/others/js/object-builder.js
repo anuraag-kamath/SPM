@@ -24,7 +24,7 @@ loadObject = (objectId) => {
 
 document.getElementById('addChild').addEventListener('click', (ev) => {
     console.log("ADD");
-    addChild("", "", "", "", "", []);
+    addChild("", "String", "text", "", "", []);
 })
 
 addChild = (name, type, control, pattern, required, options) => {
@@ -36,7 +36,7 @@ addChild = (name, type, control, pattern, required, options) => {
     TextSelected = "";
     RadioSelected = "";
     if (control == "text") {
-        TextSelected = "selected  "
+        TextSelected = "selected"
     } else if (control == "radio") {
         RadioSelected = "selected"
     }
@@ -70,8 +70,18 @@ addChild = (name, type, control, pattern, required, options) => {
     newNode.className = "row"
     newNode.id = "div_" + ts;
 
-    newNode.innerHTML = '<div class="col-1"><h3>-></h3></div><div class="col-3"><input id="ele_' + ts + '" name="root " class="form-control" placeholder="element name" required value="' + name + '"></div><div class="col-1" ><select id="type_' + ts + '" class="form-control"><option ' + StringSelected + '>String</option><option ' + NumberSelected + '>Number</option><option ' + DateSelected + '>Date</option></select></div><div class="col-1"><select id="control_' + ts + '" class="form-control"><option value="text" ' + TextSelected + '>Text</option><option value="radio" ' + RadioSelected + '>Radio</option></select></div><div class="col-2"><input type="text" id="listAdd_' + ts + '" style="width:80%;height:calc(2.25rem + 2px)" placeholder="option" ><button id="listAddButton_' + ts + '">+</button><ul id="list_' + ts + '"></ul></div><div class="col-3"><input type="text" id="pattern_' + ts + '" class="form-control"  value="' + decodeURI(pattern) + '"  placeholder="regex"></div><div class="col-1 checkbox"><label>req: <input type="checkbox" id="required_' + ts + '" ' + required + '></label></div>'
+    newNode.innerHTML = '<div class="col-1"><h3 style="float:right">-></h3></div><div class="col-3"><input id="ele_' + ts + '" name="root " class="form-control" placeholder="element name" required value="' + name + '"></div><div class="col-1" ><select id="type_' + ts + '" class="form-control"><option ' + StringSelected + '>String</option><option ' + NumberSelected + '>Number</option><option ' + DateSelected + '>Date</option></select></div><div class="col-1"><select id="control_' + ts + '" class="form-control"><option value="text" ' + TextSelected + '>Text</option><option value="radio" ' + RadioSelected + '>Radio</option></select></div><div class="col-2"><input type="text" id="listAdd_' + ts + '" style="width:80%;height:calc(2.25rem + 2px)" placeholder="option" ><button id="listAddButton_' + ts + '">+</button><ul id="list_' + ts + '"></ul></div><div class="col-3"><input type="text" id="pattern_' + ts + '" class="form-control"  value="' + decodeURI(pattern) + '"  placeholder="regex"></div><div class="col-1 checkbox"><label>req: <input type="checkbox" id="required_' + ts + '" ' + required + '></label></div>'
     document.getElementById('myFormDiv').appendChild(newNode);
+    if (TextSelected == "selected") {
+        document.getElementById("listAdd_" + ts).disabled = true;
+        document.getElementById("listAddButton_" + ts).style.visibility = false;
+        document.getElementById("pattern_" + ts).disabled = false;
+    } else {
+        document.getElementById("listAddButton_" + ts).style.visibility = true;
+        document.getElementById("listAdd_" + ts).disabled = false;
+        document.getElementById("pattern_" + ts).disabled = true;
+
+    }
     document.getElementById('control_' + ts).addEventListener('change', (ev) => {
         console.log("#####");
         console.log(ev.target.value);
@@ -176,6 +186,10 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
     // script.id = "listObjectsScript"
     // console.log("#1");
     // document.getElementsByTagName("head")[0].appendChild(script);
+    //loadBar();
+    document.getElementById("saveObj").disabled = true;
+    document.getElementById("myForm").style.visibility="hidden";
+
     fetch('/objects' + ext, {
         method: method,
         headers: {
@@ -186,14 +200,31 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
     }).then((prom) => {
         return prom.text();
     }).then((res) => {
-        loadBar();
-        document.getElementById("saveObj").disabled = true;
-        setTimeout(() => {
+        console.log("#1")
+        console.log(JSON.parse(res));
+        if (JSON.parse(res) != undefined && JSON.parse(res).error != undefined && JSON.parse(res).error.length > 0) {
+            console.log("#2")
             removeLoadBar()
+            document.getElementById("saveObj").disabled = false;
 
-            window.location.hash = "listObjects";
+            document.getElementById("myForm").style.visibility="visible";
 
-        }, 3000)
+            document.getElementById('message').innerText = JSON.parse(res).error;
+            document.getElementById("root").addEventListener('focus', (ev) => {
+                document.getElementById('message').innerText = "";
+            });
+        } else {
+            console.log("#3")
+
+            
+            setTimeout(() => {
+                removeLoadBar()
+                window.location.hash = "listObjects";
+
+
+            }, 2000)
+
+        }
 
     }).catch((err) => {
 
