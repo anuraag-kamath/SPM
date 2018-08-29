@@ -44,7 +44,7 @@ var app = express()
 
 
 var url = "";
-const port = process.env.PORT || 9099;
+const port = process.env.SPM_PORT || 9099;
 
 var cors = require('cors')
 
