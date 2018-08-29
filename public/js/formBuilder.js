@@ -669,7 +669,7 @@ drop = (event) => {
         var newImage = document.createElement("IMG");
         newImage.setAttribute("name","");
 
-        newImage.src = "/resources/sample.png";
+        newImage.src = "sample.png";
         newImage.style.border = "1px solid black"
         newImage.id = id;
         //newContainer.style.margin="20px";
