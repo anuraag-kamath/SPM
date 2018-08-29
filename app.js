@@ -51,6 +51,7 @@ const email_id = process.env.EMAIL_ID || ""
 const email_password = process.env.EMAIL_PASSWORD || ""
 const email_provider = process.env.EMAIL_PROVIDER || "";
 const proxy_url = process.env.PROXY_URL || "";
+const uam_url = process.env.UAM_URL || "";
 
 var cors = require('cors')
 
@@ -63,7 +64,7 @@ app.use(bodyparser.json());
 
 logger = (activity, subActivity, subsubActivity, activityId, status, userId, ipAddress, method) => {
     if (userId.length > 0) {
-        fetch(proxy_url + "/api/uam/user/" + userId, {
+        fetch(uam_url + "/user/" + userId, {
             credentials: "include"
         }).then((prom) => prom.text()).then((res1) => {
             if (res1 != undefined && res1 !== 'undefined') {
@@ -671,7 +672,8 @@ app.post('/instance', (req, res) => {
     console.log("**/instance entered**");
     processId = req.body.processId;
     fetch(proxy_url + "/api/uam/user/" + jsonwebtoken.verify(req.cookies.token, jwt_key).userId, {
-        credentials: "include"
+        credentials: "include",
+        cookie: 'token=' + req.cookies.token + ';'
     }).then((prom) => prom.text()).then((res123) => {
         var ins = new instance({
             processId, user: res123.username
@@ -837,7 +839,8 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
     var userSearch = jsonwebtoken.verify(token, jwt_key).userId
 
     fetch(proxy_url + "/api/uam/user/" + userSearch, {
-        credentials: "include"
+        credentials: "include",
+        cookie: 'token=' + req.cookies.token + ';'
     }).then((prom) => prom.text()).then((res123) => {
         workitem.findByIdAndUpdate(workitemId, {
             status: "rejected",
@@ -1038,7 +1041,8 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                 userSearch = jsonwebtoken.verify(token, jwt_key).userId
             }
             fetch(proxy_url + "/api/uam/user/" + userSearch, {
-                credentials: "include"
+                credentials: "include",
+                cookie: 'token=' + req.cookies.token + ';'
             }).then((prom) => prom.text()).then((res123) => {
                 console.log("##XYZ5" + workitemId);
                 workitem.findByIdAndUpdate(workitemId, {
@@ -1560,7 +1564,8 @@ waitForTrigger = (triggerId, curr, esc, escDate, schDate, instanceId) => {
     }, (err, res2) => {
         setTimeout(() => {
             fetch(proxy_url + "/api/uam/user", {
-                credentials: "include"
+                credentials: "include",
+                cookie: 'token=' + req.cookies.token + ';'
             }).then((prom) => prom.text()).then((users) => {
                 for (var j = 0; j < users.length; j++) {
                     if (users[j].email != undefined && users[j].email !== "undefined" && users[j].email.length > 0) {
@@ -1590,10 +1595,16 @@ app.get('/workitems', (req, res) => {
     var searchStep = req.query.searchStep;
     console.log("SEARCH");
     var userId = jsonwebtoken.verify(req.cookies.token, jwt_key).userId
-
+    console.log(proxy_url + "/api/uam/user/" + userId);
     fetch(proxy_url + "/api/uam/user/" + userId, {
-        credentials: "include"
+        credentials: "include",
+        cookie: 'token=' + req.cookies.token + ';'
+
+
     }).then((prom) => prom.text()).then((res2) => {
+        console.log("#");
+        console.log(res2);
+        console.log("#");
 
         search = '{"$and":[ {"$or":['
         var roles = [];
