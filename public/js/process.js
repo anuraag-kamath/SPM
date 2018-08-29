@@ -261,8 +261,8 @@ checkme = (processId) => {
         console.log("***");
         for (var i in JSON.parse(res1)) {
             var newOption = document.createElement('option');
-            newOption.value = JSON.parse(res1)[i].roles[0].roleName;
-            newOption.innerText = JSON.parse(res1)[i].roles[0].roleName;
+            newOption.value = JSON.parse(res1)[i].roleName;
+            newOption.innerText = JSON.parse(res1)[i].roleName;
             document.getElementById('participant').appendChild(newOption);
         }
     });

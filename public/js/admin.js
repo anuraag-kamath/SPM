@@ -17,7 +17,7 @@ loadUsers = () => {
             var newRow = document.createElement("tr");
             var deactivate = false;
             var add = "";
-            if (JSON.parse(res)[i].user.deactivated == true) {
+            if (JSON.parse(res)[i].deactivated == true) {
                 deactivate = true;
                 add = "<td> <i  id='activate_" + JSON.parse(res)[i]._id + "' class='fas fa-toggle-off editUsers'></i>                </td>";
 
@@ -25,11 +25,11 @@ loadUsers = () => {
                 add = "<td> <i id='deactivate_" + JSON.parse(res)[i]._id + "' class='fas fa-toggle-on editUsers'></i>          </td>";
 
             }
-            var username = JSON.parse(res)[i].user.username;
+            var username = JSON.parse(res)[i].username;
             if (username.length == 0) {
                 username = "#User invited!#"
             }
-            newRow.innerHTML = "<td>" + username + "<br><strong style='font-size:0.6em'>" + JSON.parse(res)[i].user.email + "</strong></td><td  id=roles" + JSON.parse(res)[i]._id + " data-toggle='tooltip' title=" + JSON.parse(res)[i].user.roles + ">" + JSON.parse(res)[i].user.roles + "</td><td><i  id='edit_" + JSON.parse(res)[i]._id + "' class='fas fa-user-edit editUsers'></i></td>"
+            newRow.innerHTML = "<td>" + username + "<br><strong style='font-size:0.6em'>" + JSON.parse(res)[i].email + "</strong></td><td  id=roles" + JSON.parse(res)[i]._id + " data-toggle='tooltip' title=" + JSON.parse(res)[i].roles + ">" + JSON.parse(res)[i].roles + "</td><td><i  id='edit_" + JSON.parse(res)[i]._id + "' class='fas fa-user-edit editUsers'></i></td>"
                 + add
                 + "<td><i id='delete_" + JSON.parse(res)[i]._id + "' class='fas fa-ban editUsers'></i>                </td>";
             document.getElementById('users').appendChild(newRow);
@@ -62,8 +62,8 @@ loadUsers = () => {
 
                     for (var i in JSON.parse(res1)) {
                         var newOption = document.createElement('option');
-                        newOption.value = JSON.parse(res1)[i].roles[0].roleName
-                        newOption.innerText = JSON.parse(res1)[i].roles[0].roleName;
+                        newOption.value = JSON.parse(res1)[i].roleName
+                        newOption.innerText = JSON.parse(res1)[i].roleName;
                         if (document.getElementById(String(selectedUser).replace("edit_", "roles")).innerText.indexOf(newOption.innerText) != -1) {
                             newOption.selected = true;
                         }
@@ -80,7 +80,7 @@ loadUsers = () => {
                             roles.push('"' + document.getElementById("roleSelector").options[si].value + '"');
                         }
                     }
-                    var jsonBody = '{"user":{"roles":[' + roles + '] }}'
+                    var jsonBody = '{"roles":[' + roles + '] }'
                     fetch('/api/uam/user/' + String(selectedUser).replace('edit_', ''), {
                         method: "PUT",
                         credentials: 'include',
@@ -109,7 +109,7 @@ loadUsers = () => {
 
 
             })
-            console.log(JSON.parse(res)[i].user.deactivated + "#" + deactivate);
+            console.log(JSON.parse(res)[i].deactivated + "#" + deactivate);
             if (deactivate == true) {
                 document.getElementById("activate_" + JSON.parse(res)[i]._id).addEventListener('click', (ev) => {
                     selectedUserAction = ev.target.id;

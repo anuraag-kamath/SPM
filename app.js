@@ -1647,8 +1647,8 @@ app.get('/workitems', (req, res) => {
     user.findById(userId, (err, res2) => {
         search = '{"$and":[ {"$or":['
         var roles = [];
-        for (var t = 0; t < res2.user.roles.length; t++) {
-            roles.push('{"participant":"' + res2.user.roles[t] + '"}');
+        for (var t = 0; t < res2.roles.length; t++) {
+            roles.push('{"participant":"' + res2.roles[t] + '"}');
         }
         console.log("STEPID LENGTH" + searchStep);
         if (searchStep != undefined && searchStep.length > 0) {
@@ -1789,14 +1789,14 @@ app.get('/roles', (req, res) => {
             console.log("SEARCHED!");
             var roleName = "";
             for (var e1 = 0; e1 < docs.length; e1++) {
-                roleName += docs[e1].roles[0].roleName + " ";
+                roleName += docs[e1].roleName + " ";
             }
             roleName += noNeed.join(" ");
             console.log("#$#$#$$#$");
             console.log(roleName);
             console.log(noNeed);
             console.log("#$#$#$$#$");
-            res.send(docs[0].roles[0].mode);
+            res.send(docs[0].mode);
         })
     } else {
         roles.find({}).then((docs) => {
@@ -1847,7 +1847,7 @@ app.put('/user/:id', (req, res) => {
     id = req.params.id;
 
     user.findById(id, (err, res2) => {
-        res2.user.roles = req.body.user.roles;
+        res2.roles = req.body.roles;
         user.findByIdAndUpdate(id, res2).then((res1) => {
             res.send(res1);
         })
