@@ -161,7 +161,7 @@ loadPage = (page, message, popUp) => {
 }
 
 document.getElementById('logout').addEventListener('click', (ev) => {
-    fetch('/logout', {
+    fetch('/api/uam/logout', {
         credentials: 'include',
         method: "POST"
     }).then((prom) => prom.text()).then((res) => {
@@ -213,12 +213,12 @@ hashCheck = () => {
         if (location.hash.indexOf("frm") == -1) {
             var wi_id = location.hash.substr(1);
 
-            fetch('/workitems/' + wi_id + '?checkOpen=Y', {
+            fetch('/api/bpm/workitems/' + wi_id + '?checkOpen=Y', {
                 credentials: "include"
             }).then((prom) => prom.text()).then((res) => {
 
                 if (JSON.parse(res).status != "OK") {
-                    fetch('/user/' + JSON.parse(res).user, {
+                    fetch('/api/uam/user/' + JSON.parse(res).user, {
                         credentials: "include"
                     }).then((prom) => prom.text()).then((user) => {
                         alert("Work item is already opened by " + JSON.parse(user).user);
@@ -264,7 +264,7 @@ window.addEventListener("hashchange", (ev) => {
 
 })
 
-fetch('/whoami', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {
+fetch('/api/uam/whoami', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {
     document.getElementById('loggedinUser').innerText = JSON.parse(res).user;
     loggedInUser = JSON.parse(res).userId;
 })
@@ -357,7 +357,7 @@ document.getElementById('loggedinUser').addEventListener('click', (ev) => {
         if (document.getElementById('pwd1').value.length > 0 && document.getElementById('pwd2').value.length > 0 && document.getElementById('pwd1').value == document.getElementById('pwd2').value) {
             var bodyJson = '{"newPassword": "' + document.getElementById('pwd1').value + '"}'
             console.log(bodyJson);
-            fetch('/user', {
+            fetch('/api/uam/user', {
                 method: "PUT",
                 credentials: "include",
                 headers: {
@@ -397,7 +397,7 @@ instanceIdLoader = (bindingId, calledFrom1) => {
             instanceId = String(ev.target.id).substr(String(ev.target.id).indexOf("_") + 1)
         }
         console.log("I set" + instanceId);
-        fetch('/instance/' + instanceId, {
+        fetch('/api/bpm/instance/' + instanceId, {
             credentials: "include"
         }).then((prom) => prom.text()).then((proc) => {
             console.log(JSON.parse(proc).processId + "#" + calledFrom1);

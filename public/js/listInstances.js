@@ -1,6 +1,6 @@
 
 listInstances = (searchParams) => {
-    fetch('/instance?mode=listAll&' + searchParams, {
+    fetch('/api/bpm/instance?mode=listAll&' + searchParams, {
         method: 'GET',
         headers: {
             'Access-Control-Allow-Origin': '*'
@@ -46,7 +46,7 @@ listInstances = (searchParams) => {
 
 addProcessName = (id) => {
     console.log("***" + String(id).substr(2));
-    fetch('/process?process=' + String(id).substr(String(id).indexOf("_") + 1), {
+    fetch('/api/bpm/process?process=' + String(id).substr(String(id).indexOf("_") + 1), {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
         console.log(res);

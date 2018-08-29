@@ -1,10 +1,10 @@
 var objectId = window.location.hash.substr(4);
 getObjects = (filter) => {
-    fetch('/objects/' + objectId, {
+    fetch('/api/bpm/objects/' + objectId, {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res1) => {
         var objName = JSON.parse(res1)[0].schemaName;
-        fetch('/objects/' + objectId + "/" + objName + "?mode=showAll&filter=" + filter, {
+        fetch('/api/bpm/objects/' + objectId + "/" + objName + "?mode=showAll&filter=" + filter, {
             credentials: 'include'
         }).then((prom) => prom.text()).then((res2) => {
             document.getElementById('objectContent').innerHTML = "";

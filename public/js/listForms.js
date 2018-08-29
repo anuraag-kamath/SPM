@@ -3,7 +3,7 @@ listForms = () => {
 
     document.getElementById('form-body').innerHTML = "";
 
-    fetch('/forms', {
+    fetch('/api/bpm/forms', {
         method: 'GET',
         headers: {
             'Access-Control-Allow-Origin': '*'
@@ -29,7 +29,7 @@ listForms = () => {
 
 
                     document.getElementById("delete_" + alpha[i]._id).addEventListener("click", (ev) => {
-                        fetch('/process?searchForm=' + String(ev.target.id).replace("delete_", "")).then((prom) => prom.text()).then((res) => {
+                        fetch('/api/bpm/process?searchForm=' + String(ev.target.id).replace("delete_", "")).then((prom) => prom.text()).then((res) => {
                             console.log(res);
                             if (JSON.parse(res).length > 0) {
                                 alert("The form cannot be deleted as it is being used in following processes:-" + res);
@@ -41,7 +41,7 @@ listForms = () => {
 
                                 document.getElementById('confirmButton').addEventListener('click', (ev) => {
 
-                                    fetch('/forms/' + formId, {
+                                    fetch('/api/bpm/forms/' + formId, {
                                         method: "DELETE",
                                         credentials: "include"
                                     }).then((prom) => prom.text()).then((res) => {

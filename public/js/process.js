@@ -4,7 +4,7 @@ var processSteps = {};
 
 var sts = {};
 
-fetch('/objects', {
+fetch('/api/bpm/objects', {
 
     credentials: 'include'
 }).then((prom) => prom.text()).then((res) => {
@@ -64,7 +64,7 @@ checkme = (processId) => {
         document.getElementById('header').style.display = "none";
         document.getElementById('saveDiv').style.display = "none";
 
-        fetch('/process?process=' + processId, {
+        fetch('/api/bpm/process?process=' + processId, {
             method: "GET",
             credentials: 'include'
         }).then((prom) => {
@@ -112,7 +112,7 @@ checkme = (processId) => {
 
             document.getElementById('heading').innerText = JSON.parse(response)[0].processName;
 
-            fetch('/forms?fields=name', {
+            fetch('/api/bpm/forms?fields=name', {
                 method: "GET",
                 credentials: 'include'
             }).then((prom) => {
@@ -164,7 +164,7 @@ checkme = (processId) => {
                     }
                 }
 
-                fetch('/workitems?searchStep=' + sendSteps + '&instanceId=' + instanceId, {
+                fetch('/api/bpm/workitems?searchStep=' + sendSteps + '&instanceId=' + instanceId, {
                     credentials: 'include'
                 }).then((prom) => prom.text()).then((res) => {
                     console.log(res);
@@ -221,7 +221,7 @@ checkme = (processId) => {
     }
 
 
-    fetch('/objects?fields=schemaName', {
+    fetch('/api/bpm/objects?fields=schemaName', {
         method: "GET",
         credentials: 'include'
     }).then((prom) => {
@@ -238,7 +238,7 @@ checkme = (processId) => {
 
 
 
-    fetch('/forms', {
+    fetch('/api/bpm/forms', {
 
         credentials: 'include'
     }).then((prom) => prom.text()).then((docs) => {
@@ -252,7 +252,7 @@ checkme = (processId) => {
     })
 
 
-    fetch('/roles?mode=participants', {
+    fetch('/api/uam/roles?mode=participants', {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res1) => {
         var options = "";
@@ -1001,7 +1001,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
         json += ']}'
         console.log(json);
         if (typeof (processId) !== 'undefined' && processId != undefined && processId.length > 0) {
-            fetch('/process/' + processId, {
+            fetch('/api/bpm/process/' + processId, {
                 method: "PUT",
                 headers: {
                     'content-type': 'application/json'
@@ -1014,7 +1014,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
                 window.location.hash = "listProcess"
             })
         } else {
-            fetch('/process', {
+            fetch('/api/bpm/process', {
                 method: "POST",
                 headers: {
                     'content-type': 'application/json'

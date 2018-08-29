@@ -1,5 +1,5 @@
 //var dms_server_url = "http://localhost:4000";
-var dms_server_url = "https://damp-woodland-10129.herokuapp.com"
+//var dms_server_url = "https://damp-woodland-10129.herokuapp.com"
 
 var dms_tag_id = "";
 
@@ -96,7 +96,7 @@ createDms = (mode) => {
 
 fetchDocuments = () => {
     document.getElementById("dms_doc_list").innerHTML="";
-    fetch(dms_server_url + '/documents?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier'), {
+    fetch('/documents?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier'), {
         method: "GET",
         headers: {
             "Access-Control-Allow-Origin": "*",
@@ -132,7 +132,7 @@ fetchDocuments = () => {
             document.getElementById("dms_doc_list").appendChild(tr);
 
             document.getElementById(res[i]._id).addEventListener('click', (ev) => {
-                fetch(dms_server_url + "/documents/" + ev.target.id + '?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier')).then((prom) => prom.text()).then((doc) => {
+                fetch("/documents/" + ev.target.id + '?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier')).then((prom) => prom.text()).then((doc) => {
                     document.getElementById('documentDiv').style.display = "block";
                     document.getElementById('dms_col_1').style.maxWidth = "30%"
                     document.getElementById('dms_col_2').style.maxWidth = "70%"
@@ -192,7 +192,7 @@ function documentUploaded(evt) {
                 "uniqueIdentifier": document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier')
             };
 
-            fetch(dms_server_url + '/documents', {
+            fetch('/documents', {
                 method: "POST",
                 headers: {
                     "Access-Control-Allow-Origin": "*",

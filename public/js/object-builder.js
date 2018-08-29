@@ -4,7 +4,7 @@ var objectId = "";
 
 loadObject = (objectId) => {
     if (objectId != undefined) {
-        fetch('/objects/' + objectId, {
+        fetch('/api/bpm/objects/' + objectId, {
             credentials: 'include'
         }).then((prom) => prom.text()).then((res) => {
             var obj = JSON.parse(res)[0];
@@ -190,7 +190,7 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
     document.getElementById("saveObj").disabled = true;
     document.getElementById("myForm").style.visibility="hidden";
 
-    fetch('/objects' + ext, {
+    fetch('/api/bpm/objects' + ext, {
         method: method,
         headers: {
             'content-type': 'application/json'

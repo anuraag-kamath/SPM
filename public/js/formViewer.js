@@ -15,7 +15,7 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
 
 
     console.log("AM");
-    fetch('/objects', {
+    fetch('/api/bpm/objects', {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
         objs = JSON.parse(res);
@@ -24,7 +24,7 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
     }).then(() => {
         var tempJSON = '{"processId":"' + processId + '"}'
 
-        fetch('/forms/' + formId, {
+        fetch('/api/bpm/forms/' + formId, {
             credentials: 'include'
         }).then((prom) => {
             return prom.text()
@@ -32,7 +32,7 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
             console.log(res);
 
             if (workitemId.length == 0) {
-                fetch('/instance', {
+                fetch('/api/bpm/instance', {
                     method: "POST",
                     headers: {
                         'content-type': 'application/json'
@@ -177,7 +177,7 @@ loadContents = (res, role) => {
     document.getElementById('newCommentsButton_' + instanceId1).addEventListener('click', (ev) => {
         jsonBody = '{"comment": "' + document.getElementById('newComment').value + '"}';
         console.log(jsonBody);
-        fetch('/comments/' + instanceId1, {
+        fetch('/api/bpm/comments/' + instanceId1, {
             credentials: "include",
             method: "POST",
             headers: {
@@ -335,7 +335,7 @@ loadContents = (res, role) => {
                     "instanceId1": instanceId1,
                     "objects": jsonBody
                 };
-                fetch('/instance/' + instanceId1 + wi, {
+                fetch('/api/bpm/instance/' + instanceId1 + wi, {
                     method: "POST",
                     headers: {
                         'content-type': 'application/json'
@@ -431,7 +431,7 @@ loadContents = (res, role) => {
 
 loadComments = () => {
     document.getElementById('commentsList').innerText = "";
-    fetch('/comments/' + instanceId1, {
+    fetch('/api/bpm/comments/' + instanceId1, {
         credentials: "include"
     }).then((prom) => prom.json()).then((res) => {
         for (var i = 0; i < res.length; i++) {
@@ -470,7 +470,7 @@ loadComments = () => {
 }
 
 userName = (userId) => {
-    fetch('/user/' + (userId).substr(2), {
+    fetch('/api/uam/user/' + (userId).substr(2), {
         credentials: 'include'
     }).then((prom) => prom.text()).then((doc) => {
         console.log("*****");
@@ -506,7 +506,7 @@ eventPage = (type, id) => {
         ev.preventDefault();
 
         if (type == "reject") {
-            fetch('/rejectWorkItem/' + workitemId + '/' + document.getElementById('rejectSelect').value, {
+            fetch('/api/bpm/rejectWorkItem/' + workitemId + '/' + document.getElementById('rejectSelect').value, {
                 credentials: "include",
                 method: "GET"
             }).then((prom) => prom.text()).then((rr) => {
@@ -645,7 +645,7 @@ eventPage = (type, id) => {
                     "objects": jsonBody
                 };
                 //alert(instanceId1);
-                fetch('/instance/' + instanceId1 + wi, {
+                fetch('/api/bpm/instance/' + instanceId1 + wi, {
                     method: "POST",
                     headers: {
                         'content-type': 'application/json'
@@ -679,7 +679,7 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
     onLoad(formId, processId, workitemId, "", "")
 } else {
     var search = '{"_id":"' + location.hash.substr(1) + '"}'
-    fetch('/workitems/' + location.hash.substr(1), {
+    fetch('/api/bpm/workitems/' + location.hash.substr(1), {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
         console.log("HERE1" + location.hash.substr(1));
@@ -694,7 +694,7 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
         rejectionApplicable = res.rejectionApplicable;
 
         if (workitemId.length > 0) {
-            fetch('/rejectionSteps/' + workitemId, {
+            fetch('/api/bpm/rejectionSteps/' + workitemId, {
                 credentials: "include",
                 method: "GET"
             }).then((prom) => prom.text()).then((steps) => {
@@ -715,7 +715,7 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
 
 
                 }
-                fetch('/roles?ids=' + role, {
+                fetch('/api/uam/roles?ids=' + role, {
                     credentials: 'include'
                 }).then((prom) => prom.text()).then((res123) => {
                     console.log(res);
@@ -750,7 +750,7 @@ loadObjects = () => {
     console.log(instanceId1);
     console.log(iaa);
     if (instanceId1.length > 0) {
-        fetch('/instance/' + instanceId1, {
+        fetch('/api/bpm/instance/' + instanceId1, {
             credentials: 'include'
         }).then((prom) => {
             console.log("###########################################");
@@ -762,7 +762,7 @@ loadObjects = () => {
             console.log(res);
             console.log("***1");
             for (obj in JSON.parse(res).objects) {
-                fetch('/objects/' + JSON.parse(res).objects[obj].id + '/' + JSON.parse(res).objects[obj].name, {
+                fetch('/api/bpm/objects/' + JSON.parse(res).objects[obj].id + '/' + JSON.parse(res).objects[obj].name, {
                     credentials: 'include'
                 }).then((prom1) => prom1.text()).then((res2) => {
                     for (var i = 0; i < tempArr.length; i++) {
@@ -1069,7 +1069,7 @@ putMe = (node) => {
 
     eventPage("submit", but1.id)
     document.getElementById('Close').addEventListener('click', (ev) => {
-        fetch('/workitems/' + workitemId, {
+        fetch('/api/bpm/workitems/' + workitemId, {
             credentials: "include",
             method: "PUT"
         }).then((prom) => prom.text()).then((res) => {

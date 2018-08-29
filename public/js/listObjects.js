@@ -1,5 +1,5 @@
 listObjects = () => {
-    fetch('/objects?mode=show', {
+    fetch('/api/bpm/objects?mode=show', {
         method: 'GET',
         credentials: 'include'
 
@@ -26,7 +26,7 @@ listObjects = () => {
                         window.location.hash = "objbdr" + String(event.target.id).replace("edit_", "")
                     });
                     document.getElementById("delete_" + alpha[i]._id).addEventListener('click', (event) => {
-                        fetch('/objects/' + event.target.id.replace('delete_', ''), {
+                        fetch('/api/bpm/objects/' + event.target.id.replace('delete_', ''), {
                             method: "DELETE",
                             credentials: 'include'
                         });

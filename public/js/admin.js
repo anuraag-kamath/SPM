@@ -3,7 +3,7 @@ var selectedUser = "";
 var selectedUserAction = "";
 loadUsers = () => {
     document.getElementById('users').innerHTML = "";
-    fetch('/user', {
+    fetch('/api/uam/user', {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
         if (JSON.parse(res).length > 0) {
@@ -50,7 +50,7 @@ loadUsers = () => {
                 document.getElementById('cancelRole').addEventListener('click', (ev) => {
                     popupClose();
                 })
-                fetch('/roles', {
+                fetch('/api/uam/roles', {
                     credentials: 'include'
                 }).then((prom) => prom.text()).then((res1) => {
                     var options = "";
@@ -81,7 +81,7 @@ loadUsers = () => {
                         }
                     }
                     var jsonBody = '{"user":{"roles":[' + roles + '] }}'
-                    fetch('/user/' + String(selectedUser).replace('edit_', ''), {
+                    fetch('/api/uam/user/' + String(selectedUser).replace('edit_', ''), {
                         method: "PUT",
                         credentials: 'include',
                         headers: {
@@ -165,7 +165,7 @@ loadUsers();
 
 deactivateUser = () => {
     document.getElementById('confirmButton').addEventListener('click', (ev1) => {
-        fetch('/deactivateUser/' + String(selectedUserAction).replace("deactivate_", ""), {
+        fetch('/api/uam/deactivateUser/' + String(selectedUserAction).replace("deactivate_", ""), {
             method: "POST",
             credentials: 'include'
         }).then((prom) => prom.text()).then((res) => {
@@ -179,7 +179,7 @@ deactivateUser = () => {
 
 activateUser = () => {
     document.getElementById('confirmButton').addEventListener('click', (ev1) => {
-        fetch('/activateUser/' + String(selectedUserAction).replace("activate_", ""), {
+        fetch('/api/uam/activateUser/' + String(selectedUserAction).replace("activate_", ""), {
             method: "POST",
             credentials: 'include'
         }).then((prom) => prom.text()).then((res) => {
@@ -192,7 +192,7 @@ activateUser = () => {
 
 deleteUser = () => {
     document.getElementById('confirmButton').addEventListener('click', (ev1) => {
-        fetch('/deleteUser/' + String(selectedUserAction).replace("delete_", ""), {
+        fetch('/api/uam/deleteUser/' + String(selectedUserAction).replace("delete_", ""), {
             method: "DELETE",
             credentials: 'include'
         }).then((prom) => prom.text()).then((res) => {
@@ -235,7 +235,7 @@ document.getElementById('addUser').addEventListener('click', (ev) => {
             document.getElementById('mess').innerText = "Email should of valid!";
         } else {
             var jsonBody = '{"email":"' + document.getElementById('new_email').value + '"}'
-            fetch('/register?channel=admin', {
+            fetch('/api/uam/register?channel=admin', {
                 method: "POST",
                 credentials: 'include',
                 headers: {

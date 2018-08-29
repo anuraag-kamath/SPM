@@ -1,6 +1,6 @@
 document.getElementById('pop-up').style.display = "block";
 document.getElementById('app').style.display = "none";
-fetch('/workitems?search={"status":"scheduled"}', {
+fetch('/api/bpm/workitems?search={"status":"scheduled"}', {
     method: 'GET',
     headers: {
         'Access-Control-Allow-Origin': '*'
@@ -87,7 +87,7 @@ fetch('/workitems?search={"status":"scheduled"}', {
                     document.getElementById('objectWorkitemDiv').style.backgroundColor = "yellow";
                     document.getElementById('objectWorkitemDiv').style.overflow = "scroll";
 
-                    fetch('/searchObjects/' + document.getElementById(ev.target.id).getAttribute('instanceId'), { credentials: "include" }).then((prom) => prom.text()).then((res) => {
+                    fetch('/api/bpm/searchObjects/' + document.getElementById(ev.target.id).getAttribute('instanceId'), { credentials: "include" }).then((prom) => prom.text()).then((res) => {
                         document.getElementById("objectWorkitemDiv").innerHTML = "";
                         var closeObjectWorkitemDiv = document.createElement("BUTTON");
                         closeObjectWorkitemDiv.id = "closeObjectWorkitemDiv";
@@ -131,7 +131,7 @@ fetch('/workitems?search={"status":"scheduled"}', {
 
 addTable = (name, id, tid) => {
     console.log("/" + name + "/" + id);
-    fetch("/" + name + "/" + id, {
+    fetch("/api/bpm/" + name + "/" + id, {
         credentials: "include"
     }).then((prom) => prom.text()).then((res3) => {
         res3 = JSON.parse(res3);

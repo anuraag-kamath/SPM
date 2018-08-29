@@ -54,9 +54,9 @@ const email_provider = process.env.EMAIL_PROVIDER || "";
 var cors = require('cors')
 
 //newImports
-var {test_v0}=require('./userSchemas/test_v0')
-var {employee_v1}=require('./userSchemas/employee_v1')
-var {employee_v0}=require('./userSchemas/employee_v0')
+var { test_v0 } = require('./userSchemas/test_v0')
+var { employee_v1 } = require('./userSchemas/employee_v1')
+var { employee_v0 } = require('./userSchemas/employee_v0')
 
 app.use(bodyparser.json());
 
@@ -92,391 +92,23 @@ app.use(express.static(__dirname + "/public/login"));
 
 app.use((req, res, next) => {
 
+
     next();
 })
 
-app.get('/login', (req, res) => {
-    logger("page", "login", "", "", "success", "", req.connection.remoteAddress, "GET");
-    console.log("**/login entered**");
-    res.sendFile(__dirname + '/public/login/login.html')
-    console.log("**/login exited**");
-})
 
-app.post('/login', (req, res) => {
-    console.log("**/login entered**");
 
 
-    user.find({ "user.username": req.body.username }).then((res1) => {
-        if (res1.length > 0) {
-            bcrypt.compare(req.body.password, res1[0].user.password).then((res2) => {
-                if (res1[0].user.deactivated == true) {
-                    logger("API", "login", "", "", "deactivated", res1[0]._id, req.connection.remoteAddress, "POST");
 
-                    res.send({
-                        deactivated: true,
-                        url: '/login.html'
-                    })
-                } else if (res1[0].user.activated == false) {
-                    logger("API", "login", "", "", "notactivated", res1[0]._id, req.connection.remoteAddress, "POST");
 
-                    res.send({
-                        notactivated: true,
-                        url: '/login.html'
-                    })
-                } else if (res2 == true) {
-                    logger("API", "login", "", "", "success", res1[0]._id, req.connection.remoteAddress, "POST");
 
-                    token = jsonwebtoken.sign({ userId: res1[0]._id }, jwt_key, {
-                        expiresIn: '1H'
-                    })
 
 
-                    var sendBackUrl = '/index.html';
-                    if (url.length > 0) {
-                        sendBackUrl = url;
-                    }
-                    res.cookie('token', token, { httpOnly: true }).send({
-                        url: sendBackUrl,
-                        token: token
-                    })
 
-                }
-                else {
-                    logger("API", "login", "", "", "someotherfailure", res1[0]._id, req.connection.remoteAddress, "POST");
 
-                    res.send({
-                        url: '/login.html'
-                    })
-                }
-            })
-        } else {
-            logger("API", "login", "", "", "failure", req.body.username, req.connection.remoteAddress, "POST");
 
-            res.send({
-                url: '/login.html'
-            })
-        }
-    })
 
-
-    console.log("**/login exited**");
-
-
-
-})
-
-app.get('/activate/:activationId/:userId', (req, res) => {
-    activateDeactivate(req, res)
-
-})
-
-
-app.post('/activate/:activationId/:userId', (req, res) => {
-    activateDeactivate(req, res)
-})
-
-activateDeactivate = (req, res) => {
-    console.log("INSIDE");
-    userId = req.params.userId;
-    activationId = req.params.activationId;
-    channel = req.query.channel
-    user.findById(req.params.userId, (err, res1) => {
-
-        if (res1 != undefined && res1 !== 'undefined' && res1.user.activationId == activationId) {
-            console.log(res1.user.activated);
-            if (res1.user.activated == false && channel == "username") {
-                var username = req.body.username
-                var password = req.body.password
-                console.log(username);
-                console.log(password);
-                user.find({ "user.username": username }).then((users) => {
-                    if (users.length > 0) {
-                        res.send({ error: "User Id is already taken!" })
-                    } else {
-                        bcrypt.hash(password, 10).then((res2) => {
-                            password = res2;
-                            user.findByIdAndUpdate(userId, {
-                                "user.username": username,
-                                "user.password": password,
-                                "user.activated": true
-                            }, (err, res43) => {
-                                res.writeHeader(200, { "Content-Type": "text/html" });
-                                res.write("Activated! <a href='/login'>Click here to login!</a>");
-                                res.end();
-                            })
-                        });
-
-                    }
-                })
-
-
-
-            } else if (res1.user.activated == false && channel == "adminCreated") {
-                fs.readFile('activation.html', function (err, data) {
-                    data = data.toString().replace("##userId##", res1._id);
-                    data = data.toString().replace("##emailId##", res1.user.email);
-                    data = data.toString().replace("##activationId##", res1.user.activationId);
-
-                    res.writeHead(200, { 'Content-Type': 'text/html' });
-                    res.write(data);
-                    res.end();
-                });
-
-                // res.writeHeader(200, { "Content-Type": "text/html" });
-                // res.write("<html><head><href rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'</head><body><input type='text' class='form-control' placeholder='username' id='username'><input type='password' class='form-control' placeholder='Enter password' id='password1'><input type='password' class='form-control' placeholder='Confirm password' id='password2'><button  class='form-control' onclick=''>Create Account</button></body></html>");
-                // res.end();
-
-            } else if (res1.user.activated == false) {
-                console.log(res1.user.activated);
-                res1.user.activated = true;
-                user.findByIdAndUpdate(req.params.userId, res1, (err, res2) => {
-                    res.writeHeader(200, { "Content-Type": "text/html" });
-                    res.write("Activated! <a href='/login'>Click here to login!</a>");
-                    res.end();
-
-                })
-
-            } else {
-                res.writeHeader(200, { "Content-Type": "text/html" });
-                res.write("User already activated! <a href='/login'>Click here to login!</a>");
-                res.end();
-            }
-        } else {
-            res.writeHeader(200, { "Content-Type": "text/html" });
-            res.write("Invalid Content! <a href='/login'>Click here to login!</a>");
-            res.end();
-
-
-        }
-    })
-}
-
-
-app.post('/resendActivationLink', (req, res) => {
-    console.log("IN HERE");
-
-    var email = req.body.email;
-
-    user.find({ "user.email": email }).then((users) => {
-        if (users.length > 0) {
-            if (users[0].user.activated == false) {
-                sendMail(users[0].user.email, 'Account Activation', "<h3>Dear " + users[0].user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/api/uam/activate/" + users[0].user.activationId + "/" + users[0]._id + "'>Click me!</a><hr><br><br>");
-                res.send({ status: "OK", message: "Check your mail to verify the email address!" })
-
-            } else {
-                res.send({ status: "OK", message: "user already activated!" })
-            }
-        } else {
-            res.send({ status: "ERROR", message: "user not yet registered!" })
-        }
-    })
-
-
-
-
-
-})
-
-app.post('/register', (req, res) => {
-    console.log("**/register entered**");
-    var username = req.body.username;
-    var password = req.body.password;
-    var email = req.body.email;
-    var mode = req.query.channel;
-    user.find({ "user.email": email }).then((doc) => {
-        if (doc.length > 0) {
-            res.send({ error: "Email ID already registered" });
-
-        } else {
-            if (mode != "admin") {
-                user.find({ "user.username": username }).then((doc) => {
-                    if (doc.length > 0) {
-                        if (doc[0].user.activated !== 'undefined' && doc[0].user.activated == false) {
-                            res.send({ error: "User not yet activated" });
-
-                        } else {
-                            res.send({ error: "Username already exists" });
-
-                        }
-                        logger("API", "register", "", doc[0].user.username, "failure", "", req.connection.remoteAddress, "POST");
-
-                    }
-                    else {
-                        logger("API", "register", "", "", "success", "", req.connection.remoteAddress, "POST");
-
-
-                        bcrypt.hash(password, 10).then((res2) => {
-                            var usr = new user({
-                                user: {
-                                    username: username,
-                                    password: res2,
-                                    roles: ["index", "admin"],
-                                    deactivated: false,
-                                    activated: false,
-                                    email: email,
-                                    activationId: Math.random() * (new Date().getTime())
-                                }
-                            })
-                            usr.save().then((res8) => {
-
-                                console.log(res8.user.email);
-
-                                sendMail(res8.user.email, 'Account Activation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account!</p><hr><a href='https://dry-depths-41802.herokuapp.com/api/uam/activate/" + res8.user.activationId + "/" + res8._id + "'>Click me!</a><hr><br><br>");
-
-
-
-                                logger("API", "login", "", "", "success", res8._id, req.connection.remoteAddress, "POST");
-
-                                res.send({ error: "Check your mail to verify the email address!" })
-                            });
-                        })
-                    }
-                })
-
-            } else {
-                var usr = new user({
-                    user: {
-                        username: "",
-                        password: "",
-                        roles: ["index", "admin"],
-                        deactivated: false,
-                        activated: false,
-                        email: email,
-                        activationId: Math.random() * (new Date().getTime())
-                    }
-                })
-                usr.save().then((res8) => {
-
-                    console.log(res8.user.email);
-                    //xyz123
-
-
-
-                    sendMail(res8.user.email, 'Account Activation and Username creation', "<h3>Dear " + res8.user.username + ",</h3><br><br><p>Click the link to activate your account and create a new username and password!</p><hr><a href='https://dry-depths-41802.herokuapp.com/api/uam/activate/" + res8.user.activationId + "/" + res8._id + "?channel=adminCreated'>Click me!</a><hr><br><br>");
-
-
-
-                    logger("API", "login", "", "", "success", res8._id, req.connection.remoteAddress, "POST");
-
-                    res.send({ error: "OK" })
-                });
-            }
-
-        }
-    })
-
-
-    console.log("**/register exited**");
-
-
-
-})
-
-
-
-
-
-app.use((req, res, next) => {
-    //ABCDEF
-    console.log("**/Checking Auth entered**");
-    url = req.url;
-    console.log(req.cookies);
-    if (req.cookies.token == undefined) {
-        res.sendFile(__dirname + '/public/login/login.html')
-
-    }
-    else {
-
-        try {
-            jsonwebtoken.verify(req.cookies.token, jwt_key)
-
-            var wola = {
-                workitems: ["/css/workitems.css", "/js/workitems.js", "/workitems.html"],
-                process: ["/css/process.css", "/js/process.js", "/process.html"],
-                listProcess: ["/css/listProcess.css", "/js/listProcess.js", "/listProcess.html"],
-                listObjects: ["/css/listObjects.css", "/js/listObjects.js", "/listObjects.html"],
-                objectViewer: ["/css/objectViewer.css", "/js/objectViewer.js", "/objectViewer.html"],
-                objectBuilder: ["/css/object-builder.css", "/js/object-builder.js", "/object-builder.html"],
-                listForms: ["/css/listForms.css", "/js/listForms.js", "/listForms.html"],
-                listInstances: ["/css/listInstances.css", "/js/listInstances.js", "/listInstances.html"],
-                index: ["/css/index.css", "/js/index.js", "/index.html", '/'],
-                header: ["/css/header.css", "/js/header.js", "/header.html"],
-                formBuilder: ["/css/main.css", "/js/main.js", "/formBuilder.html"],
-                admin: ["/css/admin.css", "/js/admin.js", "/admin.html"],
-                test: ["/tests/test.css", "/tests/test.js", "/tests/test.html"]
-
-            }
-
-            var vali = true;
-
-            user.findById(jsonwebtoken.verify(req.cookies.token, jwt_key).userId, (err, doc) => {
-                if (doc.user != undefined) {
-                    var roles = doc.user.roles;
-                    var keys = Object.keys(wola);
-                    var notApplicable = [];
-                    for (var i = 0; i < keys.length; i++) {
-                        found = false;
-                        for (var j = 0; j < roles.length; j++) {
-                            if (roles[j] == keys[i]) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (found == false) {
-                            notApplicable.push(wola[keys[i]]);
-                        }
-                    }
-                    var redirect = false;
-                    for (var k = 0; k < notApplicable.length; k++) {
-                        if (String(notApplicable[k]).indexOf(req.path) != -1) {
-                            redirect = true;
-                            console.log("REDIRECTED TO NOT AUTHORIZED");
-                            res.redirect('/notAuthorized.html');
-                            break;
-                        }
-                    }
-                    if (redirect == false) {
-
-                        token = jsonwebtoken.sign({ userId: doc._id }, jwt_key, {
-                            expiresIn: '1H'
-                        })
-
-
-
-                        res.cookie('token', token, { httpOnly: true });
-
-
-                        console.log("MOVE ON");
-                        next();
-
-                    }
-                }
-                else {
-                    console.log("REDIRECTED TO INDEX");
-
-                    res.redirect("/index.html")
-
-                }
-
-            })
-
-
-        }
-        catch (err) {
-            console.log("REDIRECTED TO ERROR BACK TO LOGIN");
-
-            res.sendFile(__dirname + '/public/login/login.html')
-        }
-    }
-    console.log("**/Checking Auth exited**");
-
-})
-
-
-
-
-
-app.use(express.static(__dirname + '/public/others'))
+app.use(express.static(__dirname + '/public'))
 
 
 app.get('/comments/:instanceId', (req, res) => {
@@ -643,7 +275,7 @@ app.get('/whoami', (req, res) => {
 
 app.post('/objects', (req, res) => {
     console.log("**/objects entered**");
-    obj.find({ schemaName: req.body.schemaName+"_v0" }).then((objs) => {
+    obj.find({ schemaName: req.body.schemaName + "_v0" }).then((objs) => {
         console.log(req.body.schemaName);
         console.log(objs);
         if (objs.length > 0) {
@@ -654,7 +286,6 @@ app.post('/objects', (req, res) => {
 
 
             var obj1 = new obj((req.body));
-            console.log("HERE");
             obj1.save().then((doc) => {
                 console.log("SAVED!!!");
                 fs.appendFile('./userSchemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
@@ -832,7 +463,7 @@ doACall = (url, method, bodyJSON, instanceId, wid, name) => {
 
     if (method == "GET" || method == "DELETE") {
         console.log("#24" + wid);
-        fetch(url, {
+        fetch("/api/bpm"+url, {
             method: method,
             headers: {
 
@@ -849,7 +480,7 @@ doACall = (url, method, bodyJSON, instanceId, wid, name) => {
         })
     } else {
         console.log("#26" + wid);
-        fetch(url, {
+        fetch("/api/bpm"+url, {
             method: method,
             headers: {
 
@@ -1729,7 +1360,7 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
 
 
 
-                fetch(url, {
+                fetch("/api/bpm"+url, {
                     method: method,
                     headers: {
 
@@ -1782,7 +1413,7 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
 
 
                 } else {
-                    fetch(url, {
+                    fetch("/api/bpm"+url, {
                         method: method,
                         headers: {
 
@@ -2243,74 +1874,74 @@ app.put('/user', (req, res) => {
 //newSettersGetters
 
 app.get('/test_v0/:id', (req, res) => {
-	test_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    test_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/test_v0', (req, res) => {
-	test_v0.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    test_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/test_v0', (req, res) => {
-	console.log(req.body);
-	var obj1 = new test_v0(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new test_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 app.get('/employee_v1/:id', (req, res) => {
-	employee_v1.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/employee_v1', (req, res) => {
-	employee_v1.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v1.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/employee_v1', (req, res) => {
-	console.log(req.body);
-	var obj1 = new employee_v1(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new employee_v1(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 
 
 app.get('/employee_v0/:id', (req, res) => {
-	employee_v0.find({_id:ObjectId(req.params.id)}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.get('/employee_v0', (req, res) => {
-	employee_v0.find({}).then((docs) => {
-		console.log(docs);
-		res.send(docs);
-	})
+    employee_v0.find({}).then((docs) => {
+        console.log(docs);
+        res.send(docs);
+    })
 });
 
 app.post('/employee_v0', (req, res) => {
-	console.log(req.body);
-	var obj1 = new employee_v0(req.body);
-	console.log(obj1)
-obj1.save().then((doc) => {
-		res.send(`${doc}`);
-	})
+    console.log(req.body);
+    var obj1 = new employee_v0(req.body);
+    console.log(obj1)
+    obj1.save().then((doc) => {
+        res.send(`${doc}`);
+    })
 })
 
 

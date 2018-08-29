@@ -2,7 +2,7 @@
 
 listProcess = () => {
     document.getElementById('processes-body').innerHTML="";
-    fetch('/process', {
+    fetch('/api/bpm/process', {
         method: 'GET',
         headers: { 
             'Access-Control-Allow-Origin': '*'
@@ -29,7 +29,7 @@ listProcess = () => {
 
                     document.getElementById("delete_" + alpha[i]._id).addEventListener("click", (ev) => {
                         console.log(ev.target.id);
-                        fetch('/instance?searchProcess=' + String(ev.target.id).replace("delete_", "")).then((prom) => prom.text()).then((res) => {
+                        fetch('/api/bpm/instance?searchProcess=' + String(ev.target.id).replace("delete_", "")).then((prom) => prom.text()).then((res) => {
                             console.log(res);
                             if (JSON.parse(res).length > 0) {
                                 alert("The form cannot be deleted as it is being used in "+JSON.parse(res).length+" live instaces");
@@ -41,7 +41,7 @@ listProcess = () => {
 
                                 document.getElementById('confirmButton').addEventListener('click', (ev) => {
 
-                                    fetch('/process/' + processId, {
+                                    fetch('/api/bpm/process/' + processId, {
                                         method: "DELETE",
                                         credentials: "include"
                                     }).then((prom) => prom.text()).then((res) => {
@@ -70,11 +70,11 @@ listProcess = () => {
 
 }
 getCount = (id) => {
-    fetch('/instance?processId=' + id + '&status=initiated', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {
+    fetch('/api/bpm/instance?processId=' + id + '&status=initiated', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {
         console.log(res);
         document.getElementById("live_" + id).innerText = JSON.parse(res).count;
     })
-    fetch('/instance?processId=' + id + '&status=finished', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {
+    fetch('/api/bpm/instance?processId=' + id + '&status=finished', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {
         document.getElementById("finished_" + id).innerText = JSON.parse(res).count;
     })
 }

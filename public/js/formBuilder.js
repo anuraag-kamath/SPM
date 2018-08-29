@@ -5,7 +5,7 @@ var formId = "";
 var keyValue = [];
 
 onLoad = () => {
-    fetch('/objects', {
+    fetch('/api/bpm/objects', {
 
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
@@ -31,7 +31,7 @@ onLoad = () => {
 
         }
         if (formId != undefined && formId != "undefined" && formId.length > 0) {
-            fetch('/forms/' + formId, {
+            fetch('/api/bpm/forms/' + formId, {
 
                 credentials: 'include'
             }).then((prom) => {
@@ -1454,7 +1454,7 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
                 alert("Submit button will be added by the system since the user has not added! And if reject is applicable, the same will also be added by the system");
             }
             if (formId != undefined && formId.length > 0) {
-                fetch('/forms/' + formId, {
+                fetch('/api/bpm/forms/' + formId, {
                     method: 'PUT',
                     headers: {
                         'content-type': 'application/json'
@@ -1470,7 +1470,7 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
                     //////console.log(res);
                 })
             } else {
-                fetch('/forms', {
+                fetch('/api/bpm/forms', {
                     method: 'POST',
                     headers: {
                         'content-type': 'application/json'
