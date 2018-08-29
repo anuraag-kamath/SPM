@@ -50,6 +50,7 @@ const jwt_key = process.env.JWT_KEY || "alphabetagamma"
 const email_id = process.env.EMAIL_ID || ""
 const email_password = process.env.EMAIL_PASSWORD || ""
 const email_provider = process.env.EMAIL_PROVIDER || "";
+const proxy_url = process.env.PROXY_URL || "";
 
 var cors = require('cors')
 
@@ -62,24 +63,21 @@ app.use(bodyparser.json());
 
 logger = (activity, subActivity, subsubActivity, activityId, status, userId, ipAddress, method) => {
     if (userId.length > 0) {
-        user.findById(userId, (err, res1) => {
-            if (res1 != undefined && res1 !== 'undefined' && res1.user != undefined && res1.user !== 'undefined') {
+        fetch(proxy_url + "/api/uam/user/" + userId, {
+            credentials: "include"
+        }).then((prom) => prom.text()).then((res1) => {
+            if (res1 != undefined && res1 !== 'undefined') {
                 act = new userActivity({
-                    activity, subActivity, subsubActivity, activityId, status, userId, user: res1.user.username, ipAddress, method, logDate: new Date()
+                    activity, subActivity, subsubActivity, activityId, status, userId, user: res1.username, ipAddress, method, logDate: new Date()
                 });
                 act.save();
-
             }
-
-
         })
-
     } else {
         act = new userActivity({
             activity, subActivity, subsubActivity, activityId, status, userId, user: "", ipAddress, method, logDate: new Date()
         });
         act.save();
-
     }
 }
 
@@ -157,52 +155,7 @@ app.post('/logout', (req, res) => {
 });
 
 
-app.post('/deactivateUser/:id', (req, res) => {
 
-
-
-    var deactivateId = req.params.id;
-    user.findById(deactivateId, (err, res2) => {
-        res2.user.deactivated = true;
-        console.log("####");
-        console.log(res2);
-        console.log(deactivateId);
-
-        console.log("####");
-        user.findByIdAndUpdate(deactivateId, res2).then((res1) => {
-            logger("API", "deactivateUser", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
-
-            res.send(res1);
-        })
-    })
-
-
-
-
-})
-
-app.post('/activateUser/:id', (req, res) => {
-    var activateId = req.params.id;
-    user.findById(activateId, (err, res2) => {
-        console.log(activateId)
-        res2.user.deactivated = false;
-        user.findByIdAndUpdate(activateId, res2).then((res1) => {
-            logger("API", "activateUser", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
-
-            res.send(res1);
-        })
-    })
-})
-
-app.delete('/deleteUser/:id', (req, res) => {
-    var deleteUser = req.params.id;
-
-    user.findByIdAndRemove(deleteUser, (err, res1) => {
-        logger("API", "deleteUser", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
-
-        res.send("OK");
-    })
-})
 
 
 
@@ -241,20 +194,7 @@ sendMail = (senderMailId, subject, html) => {
 
 
 
-app.get('/whoami', (req, res) => {
 
-    logger("API", "whoami", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
-    console.log("**/whoami entered**");
-
-
-    user.findById(jsonwebtoken.verify(req.cookies.token, jwt_key).userId, (err, res1) => {
-        res.send('{"user":"' + res1.user.username + '","userId":"' + jsonwebtoken.verify(req.cookies.token, jwt_key).userId + '"}')
-
-    })
-
-    console.log("**/whoami exited**");
-
-})
 
 // app.post('/process', (req, res) => {
 //     console.log("**/process entered**");
@@ -463,7 +403,7 @@ doACall = (url, method, bodyJSON, instanceId, wid, name) => {
 
     if (method == "GET" || method == "DELETE") {
         console.log("#24" + wid);
-        fetch("/api/bpm"+url, {
+        fetch("/api/bpm" + url, {
             method: method,
             headers: {
 
@@ -480,7 +420,7 @@ doACall = (url, method, bodyJSON, instanceId, wid, name) => {
         })
     } else {
         console.log("#26" + wid);
-        fetch("/api/bpm"+url, {
+        fetch("/api/bpm" + url, {
             method: method,
             headers: {
 
@@ -730,9 +670,11 @@ app.get('/process/:id', (req, res) => {
 app.post('/instance', (req, res) => {
     console.log("**/instance entered**");
     processId = req.body.processId;
-    user.findById(jsonwebtoken.verify(req.cookies.token, jwt_key).userId, (err, res123) => {
+    fetch(proxy_url + "/api/uam/user/" + jsonwebtoken.verify(req.cookies.token, jwt_key).userId, {
+        credentials: "include"
+    }).then((prom) => prom.text()).then((res123) => {
         var ins = new instance({
-            processId, user: res123.user.username
+            processId, user: res123.username
             , date: new Date(),
             status: "initiated"
         })
@@ -894,10 +836,12 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
     var rejectStep = req.params.rejectToStep
     var userSearch = jsonwebtoken.verify(token, jwt_key).userId
 
-    user.findById(userSearch, (err, res123) => {
+    fetch(proxy_url + "/api/uam/user/" + userSearch, {
+        credentials: "include"
+    }).then((prom) => prom.text()).then((res123) => {
         workitem.findByIdAndUpdate(workitemId, {
             status: "rejected",
-            user: res123.user.username,
+            user: res123.username,
             date: new Date()
         }).then(
             (doc) => {
@@ -920,7 +864,7 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
                             console.log("###RR###" + docs[d]._id);
                             workitem.findByIdAndUpdate(docs[d]._id, {
                                 status: "parallelReject",
-                                user: res123.user.username,
+                                user: res123.username,
                                 date: new Date()
                             }, (err, res44) => {
                                 console.log("#T#T#T");
@@ -1093,11 +1037,13 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
             } else {
                 userSearch = jsonwebtoken.verify(token, jwt_key).userId
             }
-            user.findById(userSearch, (err, res123) => {
+            fetch(proxy_url + "/api/uam/user/" + userSearch, {
+                credentials: "include"
+            }).then((prom) => prom.text()).then((res123) => {
                 console.log("##XYZ5" + workitemId);
                 workitem.findByIdAndUpdate(workitemId, {
                     status: "finished",
-                    user: res123.user.username,
+                    user: res123.username,
                     date: new Date()
                 }).then(
                     (doc) => {
@@ -1360,7 +1306,7 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
 
 
 
-                fetch("/api/bpm"+url, {
+                fetch("/api/bpm" + url, {
                     method: method,
                     headers: {
 
@@ -1413,7 +1359,7 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
 
 
                 } else {
-                    fetch("/api/bpm"+url, {
+                    fetch("/api/bpm" + url, {
                         method: method,
                         headers: {
 
@@ -1613,10 +1559,12 @@ waitForTrigger = (triggerId, curr, esc, escDate, schDate, instanceId) => {
         escalationStatus: "initiated"
     }, (err, res2) => {
         setTimeout(() => {
-            user.find({}).then((users) => {
+            fetch(proxy_url + "/api/uam/user", {
+                credentials: "include"
+            }).then((prom) => prom.text()).then((users) => {
                 for (var j = 0; j < users.length; j++) {
-                    if (users[j].user.email != undefined && users[j].user.email !== "undefined" && users[j].user.email.length > 0) {
-                        sendMail(users[j].user.email, "Escalation for InstanceId:-" + instanceId, "<h3>Dear " + users[j].user.username + ",</h3><br><br>Instance Id:-" + instanceId + " Workitem Id:-" + triggerId + " scheduled on:-" + schDate + " escalated on " + escDate + "<hr> Kindly take attention!<hr><hr>Shortcut for the same is here:-<a href='https://dry-depths-41802.herokuapp.com#" + triggerId + "'><h3>Click me!</h3></a>");
+                    if (users[j].email != undefined && users[j].email !== "undefined" && users[j].email.length > 0) {
+                        sendMail(users[j].email, "Escalation for InstanceId:-" + instanceId, "<h3>Dear " + users[j].username + ",</h3><br><br>Instance Id:-" + instanceId + " Workitem Id:-" + triggerId + " scheduled on:-" + schDate + " escalated on " + escDate + "<hr> Kindly take attention!<hr><hr>Shortcut for the same is here:-<a href='https://dry-depths-41802.herokuapp.com#" + triggerId + "'><h3>Click me!</h3></a>");
 
                     }
                 }
@@ -1643,8 +1591,10 @@ app.get('/workitems', (req, res) => {
     console.log("SEARCH");
     var userId = jsonwebtoken.verify(req.cookies.token, jwt_key).userId
 
+    fetch(proxy_url + "/api/uam/user/" + userId, {
+        credentials: "include"
+    }).then((prom) => prom.text()).then((res2) => {
 
-    user.findById(userId, (err, res2) => {
         search = '{"$and":[ {"$or":['
         var roles = [];
         for (var t = 0; t < res2.roles.length; t++) {
@@ -1733,143 +1683,6 @@ app.put('/workitems/:id', (req, res) => {
 })
 
 
-
-
-
-app.get('/roles/:id', (req, res) => {
-
-    roles.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/roles', (req, res) => {
-    var ids = req.query.ids;
-    var mode = req.query.mode;
-    if (mode != undefined && mode.length > 0) {
-        roles.find({ "roles.type": "participant" }).then((docs) => {
-            console.log(docs);
-            res.send(docs);
-        })
-    }
-    else if (ids != undefined && ids != "undefined" && ids.length > 0) {
-        var search = '{"$or": [';
-        oneAdded = false;
-        var noNeed = [];
-        console.log("@###");
-        console.log(String(ids).split(','));
-        console.log(String(ids).split(',').length);
-        for (var e = 0; e < String(ids).split(',').length; e++) {
-            console.log("REACHED");
-            try {
-                console.log("&&&");
-                //ObjectId(String(ids).split(",")[e]);
-                if (e != 0 && oneAdded == true) {
-                    search += ",";
-                }
-                console.log("****************");
-                search += '{"roles.roleName":"' + String(ids).split(",")[e] + '"}'
-                console.log(search);
-                console.log("****************");
-                oneAdded = true;
-
-            }
-            catch (e1) {
-                noNeed.push(String(ids).split(",")[e]);
-            }
-        }
-        search += "]}"
-
-        console.log("IDS");
-        console.log(ids);
-        console.log("IDS");
-        console.log(search);
-        roles.find(JSON.parse(search)).then((docs) => {
-            console.log("SEARCHED!");
-            var roleName = "";
-            for (var e1 = 0; e1 < docs.length; e1++) {
-                roleName += docs[e1].roleName + " ";
-            }
-            roleName += noNeed.join(" ");
-            console.log("#$#$#$$#$");
-            console.log(roleName);
-            console.log(noNeed);
-            console.log("#$#$#$$#$");
-            res.send(docs[0].mode);
-        })
-    } else {
-        roles.find({}).then((docs) => {
-            console.log(docs);
-            res.send(docs);
-        })
-    }
-});
-
-app.post('/roles', (req, res) => {
-    console.log(req.body);
-    var obj1 = new roles(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-
-app.get('/user', (req, res) => {
-    user.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/user/:id', (req, res) => {
-    console.log(req.params.id);
-    req.params.id = req.params.id.replace("_", "")
-    user.findById(req.params.id, (err, docs) => {
-        res.send({
-            user: docs.user.username
-        })
-    })
-});
-
-app.post('/user', (req, res) => {
-    console.log(req.body);
-    var obj1 = new user(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.put('/user/:id', (req, res) => {
-    console.log(req.body);
-    id = req.params.id;
-
-    user.findById(id, (err, res2) => {
-        res2.roles = req.body.roles;
-        user.findByIdAndUpdate(id, res2).then((res1) => {
-            res.send(res1);
-        })
-    })
-
-
-});
-
-app.put('/user', (req, res) => {
-    console.log(req.body);
-    var password = req.body.newPassword
-    var id = jsonwebtoken.verify(req.cookies.token, jwt_key).userId;
-    user.findById(id, (err, res2) => {
-        bcrypt.hash(password, 10).then((res3) => {
-            res2.user.password = res3;
-            user.findByIdAndUpdate(id, res2).then((res1) => {
-                res.send(res1);
-            })
-
-        });
-    })
-})
 
 //newSettersGetters
 
