@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 
-var url= "mongodb://anuraagkamath:Anuraag123!@ds159641.mlab.com:59641/spm"
+var url = process.env.SPM_MONGODB_URL || "mongodb://mongo:27017/mydms"
 //var url = "mongodb://localhost:27017"
 //var url="mongodb://localhost:27017"
 mongoose.connect(url, () => {
