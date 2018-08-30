@@ -801,8 +801,16 @@ loadObjects = () => {
                                                
                                                 document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]).checked = true;
                                             } else {
+                                                console.log(res2[j]);
                                                 console.log(new Date(res2[j][key]));
-                                                document.getElementById(tempArr[i].id + "_" + key).value = res2[j][key];
+                                                if(String(new Date(res2[j][key])).indexOf("Invalid")==-1){
+                                                    var dt=new Date(res2[j][key]);
+                                                    document.getElementById(tempArr[i].id + "_" + key).value = dt.getFullYear()+"-"+dt.getMonth()+"-"+dt.getDate();
+
+                                                }else{
+
+                                                    document.getElementById(tempArr[i].id + "_" + key).value = res2[j][key];
+                                                }
                                             }
                                         }
                                     }
@@ -858,7 +866,7 @@ bindObject = (bindObjName, currentEl, role) => {
                             newEl.type = "number";
 
                         } else if (schema[key].type == "Date") {
-                            newEl.type = "datetime-local";
+                            newEl.type = "date";
 
                         } else if (schema[key].type == "DateTime") {
                             newEl.type = "datetime-local";

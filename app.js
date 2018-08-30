@@ -708,7 +708,7 @@ app.post('/process', (req, res) => {
         master.save().then((doc1) => {
             logger(req.cookies.token, "API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
-            res.send(`${doc1}`);
+            res.send(doc);
 
         })
     })

@@ -1011,6 +1011,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             }).then((prom) => {
                 return prom.text();
             }).then((res) => {
+                console.log("A");
                 window.location.hash = "listProcess"
             })
         } else {
@@ -1024,6 +1025,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             }).then((prom) => {
                 return prom.text();
             }).then((res) => {
+                console.log("B");
                 window.location.hash = "listProcess"
 
 

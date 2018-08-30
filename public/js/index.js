@@ -28,7 +28,7 @@ removeLoadBar = () => {
 
 
 loadPage = (page, message, popUp) => {
-    if(page!="listObjects")
+    // if(page!="listObjects")
     loadBar();
 
     // render = (i) => {
