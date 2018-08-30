@@ -186,9 +186,9 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
     // script.id = "listObjectsScript"
     // console.log("#1");
     // document.getElementsByTagName("head")[0].appendChild(script);
-    //loadBar();
+    loadBar();
     document.getElementById("saveObj").disabled = true;
-    document.getElementById("myForm").style.visibility="hidden";
+    document.getElementById("myForm").style.visibility = "hidden";
 
     fetch('/api/bpm/objects' + ext, {
         method: method,
@@ -207,7 +207,7 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
             removeLoadBar()
             document.getElementById("saveObj").disabled = false;
 
-            document.getElementById("myForm").style.visibility="visible";
+            document.getElementById("myForm").style.visibility = "visible";
 
             document.getElementById('message').innerText = JSON.parse(res).error;
             document.getElementById("root").addEventListener('focus', (ev) => {
@@ -216,14 +216,9 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
         } else {
             console.log("#3")
 
-            
-            setTimeout(() => {
-                removeLoadBar()
-                window.location.hash = "listObjects";
 
-
-            }, 2000)
-
+            removeLoadBar()
+            window.location.hash = "listObjects";
         }
 
     }).catch((err) => {

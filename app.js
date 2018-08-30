@@ -51,22 +51,20 @@ const email_id = process.env.EMAIL_ID || ""
 const email_password = process.env.EMAIL_PASSWORD || ""
 const email_provider = process.env.EMAIL_PROVIDER || "";
 const proxy_url = process.env.PROXY_URL || "";
-const uam_url = process.env.UAM_URL || "";
 
-var cors = require('cors')
 
-//newImports
-var { test_v0 } = require('./userSchemas/test_v0')
-var { employee_v1 } = require('./userSchemas/employee_v1')
-var { employee_v0 } = require('./userSchemas/employee_v0')
 
 app.use(bodyparser.json());
 
-logger = (activity, subActivity, subsubActivity, activityId, status, userId, ipAddress, method) => {
+logger = (token, activity, subActivity, subsubActivity, activityId, status, userId, ipAddress, method) => {
     if (userId.length > 0) {
-        fetch(uam_url + "/user/" + userId, {
-            credentials: "include"
+        fetch(proxy_url + "/api/uam/user/" + userId, {
+            credentials: "include",
+            headers: {
+                cookie: 'token=' + token + ';'
+            }
         }).then((prom) => prom.text()).then((res1) => {
+            res1 = JSON.parse(res1)
             if (res1 != undefined && res1 !== 'undefined') {
                 act = new userActivity({
                     activity, subActivity, subsubActivity, activityId, status, userId, user: res1.username, ipAddress, method, logDate: new Date()
@@ -111,14 +109,14 @@ app.use(express.static(__dirname + '/public'))
 
 
 app.get('/comments/:instanceId', (req, res) => {
-    logger("API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+    logger(req.cookies.token, "API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
     comments.find({ instanceId: req.params.instanceId }).then((docs) => {
         res.send(docs);
     })
 })
 
 app.post('/comments/:instanceId', (req, res) => {
-    logger("API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+    logger(req.cookies.token, "API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
     console.log("COMMENT SAVED for" + req.params.instanceId);
     var com = new comments({
         comment: req.body.comment,
@@ -143,7 +141,7 @@ app.delete('/comments/:id', (req, res) => {
 })
 
 app.post('/logout', (req, res) => {
-    logger("API", "logout", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+    logger(req.cookies.token, "API", "logout", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
     console.log("**/logout entered**");
 
@@ -197,28 +195,10 @@ sendMail = (senderMailId, subject, html) => {
 
 
 
-// app.post('/process', (req, res) => {
-//     console.log("**/process entered**");
-//     var process2 = new process1(req.body);
-//     process2.save().then((doc) => {
-//         var master = new processMaster({ processName: req.body.processName, latestVersionId: doc._id, pastversions: [] });
-//         master.save().then((doc1) => {
-//             logger("API", "process", "", doc1._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
-
-
-//             res.send(`${doc1}`);
-
-//         })
-//     })
-//     console.log("**/process exited**");
-
-// })
 
 app.post('/objects', (req, res) => {
     console.log("**/objects entered**");
     obj.find({ schemaName: req.body.schemaName + "_v0" }).then((objs) => {
-        console.log(req.body.schemaName);
-        console.log(objs);
         if (objs.length > 0) {
             res.send({ error: "Object with same root element exists! Please change the root element name" });
         } else {
@@ -228,24 +208,21 @@ app.post('/objects', (req, res) => {
 
             var obj1 = new obj((req.body));
             obj1.save().then((doc) => {
-                console.log("SAVED!!!");
-                fs.appendFile('./userSchemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
-                })
-                logger("API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
-                fs.readFile('./app.js', (err, data) => {
+                fetch(proxy_url + "/api/objs/objects", {
+                    credentials: "include",
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                        cookie: 'token=' + req.cookies.token + ';'
+                    },
+                    body: JSON.stringify(req.body)
+                }).then((prom) => prom.text()).then((res123) => {
+                    res.send({
+                        "status": "OK"
+                    });
 
+                });
 
-
-                    data = String(data).replace("//newImports", "//newImports\nvar {" + req.body.schemaName + "}=require('./userSchemas/" + req.body.schemaName + "')");
-
-                    data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.post('/" + req.body.schemaName + "', (req, res) => {\n\tconsole.log(req.body);\n\tvar obj1 = new " + req.body.schemaName + "(req.body);\n\tconsole.log(obj1)\n\obj1.save().then((doc) => {\n\t\tres.send(`${doc}`);\n\t})\n})")
-                    data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "', (req, res) => {\n\t" + req.body.schemaName + ".find({}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-                    data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "/:id', (req, res) => {\n\t" + req.body.schemaName + ".find({_id:ObjectId(req.params.id)}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-                    fs.writeFile('./app.js', data, (err) => {
-                        res.send(`${doc}`);
-
-                    })
-                })
             }).catch((err) => {
                 console.log("ERR");
                 console.log(err);
@@ -273,27 +250,32 @@ app.put('/objects/:id', (req, res) => {
         req.body.schemaName = req.body.schemaName + version
         var obj1 = new obj((req.body));
         obj1.save().then((doc) => {
-            logger("API", "object", doc._id, req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "UPDATE");
+            logger(req.cookies.token, "API", "object", doc._id, req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "UPDATE");
 
-            logger("API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
+            logger(req.cookies.token, "API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
 
-            fs.appendFile('./userSchemas/' + req.body.schemaName + '.js', "var mongoose=require('mongoose');\nvar " + req.body.schemaName + '=mongoose.model("' + req.body.schemaName + '",{"' + req.body.schemaName + '":[' + JSON.stringify(req.body.schemaStructure) + '],"instanceId":{"type":"String"}});\nmodule.exports={' + req.body.schemaName + "}", (err) => {
-            })
+            fetch(proxy_url + "/api/uam/user/" + jsonwebtoken.verify(req.cookies.token, jwt_key).userId, {
+                credentials: "include",
+                headers: {
+                    cookie: 'token=' + req.cookies.token + ';'
+                }
+            }).then((prom) => prom.text()).then((res123) => {
 
 
-            fs.readFile('./app.js', (err, data) => {
+                fetch(proxy_url + "/api/objs/objects/" + req.params.id, {
+                    credentials: "include",
+                    method: "PUT",
+                    headers: {
+                        "content-type": "application/json",
+                        cookie: 'token=' + req.cookies.token + ';'
+                    },
+                    body: JSON.stringify(req.body)
+                }).then((prom) => prom.text()).then((res123) => {
+                    res.send({
+                        "status": "OK"
+                    });
 
-
-
-                data = String(data).replace("//newImports", "//newImports\nvar {" + req.body.schemaName + "}=require('./userSchemas/" + req.body.schemaName + "')");
-
-                data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.post('/" + req.body.schemaName + "', (req, res) => {\n\tconsole.log(req.body);\n\tvar obj1 = new " + req.body.schemaName + "(req.body);\n\tconsole.log(obj1)\n\obj1.save().then((doc) => {\n\t\tres.send(`${doc}`);\n\t})\n})")
-                data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "', (req, res) => {\n\t" + req.body.schemaName + ".find({}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-                data = String(data).replace("//newSettersGetter" + "s", "//newSettersGetter" + "" + "s\n\napp.get('/" + req.body.schemaName + "/:id', (req, res) => {\n\t" + req.body.schemaName + ".find({_id:ObjectId(req.params.id)}).then((docs) => {\n\t\tconsole.log(docs);\n\t\tres.send(docs);\n\t})\n});")
-                fs.writeFile('./app.js', data, (err) => {
-
-                    res.send({});
-                })
+                });
 
             })
         })
@@ -312,7 +294,7 @@ app.get('/objects', (req, res) => {
     console.log("**/objects entered**");
 
     obj.find({}).then((docs) => {
-        logger("API", "object", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        logger(req.cookies.token, "API", "object", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         res.send(docs);
     });
@@ -324,7 +306,7 @@ app.get('/objects/:id', (req, res) => {
     console.log("**/objects entered**");
 
     obj.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        logger("API", "object", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        logger(req.cookies.token, "API", "object", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         res.send(docs);
     })
@@ -333,41 +315,131 @@ app.get('/objects/:id', (req, res) => {
 });
 
 app.get('/objects/:id/:name', (req, res) => {
-
-    getObjects(req.params.id, req.params.name, req.query.mode, req.query.filter || "", req.connection.remoteAddress, jsonwebtoken.verify(req.cookies.token, jwt_key).userId, "actual", res, "", "", "", "");
+    console.log("#@#@#@" + req.params.id);
+    console.log(req.cookies.token);
+    getObjects(req.params.id, req.params.name, req.query.mode, req.query.filter || "", req.connection.remoteAddress, jsonwebtoken.verify(req.cookies.token, jwt_key).userId, "actual", res, "", "", "", "", req.cookies.token);
 
 });
 
 
-getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, url, method, instanceId, wid) => {
-    console.log("**/objects entered**");
+getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, url, method, instanceId, wid, token) => {
+    console.log("**/get objects entered**");
+    console.log("##" + id);
+
+    console.log("##2" + token);
 
     if (filterText.length > 0 && mode != "undefined" && mode != undefined && mode == "showAll") {
 
         var search = '{"$or": [';
+        var addedOne = false;
 
         obj.findById(id, (err, res22) => {
             console.log("##");
             keys = Object.keys(res22.schemaStructure);
             for (var ip = 0; ip < keys.length; ip++) {
-                if (ip != 0) {
-                    search += ",";
-                } search += '{"' + name + "." + keys[ip] + '":{"$regex":"' + filterText + '"}}'
+                var cannotContinue = false;
+                if (eval("res22.schemaStructure." + keys[ip] + ".type").indexOf("Number") != -1) {
+                    cannotContinue = true;
+                    if (String(Number(filterText)).indexOf("NaN") == -1) {
+
+                        if (ip != 0 && addedOne == true) {
+                            search += ",";
+                        }
+                        addedOne = true;
+                        search += '{"' + name + "." + keys[ip] + '":"' + filterText + '"}'
+
+                    }
+
+                } else if (eval("res22.schemaStructure." + keys[ip] + ".type").indexOf("Date") != -1) {
+                    cannotContinue = true;
+                    if (String(Number(filterText)).indexOf("Invalid") == -1) {
+
+
+                        if (ip != 0 && addedOne == true) {
+                            search += ",";
+                        }
+                        addedOne = true;
+                        search += '{"' + name + "." + keys[ip] + '":"' + filterText + '"}'
+                    }
+
+                }
+                if (cannotContinue == false) {
+                    console.log(eval("res22.schemaStructure." + keys[ip] + ".type"));
+                    console.log(typeof (filterText))
+                    console.log(filterText);
+                    // if(eval("res22.schemaStructure."+keys[ip]+".type").indexOf(""))
+                    if (ip != 0 && addedOne == true) {
+                        search += ",";
+                    }
+                    addedOne = true;
+                    search += '{"' + name + "." + keys[ip] + '":{"$regex":"' + filterText + '"}}'
+
+                }
             }
             search += "]}";
-            logger("API", "object", name, id, "success", userId, remoteAddress, "GET");
-            eval(name + '.find(' + (search) + ').then((docs)=>{console.log("AA");if(callMode=="actual"){res.send(docs)}else{return docs;}})');
+            logger(token, "API", "object", name, id, "success", userId, remoteAddress, "GET");
+
+            fetch(proxy_url + "/api/objs/objects/" + id + "/" + name + "?filterText=" + filterText + "&mode=showAll&callMode=" + callMode + "&search=" + encodeURI(search), {
+                credentials: "include",
+                method: "GET",
+                headers: {
+                    "content-type": "application/json",
+                    cookie: 'token=' + token + ';'
+                }
+            }).then((prom) => prom.json()).then((docs) => {
+                if (callMode == "actual") {
+                    res.send(docs)
+                } else {
+                    return docs;
+                }
+            });
+
+
+
+            // eval(name + '.find(' + (search) + ').then((docs)=>{console.log("AA");if(callMode=="actual"){res.send(docs)}else{return docs;}})');
 
         })
 
     } else if (filterText.length == 0 && mode != "undefined" && mode != undefined && mode == "showAll") {
-        logger("API", "object", name, id, "success", userId, remoteAddress, "GET");
+        logger(token, "API", "object", name, id, "success", userId, remoteAddress, "GET");
+        fetch(proxy_url + "/api/objs/objects/" + id + "/" + name + "?filterText=" + filterText + "&mode=showAll&callMode=" + callMode, {
+            credentials: "include",
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+                cookie: 'token=' + token + ';'
+            }
+        }).then((prom) => prom.json()).then((docs) => {
+            if (callMode == "actual") {
+                res.send(docs)
+            } else {
+                return docs;
+            }
+        });
 
-        eval(name + '.find().then((docs)=>{if(callMode=="actual"){res.send(docs)}else{return docs;}})');
+        // eval(name + '.find().then((docs)=>{if(callMode=="actual"){res.send(docs)}else{return docs;}})');
     }
     else {
         console.log("@@@" + id + "@@@" + name);
-        eval(name + '.findById("' + id + '",(err,docs)=>{console.log("**************");console.log(docs);console.log("**************");if(callMode=="actual"){res.send(docs)}else{console.log("EEEEEE");console.log(docs);doACall(url,method,docs,instanceId,wid,name);return docs;}})');
+        console.log(token);
+        fetch(proxy_url + "/api/objs/objects/" + id + "/" + name + "?filterText=" + filterText + "&mode=&callMode=" + callMode, {
+            credentials: "include",
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+                cookie: 'token=' + token + ';'
+            }
+        }).then((prom) => prom.json()).then((docs) => {
+
+            if (callMode == "actual") {
+                res.send(docs)
+            } else {
+                doACall(url, method, docs, instanceId, wid, name, token);
+                return docs;
+            }
+            res.send(docs);
+        });
+        // eval(name + '.findById("' + id + '",(err,docs)=>{console.log("**************");console.log(docs);console.log("**************");if(callMode=="actual"){res.send(docs)}else{console.log("EEEEEE");console.log(docs);doACall(url,method,docs,instanceId,wid,name);return docs;}})');
 
     }
     console.log("**/objects exited**");
@@ -375,15 +447,8 @@ getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, 
 }
 
 
-doACall = (url, method, bodyJSON, instanceId, wid, name) => {
-    console.log("#23" + wid);
-    console.log("#######################");
-    console.log(method);
-    console.log(name);
+doACall = (url, method, bodyJSON, instanceId, wid, name, token) => {
     bodyJSON = '{"' + name + '":' + JSON.stringify(bodyJSON[name]) + "}";
-    console.log(bodyJSON);
-    console.log("#######################");
-
 
     var param = "";
     if (new URL(url).pathname.indexOf(":") != -1) {
@@ -404,11 +469,14 @@ doACall = (url, method, bodyJSON, instanceId, wid, name) => {
 
     if (method == "GET" || method == "DELETE") {
         console.log("#24" + wid);
-        fetch("/api/bpm" + url, {
+        fetch(url, {
             method: method,
             headers: {
 
-                "content-type": "application/json"
+                "content-type": "application/json",
+                cookie: 'token=' + token + ';'
+
+
             }
         }).then((prom) => prom.json()).then((res) => {
 
@@ -421,16 +489,21 @@ doACall = (url, method, bodyJSON, instanceId, wid, name) => {
         })
     } else {
         console.log("#26" + wid);
-        fetch("/api/bpm" + url, {
+        console.log("$$$$$3");
+        console.log(url);
+        console.log("$$$$$3");
+        fetch(url, {
             method: method,
             headers: {
 
-                "content-type": "application/json"
+                "content-type": "application/json",
+                cookie: 'token=' + token + ';'
+
             },
             body: bodyJSON
         }).then((prom) => prom.json()).then((res) => {
 
-
+            console.log("CALLED");
             instanceWorkitemExecutor(instanceId, wid, JSON.stringify(res), null, null, "internal");
 
 
@@ -446,7 +519,7 @@ app.get('/process', (req, res) => {
     var alpha = req.query.process;
     searchForm = req.query.searchForm;
     if (alpha != undefined) {
-        logger("API", "process", "", req.query.process, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        logger(req.cookies.token, "API", "process", "", req.query.process, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         searchQuery = "'_id':'" + ObjectID(alpha) + "'"
         process1.find({ "_id": ObjectId(alpha) }).select().then((docs) => {
@@ -458,7 +531,7 @@ app.get('/process', (req, res) => {
         });
     }
     else {
-        logger("API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        logger(req.cookies.token, "API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
         console.log("");
         process1.find({ $and: [{ obsolete: { $ne: 'yes' } }, { deleted: { $ne: true } }] }).
             then((res1) => res.send(res1));
@@ -474,7 +547,7 @@ app.delete('/objects/:id', (req, res) => {
 
     _id = req.params.id;
     obj.deleteOne({ "_id": ObjectId(_id) }).then((doc) => {
-        logger("API", "object", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "DELETE");
+        logger(req.cookies.token, "API", "object", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "DELETE");
 
         res.send(doc)
     })
@@ -487,7 +560,7 @@ app.post('/forms', (req, res) => {
 
     var frm = new form1(req.body);
     frm.save().then((doc) => {
-        logger("API", "form", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+        logger(req.cookies.token, "API", "form", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
         res.send(doc);
     })
@@ -516,7 +589,7 @@ app.put('/forms/:id', (req, res) => {
     id = req.params.id;
     var frm = new form1(req.body);
     form1.findByIdAndUpdate(id, req.body, (err, res1) => {
-        logger("API", "form", "", res1._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
+        logger(req.cookies.token, "API", "form", "", res1._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
 
         res.send(res1);
     })
@@ -554,7 +627,7 @@ app.get('/forms/:id', (req, res) => {
     } else {
         form1.findById(id, (err, res2) => {
             console.log(id);
-            logger("API", "form", "", res2._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+            logger(req.cookies.token, "API", "form", "", res2._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
             res.send(res2);
         })
@@ -569,7 +642,7 @@ app.get('/forms', (req, res) => {
 
     fields = req.query.fields;
     form1.find({ deleted: { $ne: true } }).select(fields).then((docs) => {
-        logger("API", "form", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        logger(req.cookies.token, "API", "form", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
 
         res.send(docs);
@@ -604,9 +677,9 @@ app.put('/process/:id', (req, res) => {
                         pastVersions: alpha
                     }
                 }, (err, doc3) => {
-                    logger("API", "process", doc._id, req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "UPDATE");
+                    logger(req.cookies.token, "API", "process", doc._id, req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "UPDATE");
 
-                    logger("API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
+                    logger(req.cookies.token, "API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
 
                     res.send(doc)
                 })
@@ -633,7 +706,7 @@ app.post('/process', (req, res) => {
     process2.save().then((doc) => {
         var master = new processMaster({ processName: req.body.processName, latestVersionId: doc._id, pastversions: [] });
         master.save().then((doc1) => {
-            logger("API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+            logger(req.cookies.token, "API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
             res.send(`${doc1}`);
 
@@ -646,7 +719,7 @@ app.delete('/deleteAll', (req, res) => {
     console.log("**/deleteAll entered**");
 
     process.deleteMany({}).then((doc) => {
-        logger("API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "DELETE");
+        logger(req.cookies.token, "API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "DELETE");
 
         res.send(doc)
     })
@@ -659,7 +732,7 @@ app.get('/process/:id', (req, res) => {
 
     id = req.params.id;
     process1.findById(id, (err, res1) => {
-        logger("API", "process", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        logger(req.cookies.token, "API", "process", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         res.send(res1);
     }).select('processName formName');
@@ -673,15 +746,18 @@ app.post('/instance', (req, res) => {
     processId = req.body.processId;
     fetch(proxy_url + "/api/uam/user/" + jsonwebtoken.verify(req.cookies.token, jwt_key).userId, {
         credentials: "include",
-        cookie: 'token=' + req.cookies.token + ';'
+        headers: {
+            cookie: 'token=' + req.cookies.token + ';'
+        }
     }).then((prom) => prom.text()).then((res123) => {
+        res123 = JSON.parse(res123)
         var ins = new instance({
             processId, user: res123.username
             , date: new Date(),
             status: "initiated"
         })
         ins.save().then((doc) => {
-            logger("API", "instance", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+            logger(req.cookies.token, "API", "instance", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
             res.send(doc);
         })
@@ -695,7 +771,7 @@ app.post('/instance/:id', (req, res) => {
     instanceId = req.params.id;
     objects = JSON.parse(req.body.objects);
     oldObjects = [];
-    addObjects(objects, req.params.id);
+    addObjects(objects, req.params.id, req.cookies.token);
     instance.findByIdAndUpdate(instanceId, {
         $push: {
             workedUponUsers: {
@@ -764,9 +840,9 @@ app.post('/instance/:id', (req, res) => {
             wi.save().then((doc) => {
                 console.log("WORKITEM SAVED");
                 console.log(doc);
-                logger("API", "workitem", req.params.id, doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+                logger(req.cookies.token, "API", "workitem", req.params.id, doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
                 if (doc.stepType == "Service Task") {
-                    executeServiceTask(doc._id, doc.instanceId, doc.stepId, "1", doc.processId);
+                    executeServiceTask(doc._id, doc.instanceId, doc.stepId, "1", doc.processId, req.cookies.token);
                 }
                 res.send(doc);
             })
@@ -840,8 +916,12 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
 
     fetch(proxy_url + "/api/uam/user/" + userSearch, {
         credentials: "include",
-        cookie: 'token=' + req.cookies.token + ';'
+        headers: {
+            cookie: 'token=' + req.cookies.token + ';'
+        }
     }).then((prom) => prom.text()).then((res123) => {
+        res123 = JSON.parse(res123)
+
         workitem.findByIdAndUpdate(workitemId, {
             status: "rejected",
             user: res123.username,
@@ -1031,7 +1111,7 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                 instance.findByIdAndUpdate(instanceId, {
                     objects: []
                 }, (err, res10) => {
-                    addObjects(objects, instanceId);
+                    addObjects(objects, instanceId, token);
                 })
             })
             var userSearch = "";
@@ -1042,8 +1122,12 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
             }
             fetch(proxy_url + "/api/uam/user/" + userSearch, {
                 credentials: "include",
-                cookie: 'token=' + req.cookies.token + ';'
+                headers: {
+                    cookie: 'token=' + token + ';'
+                }
             }).then((prom) => prom.text()).then((res123) => {
+                res123 = JSON.parse(res123)
+
                 console.log("##XYZ5" + workitemId);
                 workitem.findByIdAndUpdate(workitemId, {
                     status: "finished",
@@ -1129,7 +1213,7 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                 wi1.save().then((doc) => {
                                                     console.log("SAVED1" + doc);
                                                     if (doc.stepType == "Service Task") {
-                                                        executeServiceTask(doc._id, doc.instanceId, doc.stepId, "1", doc.processId);
+                                                        executeServiceTask(doc._id, doc.instanceId, doc.stepId, "1", doc.processId, token);
                                                     }
                                                 })
                                                 if (doc1.steps[i].lbl2 != undefined && doc1.steps[i].lbl2.length > 0) {
@@ -1178,7 +1262,7 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                         console.log("SAVED2" + doc);
 
                                                         if (doc.stepType == "Service Task") {
-                                                            executeServiceTask(doc._id, doc.instanceId, doc.stepId, "2", doc.processId);
+                                                            executeServiceTask(doc._id, doc.instanceId, doc.stepId, "2", doc.processId, token);
                                                         }
 
                                                     })
@@ -1232,7 +1316,7 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
 
 }
 
-executeServiceTask = (wid, instanceId, stepId, step, processId) => {
+executeServiceTask = (wid, instanceId, stepId, step, processId, token) => {
     console.log("ENTER SERVICE TASK") + stepId;
     process1.find({ "steps._id": ObjectId(stepId) }).then((proc) => {
         console.log("###########");
@@ -1299,7 +1383,7 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
                     }
 
                     if (inputObjectId.length > 0) {
-                        getObjects(inputObjectId, input, "", "", "", "system", "internal", null, url, method, instanceId, wid)
+                        getObjects(inputObjectId, input, "", "", "", "system", "internal", null, url, method, instanceId, wid, token)
 
                     }
                 });
@@ -1314,7 +1398,9 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
                     method: method,
                     headers: {
 
-                        "content-type": "application/json"
+                        "content-type": "application/json",
+                        cookie: 'token=' + token + ';'
+
                     }
                 }).then((prom) => prom.json()).then((res) => {
 
@@ -1356,7 +1442,7 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
 
 
 
-                    getObjects(inputObjectId, input, "", "", "", "system", "internal", null, url, method, instanceId, wid)
+                    getObjects(inputObjectId, input, "", "", "", "system", "internal", null, url, method, instanceId, wid, token)
                     console.log(bodyJSON);
                     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$");
 
@@ -1367,7 +1453,9 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
                         method: method,
                         headers: {
 
-                            "content-type": "application/json"
+                            "content-type": "application/json",
+                            cookie: 'token=' + token + ';'
+
                         },
                         body: bodyJSON
                     }).then((prom) => prom.json()).then((res) => {
@@ -1387,7 +1475,7 @@ executeServiceTask = (wid, instanceId, stepId, step, processId) => {
     console.log("EXIT SERVICE TASK");
 }
 
-function addObjects(objects, instanceId) {
+function addObjects(objects, instanceId, token) {
     console.log("***ADDED OBJECTS TO INSTANCED ID:-****" + instanceId);
 
     console.log(objects);
@@ -1418,30 +1506,49 @@ function addObjects(objects, instanceId) {
         //console.log( objects[key]);
 
         //console.log('{"' + key + '":' + JSON.stringify(objects[key]) + ',"instanceId":"'+instanceId+'"}');
-        var body = ('{"' + key + '":' + JSON.stringify(objects[key]) + ',"instanceId":"' + instanceId + '"}');
-        var obj2 = eval("new " + key + '(JSON.parse(body))')
-        obj2.save().then((doc) => {
-            var tempObj = JSON.stringify(doc);
+
+        fetch(proxy_url + "/api/objs/addObject/" + instanceId + "/" + key, {
+            credentials: "include",
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                cookie: 'token=' + token + ';'
+
+            },
+            body: JSON.stringify(objects[key])
+        }).then((prom) => prom.text()).then((doc) => {
+            var tempObj = JSON.parse(doc);
+            console.log("&&&&&1");
+            console.log(doc);
+            console.log("&&&&&1");
             instance.findByIdAndUpdate(instanceId, {
                 $push: {
                     objects: {
-                        id: doc._id,
-                        name: Object.keys(JSON.parse(tempObj))[1]
+                        id: tempObj._id,
+                        name: Object.keys((tempObj))[1]
                     }
                 }
-            }, (err, resinst) => {
-            })
+
+
+            }).then((inst) => {
+                console.log("&&&&&2");
+                console.log(inst);
+                console.log("&&&&&2");
+
+            });
+
+
+            // var body = ('{"' + key + '":' + JSON.stringify(objects[key]) + ',"instanceId":"' + instanceId + '"}');
+            // var obj2 = eval("new " + key + '(JSON.parse(body))')
+            // obj2.save().then((doc) => {
+            //     }, (err, resinst) => {
+            //     })
 
 
 
 
-
-        })
-
-
-
+        });
     }
-
     for (var j = 0; j < carryForward.length; j++) {
         instance.findByIdAndUpdate(instanceId, {
             $push: {
@@ -1509,7 +1616,7 @@ app.get('/instance', (req, res) => {
         })
     } else {
         instance.count({ status: searchStatus, processId: searchProcessId }).then((doc) => {
-            logger("API", "instance", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+            logger(req.cookies.token, "API", "instance", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
             res.send({ count: doc });
         })
@@ -1524,7 +1631,7 @@ app.get('/instance/:id', (req, res) => {
     instanceId = req.params.id;
     instance.findById(instanceId, (err, doc) => {
         var res1;
-        logger("API", "instance", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        logger(req.cookies.token, "API", "instance", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         res.send(doc);
 
@@ -1565,8 +1672,12 @@ waitForTrigger = (triggerId, curr, esc, escDate, schDate, instanceId) => {
         setTimeout(() => {
             fetch(proxy_url + "/api/uam/user", {
                 credentials: "include",
-                cookie: 'token=' + req.cookies.token + ';'
+                headers: {
+                    cookie: 'token=' + req.cookies.token + ';'
+                }
             }).then((prom) => prom.text()).then((users) => {
+                users = JSON.parse(users)
+
                 for (var j = 0; j < users.length; j++) {
                     if (users[j].email != undefined && users[j].email !== "undefined" && users[j].email.length > 0) {
                         sendMail(users[j].email, "Escalation for InstanceId:-" + instanceId, "<h3>Dear " + users[j].username + ",</h3><br><br>Instance Id:-" + instanceId + " Workitem Id:-" + triggerId + " scheduled on:-" + schDate + " escalated on " + escDate + "<hr> Kindly take attention!<hr><hr>Shortcut for the same is here:-<a href='https://dry-depths-41802.herokuapp.com#" + triggerId + "'><h3>Click me!</h3></a>");
@@ -1598,12 +1709,14 @@ app.get('/workitems', (req, res) => {
     console.log(proxy_url + "/api/uam/user/" + userId);
     fetch(proxy_url + "/api/uam/user/" + userId, {
         credentials: "include",
-        cookie: 'token=' + req.cookies.token + ';'
-
+        headers: {
+            cookie: 'token=' + req.cookies.token + ';'
+        }
 
     }).then((prom) => prom.text()).then((res2) => {
         console.log("#");
         console.log(res2);
+        res2 = JSON.parse(res2);
         console.log("#");
 
         search = '{"$and":[ {"$or":['
@@ -1620,7 +1733,7 @@ app.get('/workitems', (req, res) => {
         console.log(search);
         workitem.find(JSON.parse(search)).then((data) => {
 
-            logger("API", "workitem", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+            logger(req.cookies.token, "API", "workitem", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
             res.send(data)
         });
@@ -1663,7 +1776,7 @@ app.get('/workitems/:id', (req, res) => {
         }
 
 
-        logger("API", "workitem", "", data._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        logger(req.cookies.token, "API", "workitem", "", data._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
     });
     console.log("**/workitems exited**");
 
@@ -1688,89 +1801,17 @@ app.put('/workitems/:id', (req, res) => {
     })
 
 
-    logger("API", "workitem", "", id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
+    logger(req.cookies.token, "API", "workitem", "", id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
     console.log("**/workitems exited**");
 
 })
 
 
 
-//newSettersGetters
-
-app.get('/test_v0/:id', (req, res) => {
-    test_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/test_v0', (req, res) => {
-    test_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/test_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new test_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-app.get('/employee_v1/:id', (req, res) => {
-    employee_v1.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/employee_v1', (req, res) => {
-    employee_v1.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/employee_v1', (req, res) => {
-    console.log(req.body);
-    var obj1 = new employee_v1(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
-
-
-
-app.get('/employee_v0/:id', (req, res) => {
-    employee_v0.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.get('/employee_v0', (req, res) => {
-    employee_v0.find({}).then((docs) => {
-        console.log(docs);
-        res.send(docs);
-    })
-});
-
-app.post('/employee_v0', (req, res) => {
-    console.log(req.body);
-    var obj1 = new employee_v0(req.body);
-    console.log(obj1)
-    obj1.save().then((doc) => {
-        res.send(`${doc}`);
-    })
-})
 
 
 app.use((req, res, next) => {
-    logger("page", "index", "", "", "failure", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+    logger(req.cookies.token, "page", "index", "", "", "failure", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
     res.redirect("/index.html")
 })

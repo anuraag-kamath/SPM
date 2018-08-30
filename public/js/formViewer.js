@@ -762,6 +762,7 @@ loadObjects = () => {
             console.log(res);
             console.log("***1");
             for (obj in JSON.parse(res).objects) {
+                console.log(JSON.parse(res));
                 fetch('/api/bpm/objects/' + JSON.parse(res).objects[obj].id + '/' + JSON.parse(res).objects[obj].name, {
                     credentials: 'include'
                 }).then((prom1) => prom1.text()).then((res2) => {
