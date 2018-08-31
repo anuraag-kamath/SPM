@@ -352,7 +352,7 @@ getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, 
 
                 } else if (eval("res22.schemaStructure." + keys[ip] + ".type").indexOf("Date") != -1) {
                     cannotContinue = true;
-                    if (String(Number(filterText)).indexOf("Invalid") == -1) {
+                    if (String(new Date(filterText)).indexOf("Invalid") == -1) {
 
 
                         if (ip != 0 && addedOne == true) {
