@@ -737,8 +737,7 @@ loadObjects = () => {
                                                
                                                 document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]).checked = true;
                                             } else {
-                                               
-                                                if(String(new Date(res2[j][key])).indexOf("Invalid")==-1){
+                                                if(String(new Date(res2[j][key])).indexOf("Invalid")==-1 && String(res2[j][key]).indexOf("Z")!=-1){
                                                     var dt=new Date(res2[j][key]);
                                                     document.getElementById(tempArr[i].id + "_" + key).value = dt.getFullYear()+"-"+dt.getMonth()+"-"+dt.getDate();
 

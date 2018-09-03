@@ -834,7 +834,7 @@ var oldObjects = [];
 app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
     var workitemId = req.params.wid;
     var rejectStep = req.params.rejectToStep
-    var userSearch = jsonwebtoken.verify(token, jwt_key).userId
+    var userSearch = jsonwebtoken.verify(req.cookies.token, jwt_key).userId
 
     fetch(proxy_url + "/api/uam/user/" + userSearch, {
         credentials: "include",

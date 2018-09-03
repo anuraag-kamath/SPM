@@ -91,7 +91,7 @@ createDms = (mode) => {
 
 fetchDocuments = () => {
     document.getElementById("dms_doc_list").innerHTML="";
-    fetch('/documents?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier'), {
+    fetch('/api/dms/documents?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier'), {
         method: "GET",
         headers: {
             "Access-Control-Allow-Origin": "*",
@@ -127,7 +127,7 @@ fetchDocuments = () => {
             document.getElementById("dms_doc_list").appendChild(tr);
 
             document.getElementById(res[i]._id).addEventListener('click', (ev) => {
-                fetch("/documents/" + ev.target.id + '?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier')).then((prom) => prom.text()).then((doc) => {
+                fetch("/api/dms/documents/" + ev.target.id + '?uniqueIdentifier=' + document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier')).then((prom) => prom.text()).then((doc) => {
                     document.getElementById('documentDiv').style.display = "block";
                     document.getElementById('dms_col_1').style.maxWidth = "30%"
                     document.getElementById('dms_col_2').style.maxWidth = "70%"
@@ -185,7 +185,7 @@ function documentUploaded(evt) {
                 "uniqueIdentifier": document.getElementById(dms_tag_id).getAttribute('uniqueIdentifier')
             };
 
-            fetch('/documents', {
+            fetch('/api/dms/documents', {
                 method: "POST",
                 headers: {
                     "Access-Control-Allow-Origin": "*",
