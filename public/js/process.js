@@ -8,14 +8,12 @@ fetch('/api/bpm/objects', {
 
     credentials: 'include'
 }).then((prom) => prom.text()).then((res) => {
-    //////console.log(res);
     objs = JSON.parse(res);
     document.getElementById('st-input').innerHTML = "";
     document.getElementById('st-output').innerHTML = "";
     document.getElementById('st-input').innerHTML += "<option value=''>INPUT</option>";
     document.getElementById('st-output').innerHTML += "<option value=''>OUTPUT</option>";
     for (var ob in JSON.parse(res)) {
-        ////console.log(objs[ob].schemaName);
         document.getElementById('st-input').innerHTML += "<option value='" + objs[ob].schemaName + "'>" + objs[ob].schemaName + "</option>";
         document.getElementById('st-output').innerHTML += "<option value='" + objs[ob].schemaName + "'>" + objs[ob].schemaName + "</option>";
     }
@@ -24,39 +22,11 @@ fetch('/api/bpm/objects', {
 
 
 
-// document.addEventListener('click', (event) => {
-//     if (!(event.target.classList.contains("noclick"))) {
-//         console.log("PROCEED");
-//     }
-// })
 
-// if (typeof (calledFrom) === "undefined" || calledFrom != "workitem") {
-//     document.getElementById('title').innerText = "";
-//     var h4 = document.createElement("P");
-//     var inputName = document.createElement("INPUT");
-//     h4.id = "heading"; 
-//     inputName.id = "heading-text";
-
-
-
-
-//     document.getElementById("title").appendChild(h4);
-//     document.getElementById("title").appendChild(inputName);
-//     var trigSel = document.createElement("SELECT");
-//     h4Trig.id = "h4Trig";
-//     trigSel.id = "triggeringForm";
-
-//     document.getElementById("heading").appendChild(trigSel);
-
-//     // document.getElementById("title").appendChild(h4Trig);
-//     // document.getElementById("title").appendChild(trigSel);
-
-// }
 
 var steps = [];
 
 checkme = (processId) => {
-    console.log(processId)
 
     if (processId != undefined) {
 
@@ -70,12 +40,9 @@ checkme = (processId) => {
         }).then((prom) => {
             return prom.text();
         }).then((response) => {
-            console.log(response);
             steps = JSON.parse(response)[0].steps;
             for (var i = 0; i < steps.length; i++) {
-                console.log("##$$%%");
-                console.log(steps[i]);
-                console.log("##$$%%");
+               
                 rej1 = steps[i].rej1 || false;
                 rej2 = steps[i].rej2 || false;
                 step1 = steps[i].step1 || "";
@@ -86,7 +53,6 @@ checkme = (processId) => {
                 frm2 = steps[i].frm2 || "";
                 part1 = steps[i].part1 || "";
                 part2 = steps[i].part2 || "";
-                console.log(steps[i]);
                 days1 = steps[i].days1 || 0;
                 days2 = steps[i].days2 || 0;
                 minutes1 = steps[i].minutes1 || 0;
@@ -132,7 +98,6 @@ checkme = (processId) => {
 
 
             });
-            console.log(processId);
 
 
             if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") {
@@ -143,19 +108,14 @@ checkme = (processId) => {
                 document.getElementById('header').style.display = "none";
                 document.getElementById('saveDiv').style.display = "none";
 
-                console.log("AAA");
 
                 var deletes = document.getElementsByName("delete1");
-                console.log(deletes);
                 for (var i = 0; i < deletes.length; i++) {
-                    console.log(deletes[i]);
                     document.getElementById(deletes[i].id).style.display = "none";
                 }
                 document.getElementById('process-section').className = "col-12";
 
-                console.log("@@@");
-                console.log(steps);
-                console.log("@@@");
+                
                 var sendSteps = '';
                 for (var i = 0; i < steps.length; i++) {
                     sendSteps += '"' + steps[i]._id + '"';
@@ -167,11 +127,9 @@ checkme = (processId) => {
                 fetch('/api/bpm/workitems?searchStep=' + sendSteps + '&instanceId=' + instanceId, {
                     credentials: 'include'
                 }).then((prom) => prom.text()).then((res) => {
-                    console.log(res);
                     var res = JSON.parse(res);
                     for (var i = 0; i < res.length; i++) {
                         if (res[i].status == "scheduled") {
-                            console.log(res[i]);
                             if (document.getElementById('lbl1_' + res[i].stepId) != undefined &&
                                 document.getElementById('lbl1_' + res[i].stepId).innerText == res[i].stepName) {
                                 document.getElementById('lbl1_' + res[i].stepId).style.backgroundColor = "orange";
@@ -189,8 +147,7 @@ checkme = (processId) => {
                                 document.getElementById('lbl1_' + res[i].stepId).style.backgroundColor = "green";
                                 document.getElementById('lbl1_' + res[i].stepId).style.color = "white";
 
-                                console.log(res[i].user);
-                                console.log(res[i]);
+                           
                                 document.getElementById('lbl1_' + res[i].stepId).innerText += " -done by:" + res[i].user + " @ " + res[i].date;
 
                             } if (document.getElementById('lbl2_' + res[i].stepId) != undefined &&
@@ -256,9 +213,7 @@ checkme = (processId) => {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res1) => {
         var options = "";
-        console.log("***");
-        console.log(res1);
-        console.log("***");
+     
         for (var i in JSON.parse(res1)) {
             var newOption = document.createElement('option');
             newOption.value = JSON.parse(res1)[i].roleName;
@@ -271,25 +226,7 @@ checkme = (processId) => {
 
 }
 
-// selectRejection = (count) => {
-//     // document.getElementById("rejectionDropDown").innerHTML = "";
-//     // document.getElementById("rejectionDropDown").innerHTML += '<option></option>';
 
-//     nodes = document.getElementById("process-section").childNodes;
-//     for (var i = 1; i < count; i++) {
-//         id = nodes[i].id.replace("div_", "");
-//         lbl1 = document.getElementById('lbl1_' + id).innerText;
-//         // document.getElementById("rejectionDropDown").innerHTML += '<option>' + lbl1 + '</option>';
-//         lbl2 = "";
-//         if (document.getElementById('step2_' + id) != null) {
-//             lbl2 = document.getElementById('lbl2_' + id).innerText;
-//             // document.getElementById("rejectionDropDown").innerHTML += '<option>' + lbl2 + '</option>';
-//         }
-
-//     }
-
-
-// }
 
 document.getElementById('formName').addEventListener('focusout', (event) => {
     document.getElementById(currentElement).setAttribute('formName', event.target.value);
@@ -298,7 +235,6 @@ document.getElementById('formName').addEventListener('focusout', (event) => {
 });
 
 document.getElementById('rejection').addEventListener('change', (event) => {
-    console.log(event.target.value);
     if (event.target.checked == false) {
         document.getElementById(currentElement).setAttribute('rejection', false);
 
@@ -310,8 +246,7 @@ document.getElementById('rejection').addEventListener('change', (event) => {
 });
 
 document.getElementById('participant').addEventListener('focusout', (event) => {
-    console.log(currentElement);
-    console.log(event.target.value)
+   
 
     document.getElementById(currentElement).setAttribute('participant', event.target.value);
 
@@ -319,24 +254,21 @@ document.getElementById('participant').addEventListener('focusout', (event) => {
 });
 
 document.getElementById('escalation-days').addEventListener('focusout', (event) => {
-    console.log(currentElement);
-    console.log(event.target.value)
+    
     var esc = document.getElementById('escalation-days').value + "#" + document.getElementById('escalation-hours').value + "#" + document.getElementById('escalation-minutes').value
     document.getElementById(currentElement).setAttribute('esc', esc);
 
 
 });
 document.getElementById('escalation-minutes').addEventListener('focusout', (event) => {
-    console.log(currentElement);
-    console.log(event.target.value)
+   
     var esc = document.getElementById('escalation-days').value + "#" + document.getElementById('escalation-hours').value + "#" + document.getElementById('escalation-minutes').value
     document.getElementById(currentElement).setAttribute('esc', esc);
 
 
 });
 document.getElementById('escalation-hours').addEventListener('focusout', (event) => {
-    console.log(currentElement);
-    console.log(event.target.value)
+ 
     var esc = document.getElementById('escalation-days').value + "#" + document.getElementById('escalation-hours').value + "#" + document.getElementById('escalation-minutes').value
     document.getElementById(currentElement).setAttribute('esc', esc);
 
@@ -374,14 +306,7 @@ document.getElementById('myForm').addEventListener('submit', (event) => {
         t2 = document.getElementById('type-task2').value;
 
     }
-    console.log(t1 + "#" + t2 + "#" + step1 + "#" + step2);
-    // if (String(t1).indexOf("Service") != -1 && String(t2).indexOf("Service") != -1) {
-    //     alert("Kindly delete System task, it is currently under progress!!:)");
-    // } else {
-    //     addProcess(t1, t2, step1, step2, '', '', '', '', '', 0, 0, 0, 0, 0, 0);
-
-
-    // }
+   
     addProcess(t1, t2, step1, step2, '', '', '', '', '', 0, 0, 0, 0, 0, 0, "", "", "[]", "[]", "", "", "", "", "[]", "[]", "", "", false, false);
 
 
@@ -408,28 +333,16 @@ dragover = (event) => {
 }
 
 var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1, hours1, minutes1, days2, hours2, minutes2, url1, method1, headers1, queryParams1, input1, output1, url2, method2, headers2, queryParams2, input2, output2, rej1, rej2) => {
-    console.log("@@@@@@");
-    console.log(days1);
-    console.log(hours1);
-    console.log(minutes1);
-    console.log(days2);
-    console.log(hours2);
-    console.log(minutes2);
-    console.log(headers1);
-    console.log(headers2);
-    console.log("@@@@@@");
+    
     var ts = "";
     if (stepId.length > 0) {
         ts = stepId;
     } else {
         ts = Math.ceil(new Date().getTime() * Math.random());
     }
-    console.log("####"+step1+"$"+step2+"#####");
     if (step1.length > 0 && step2.length > 0) {
         var newDiv = document.createElement("DIV");
-        //newDiv.draggable = true;
-        // newDiv.ondragstart = "dragStart(event)";
-        // newDiv.drag = "drag(event)";
+        
         newDiv.id = "div_" + ts;
         if (step1.indexOf("Service") != -1) {
             if (headers1.length == 0) {
@@ -462,11 +375,9 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
         var countDiv = document.createElement("DIV");
         countDiv.id = "count_" + ts;
         countDiv.className = "col-1 ctr"
-        //countDiv.innerHTML = "<h3 id='count'>2</h3>"
         var leftDiv = document.createElement("DIV");
         leftDiv.className = "col-5"
-        console.log(days1 + "#" + hours1 + "#" + minutes1);
-        console.log(days2 + "#" + hours2 + "#" + minutes2);
+        
         var esc1 = days1 + "#" + hours1 + "#" + minutes1;
 
         leftDiv.innerHTML = "<h6 id='step1_" + ts + "' >" + step1 + "</h6><label formName='" + frm1 + "' participant='" + part1 + "' esc=" + esc1 + "  rejection=" + rej1 + " id='lbl1_" + ts + "' class='lbl noclick'>" + t1 + "</label>"
@@ -486,25 +397,7 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
             document.getElementById(('lbl2_' + ts)).addEventListener('click', (event) => {
 
-                console.log('APPLIED EVENT FOR lbl2_' + ts);
-                //selectRejection(document.getElementById(String(event.target.id).replace("lbl2_", "count_")).innerText);
-
-                // document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
-                // document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
-                // var esc = document.getElementById(event.target.id).getAttribute('esc').split("#");
-                // document.getElementById('escalation-days').value = esc[0];
-                // document.getElementById('escalation-hours').value = esc[1];
-                // document.getElementById('escalation-minutes').value = esc[2];
-
-                // if (currentElement != "") {
-                //     document.getElementById(currentElement).style.border = "2px solid black";
-                //     document.getElementById(event.target.id).style.border = "2px solid red";
-                //     document.getElementById('name').value = event.target.innerText;
-                //     currentElement = event.target.id;
-                //     document.getElementsByTagName('footer')[0].style.display = "block";
-                //     document.getElementsByClassName('mid-section')[0].style.height = "60vh";
-
-                // }
+                
 
                 var tempText = document.getElementById(String(event.target.id).replace("lbl2_", "step2_")).innerText;
                 if (document.getElementById(currentElement) != undefined && currentElement != "") {
@@ -564,11 +457,8 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                     document.getElementById('rejection_div').style.display = "none";
 
 
-                    console.log("##");
-                    console.log(sts[currentElement]);
 
                     if (sts[currentElement] != undefined) {
-                        console.log(sts[currentElement]);
                         var cur = JSON.parse(sts[currentElement])
 
                         document.getElementById('st-url').value = cur.url;
@@ -577,20 +467,13 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                         var queryParams = [];
                         document.getElementById('st-input').value = cur.input;
                         document.getElementById('st-output').value = cur.output;
-                        console.log(currentElement);
-                        console.log("$$$");
-                        console.log(cur.headers);
-                        console.log("$$$");
+                       
                         for (var i = 0; i < JSON.parse(cur.headers).length; i++) {
-                            console.log("##");
-                            console.log(JSON.parse(cur.headers)[i].split("#"));
-                            console.log("#");
+                         
                             addHeader(JSON.parse(cur.headers)[i].split("#")[0], JSON.parse(cur.headers)[i].split("#")[1])
                         }
                         for (var i = 0; i < JSON.parse(cur.queryParams).length; i++) {
-                            console.log("##");
-                            console.log(JSON.parse(cur.queryParams)[i].split("#"));
-                            console.log("#");
+                         
                             addQueryParams(JSON.parse(cur.queryParams)[i].split("#")[0], JSON.parse(cur.queryParams)[i].split("#")[1])
                         }
 
@@ -606,10 +489,7 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
     } else {
         var newDiv = document.createElement("DIV");
-        //newDiv.draggable = true;
-        // newDiv.ondragstart = "dragStart(event)";
-        // newDiv.drag = "drag(event)";
-        console.log("@");
+      
         if (step1.indexOf("Service") != -1) {
             if (headers1.length == 0) {
                 headers1 = "[]"
@@ -623,7 +503,6 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
             }
             sts["lbl1_" + ts] = '{"url": "' + url1 + '","method": "' + method1 + '","headers": ' + headers1 + ',"queryParams": ' + queryParams1 + ',"input": "' + input1 + '","output":"' + output1 + '" }'
         }
-        console.log("@");
 
         newDiv.id = "div_" + ts;
         newDiv.className = "row";
@@ -653,7 +532,6 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
     if (typeof (calledFrom) !== 'undefined' && calledFrom == "workitem") { } else {
         document.getElementById(('lbl1_' + ts)).addEventListener('click', (event) => {
-            console.log('APPLIED EVENT FOR lbl1_' + ts);
 
             //selectRejection(document.getElementById(String(event.target.id).replace("lbl1_", "count_")).innerText);
             tempText = document.getElementById(String(event.target.id).replace("lbl1_", "step1_")).innerText;
@@ -671,9 +549,7 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                 document.getElementById('formName').value = document.getElementById(event.target.id).getAttribute('formName');
                 document.getElementById('participant').value = document.getElementById(event.target.id).getAttribute('participant');
                 var checked = false;
-                console.log("@@@");
-                console.log(document.getElementById(event.target.id).getAttribute('rejection'));
-                console.log("@@@");
+             
                 if (document.getElementById(event.target.id).getAttribute('rejection') != null && document.getElementById(event.target.id).getAttribute('rejection') == "true") {
                     checked = true
                 }
@@ -710,11 +586,9 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
                 document.getElementById('rejection_div').style.display = "none";
 
-                console.log("##");
-                console.log(sts[currentElement]);
+              
 
                 if (sts[currentElement] != undefined) {
-                    console.log(currentElement);
                     var cur = JSON.parse(sts[currentElement])
 
                     document.getElementById('st-url').value = cur.url;
@@ -723,19 +597,13 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
                     var queryParams = [];
                     document.getElementById('st-input').value = cur.input;
                     document.getElementById('st-output').value = cur.output;
-                    console.log(currentElement);
-                    console.log(cur)
-                    console.log(cur.headers);
+                    
                     for (var i = 0; i < JSON.parse(cur.headers).length; i++) {
-                        console.log("##");
-                        console.log(JSON.parse(cur.headers)[i].split("#"));
-                        console.log("#");
+                       
                         addHeader(JSON.parse(cur.headers)[i].split("#")[0], JSON.parse(cur.headers)[i].split("#")[1])
                     }
                     for (var i = 0; i < JSON.parse(cur.queryParams).length; i++) {
-                        console.log("##");
-                        console.log(JSON.parse(cur.queryParams)[i].split("#"));
-                        console.log("#");
+                      
                         addQueryParams(JSON.parse(cur.queryParams)[i].split("#")[0], JSON.parse(cur.queryParams)[i].split("#")[1])
                     }
 
@@ -753,16 +621,12 @@ var addProcess = (step1, step2, t1, t2, frm1, frm2, part1, part2, stepId, days1,
 
 
     document.getElementById("delete1_" + ts).addEventListener('click', (event) => {
-        console.log(document.getElementById(String(event.target.id).replace("delete1", "count")).innerText);
-        // if (document.getElementById(String(event.target.id).replace("delete1", "count")).innerText != 1) {
         var child = event.target.parentElement.parentElement;
         var parent = event.target.parentElement.parentElement.parentElement;
         parent.removeChild(child);
         recalcCount();
 
-        // }else{
-        //     alert("cannot delete the first step!");
-        // }
+  
 
     });
 
@@ -778,7 +642,6 @@ recalcCount = () => {
     for (var i = 1; i < nodes.length; i++) {
         var count_div = nodes[i].id;
         count_div = String(count_div).replace("div_", "count_");
-        console.log("COUNTING" + count_div);
 
         document.getElementById(count_div).innerHTML = "<h3>" + (i) + "</h3>";
     }
@@ -878,16 +741,14 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             lbl1.length == 0 ||
             frm1.length == 0 ||
             part1.length == 0)) {
-            console.log(step1);
-            console.log(step1.indexOf("System") == -1);
+          
             err = "problem found, focussing on the problem!";
             errEl = "lbl1_" + id;
             break;
         } else if (step1.indexOf("Service") != -1 && (step1.length == 0 ||
             url1.length == 0 ||
             method1.length == 0)) {
-            console.log(url1.length);
-            console.log(method1.length);
+            
 
             err = "problem found, focussing on the problem!";
             errEl = "lbl1_" + id;
@@ -914,7 +775,6 @@ document.getElementById("save-process").addEventListener('click', (event) => {
 
 
             if (step2.indexOf("Service") != -1) {
-                console.log(JSON.parse(sts['lbl2_' + id]));
                 url2 = '"' + JSON.parse(sts['lbl2_' + id]).url + '"';
                 method2 = '"' + JSON.parse(sts['lbl2_' + id]).method + '"';
                 headers2 = JSON.parse(sts['lbl2_' + id]).headers;
@@ -966,9 +826,7 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             json += "},"
         }
     }
-    console.log(err + "##" + err.length);
     if (err.length > 0) {
-        console.log("GOT IN");
         document.getElementById("pop-up").innerHTML = "";
 
 
@@ -985,7 +843,6 @@ document.getElementById("save-process").addEventListener('click', (event) => {
         var text = document.createElement('H1');
         text.innerText = err;
         newDiv.appendChild(text)
-        //    document.getElementById("app").style.display = "none";
         document.getElementById("app").style.opacity = 0.3;
         document.getElementById("pop-up").style.display = "block";
         document.getElementById("pop-up").appendChild(newDiv);
@@ -999,7 +856,6 @@ document.getElementById("save-process").addEventListener('click', (event) => {
     } else {
         var tempArr = []
         json += ']}'
-        console.log(json);
         if (typeof (processId) !== 'undefined' && processId != undefined && processId.length > 0) {
             fetch('/api/bpm/process/' + processId, {
                 method: "PUT",
@@ -1011,7 +867,6 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             }).then((prom) => {
                 return prom.text();
             }).then((res) => {
-                console.log("A");
                 window.location.hash = "listProcess"
             })
         } else {
@@ -1025,7 +880,6 @@ document.getElementById("save-process").addEventListener('click', (event) => {
             }).then((prom) => {
                 return prom.text();
             }).then((res) => {
-                console.log("B");
                 window.location.hash = "listProcess"
 
 
@@ -1045,16 +899,11 @@ document.getElementById('name').addEventListener(('focusout'), (event) => {
     document.getElementById(currentElement).innerText = event.target.value;
 });
 
-// document.getElementById('toggle-down').addEventListener(('click'), (event) => {
-//     document.getElementsByTagName('footer')[0].style.display = "none";
-//     document.getElementsByClassName('mid-section')[0].style.height = "80vh";
-// });
 
 
 
 
 if (location.hash != undefined && location.hash.length > 0 && location.hash != "#newpro") {
-    //processId = location.hash.substr(4);
     if (typeof (processId) !== 'undefined' && processId != null && processId.length > 0) {
 
         checkme(processId);
@@ -1083,7 +932,6 @@ document.getElementById('addHeader').addEventListener('click', (ev) => {
 });
 
 addHeader = (left, right) => {
-    console.log("####" + left + "###" + right);
     ts = Math.ceil(new Date().getTime() * Math.random());
 
     var div = document.createElement("DIV");
@@ -1154,9 +1002,7 @@ document.getElementById('st-method').addEventListener('change', (ev) => {
     if (ev.target.value == "GET" || ev.target.value == "DELETE") {
 
         document.getElementById('st-input').value = "";
-        //        document.getElementById('st-input').disabled=true;
     } else {
-        //        document.getElementById('st-input').disabled=false;
     }
 });
 
@@ -1172,7 +1018,6 @@ saveSt = (currentElement) => {
     var st_queryParams = document.getElementById('st-queryParams').childNodes;
 
     for (var i = 0; i < st_headers.length; i++) {
-        console.log(st_headers[i]);
         if (st_headers[i].id != undefined) {
             var leftInp = st_headers[i].id.replace("div", "inpLeft")
             var rightInp = st_headers[i].id.replace("div", "inpRight")
@@ -1180,12 +1025,10 @@ saveSt = (currentElement) => {
             rightInp = document.getElementById(rightInp).value;
             headers.push('\"' + leftInp + "#" + rightInp + '\"');
         }
-        console.log(leftInp);
-        console.log(rightInp);
+       
 
     }
     for (var i = 0; i < st_queryParams.length; i++) {
-        console.log(st_queryParams[i]);
         if (st_queryParams[i].id != undefined) {
             var leftInp = st_queryParams[i].id.replace("div", "inpLeft")
             var rightInp = st_queryParams[i].id.replace("div", "inpRight")
@@ -1193,14 +1036,12 @@ saveSt = (currentElement) => {
             rightInp = document.getElementById(rightInp).value;
             queryParams.push('"' + leftInp + "#" + rightInp + '"');
         }
-        console.log(leftInp);
-        console.log(rightInp);
+       
     }
     if (headers.length == 0) {
         headers = "[]"
     } else {
         headers = JSON.stringify(headers)
-        //headers = '[' + headers + ']'
     }
     if (queryParams.length == 0) {
         queryParams = "[]"
@@ -1210,10 +1051,8 @@ saveSt = (currentElement) => {
     }
     var jsonBuildup = '{"' + currentElement + '": {"url": "' + document.getElementById('st-url').value + '","method": "' + document.getElementById('st-method').value + '","headers": ' + headers + ',"queryParams": ' + queryParams + ',"input": "' + document.getElementById('st-input').value + '","output":"' + document.getElementById('st-output').value + '" }}'
 
-    console.log(jsonBuildup);
     sts[currentElement] = '{"url": "' + document.getElementById('st-url').value + '","method": "' + document.getElementById('st-method').value + '","headers": ' + headers + ',"queryParams": ' + queryParams + ',"input": "' + document.getElementById('st-input').value + '","output":"' + document.getElementById('st-output').value + '" }'
 
-    console.log(jsonBuildup);
 
 }
 
@@ -1226,7 +1065,6 @@ document.getElementById("tryOut").addEventListener('click', (ev) => {
 st = (cur) => {
     cur = JSON.parse(cur);
     var sampleInput = document.getElementById("sampleInput").value;
-    console.log(cur.method);
     fetch(cur.url, {
         method: cur.method,
         headers: {

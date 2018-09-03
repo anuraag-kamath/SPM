@@ -1,8 +1,4 @@
-// console.log(document.getElementById('t1').getClientRects());
 
-
-
-// console.log(document.getElementById('t2').getClientRects());
 
 
 // var y1 = document.getElementById('t3').getClientRects()[0].top + document.getElementById('t3').getClientRects()[0].height / 2;
@@ -20,8 +16,7 @@ dragEnd = (ev) => {
     var source=(ev.target.id);
     var target=(ev.dataTransfer.getData("alpha"));
 
-    console.log(source);
-    console.log(target);
+  
 
     var y1 = document.getElementById(target).getClientRects()[0].top + document.getElementById(target).getClientRects()[0].height / 2;
     var y2 = document.getElementById(source).getClientRects()[0].top + document.getElementById(source).getClientRects()[0].height / 2;

@@ -45,11 +45,9 @@ listInstances = (searchParams) => {
 }
 
 addProcessName = (id) => {
-    console.log("***" + String(id).substr(2));
     fetch('/api/bpm/process?process=' + String(id).substr(String(id).indexOf("_") + 1), {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
-        console.log(res);
         document.getElementById(id).innerText = JSON.parse(res)[0].processName;
     })
 }
@@ -57,6 +55,5 @@ addProcessName = (id) => {
 listInstances("");
 
 document.getElementById("searchParams").addEventListener("focusout",(ev)=>{
-    console.log(ev.target.value);
     listInstances(ev.target.value)
 });

@@ -19,12 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 createDms = (mode) => {
-    console.log("CREATING!");
     dmsEls = (document.getElementsByTagName("mydms"));
-    console.log(document.getElementsByTagName("mydms").length);
     if (document.getElementsByTagName("mydms").length > 0) {
         dms_tag_id = dmsEls[0].id;
-        console.log(dmsEls[0].id);
         var row = document.createElement("ROW");
         row.style.display = "flex";
         var div1 = document.createElement("DIV");
@@ -80,9 +77,7 @@ createDms = (mode) => {
         div2.className = "col-0"
         row.appendChild(div1);
         row.appendChild(div2);
-        console.log("################");
-        console.log(row);
-        console.log("################");
+      
         dmsEls[0].appendChild(row);
 
         var sheet = document.createElement('style')
@@ -158,9 +153,7 @@ fetchDocuments = () => {
 function documentUploaded(evt) {
     var files = evt.target.files;
     var file = files[0];
-    console.log(file.name);
-    console.log(file.type);
-    console.log(file.size);
+
     if (file.size > 2048000) {
         alert("File Limit of 2MB");
 

@@ -95,7 +95,6 @@ fetch('/api/bpm/workitems?search={"status":"scheduled"}', {
                         closeObjectWorkitemDiv.className = "right btn"
                         document.getElementById("objectWorkitemDiv").appendChild(closeObjectWorkitemDiv)
 
-                        console.log(document.getElementById("closeObjectWorkitemDiv"));
 
                         res = JSON.parse(res);
                         if (res.length > 0) {
@@ -111,7 +110,6 @@ fetch('/api/bpm/workitems?search={"status":"scheduled"}', {
 
                         }
                         document.getElementById("closeObjectWorkitemDiv").addEventListener('click', (ev) => {
-                            console.log("HITME");
                             document.getElementById('workitemsDiv').style.height = "100%";
                             document.getElementById('objectWorkitemDiv').style.height = "0%";
 
@@ -130,7 +128,6 @@ fetch('/api/bpm/workitems?search={"status":"scheduled"}', {
 
 
 addTable = (name, id, tid) => {
-    console.log("/" + name + "/" + id);
     fetch("/api/bpm/" + name + "/" + id, {
         credentials: "include"
     }).then((prom) => prom.text()).then((res3) => {

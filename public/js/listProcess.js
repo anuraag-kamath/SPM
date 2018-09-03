@@ -16,7 +16,6 @@ listProcess = () => {
         function (res) {
             ts = Math.ceil(new Date().getTime() * Math.random());
             if (JSON.parse(res).length > 0) {
-                console.log(res);
                 document.getElementById('noProcesses').style.display = "none";
                 document.getElementById('processes').style.display = "table";
                 alpha = JSON.parse(res);
@@ -28,9 +27,7 @@ listProcess = () => {
                     document.getElementById('processes-body').appendChild(row);
 
                     document.getElementById("delete_" + alpha[i]._id).addEventListener("click", (ev) => {
-                        console.log(ev.target.id);
                         fetch('/api/bpm/instance?searchProcess=' + String(ev.target.id).replace("delete_", "")).then((prom) => prom.text()).then((res) => {
-                            console.log(res);
                             if (JSON.parse(res).length > 0) {
                                 alert("The form cannot be deleted as it is being used in "+JSON.parse(res).length+" live instaces");
                             }
@@ -71,7 +68,6 @@ listProcess = () => {
 }
 getCount = (id) => {
     fetch('/api/bpm/instance?processId=' + id + '&status=initiated', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {
-        console.log(res);
         document.getElementById("live_" + id).innerText = JSON.parse(res).count;
     })
     fetch('/api/bpm/instance?processId=' + id + '&status=finished', { credentials: 'include' }).then((prom) => prom.text()).then((res) => {

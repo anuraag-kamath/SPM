@@ -2,7 +2,6 @@
 var objs = [];
 
 var cur;
-console.log("LOADING");
 var tempArr = [];
 var instanceId1 = "";
 var processId = "";
@@ -14,7 +13,6 @@ var rejectExists = false;
 onLoad = (formId, processId, workitemId, instanceId1, role) => {
 
 
-    console.log("AM");
     fetch('/api/bpm/objects', {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
@@ -29,7 +27,6 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
         }).then((prom) => {
             return prom.text()
         }).then((res) => {
-            console.log(res);
 
             if (workitemId.length == 0) {
                 fetch('/api/bpm/instance', {
@@ -44,19 +41,15 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
                     //                    instanceId1 = JSON.parse(res)._id;
                     instanceId1 = 1234;
                     iaa = JSON.parse(res)._id;
-                    console.log("Instance ID after loading for first time:-" + instanceId1);
                     loadObjects();
 
                 }).then(() => {
-                    console.log("instanceId1 is set:-" + instanceId1);
 
                 }).then(() => {
-                    console.log("Random1" + instanceId1);
 
                     loadContents(res, role);
                 });
             } else {
-                console.log("Random2" + instanceId1);
 
                 loadContents(res, role);
             }
@@ -64,9 +57,7 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
 
 
         }).then(() => {
-            console.log("###############");
-            console.log(instanceId1);
-            console.log("###############");
+            
             if (typeof (instanceId1) !== 'undefined' && instanceId1.length > 0) {
                 loadObjects();
             }
@@ -84,17 +75,9 @@ onLoad = (formId, processId, workitemId, instanceId1, role) => {
 loadContents = (res, role) => {
     tempArr = (JSON.parse(res).structure)
     document.getElementById('main-section').innerHTML = "";
-    // var button = document.createElement("BUTTON");
-    // button.id = "comments_button"
-    // button.innerHTML = '<i class="fas fa-comment"></i>'
-    // button.style.position = "fixed";
-    // button.style.top = "6vh";
-    // button.style.marginRight = "15px";
-    // button.style.right = "0";
-    // button.style.zIndex = "1";
+    
     var button = document.createElement("BUTTON");
     button.id = "comments_button"
-    //button.innerHTML = '<i class="fas fa-comment"></i>'
     button.style.position = "fixed";
     button.className = "fas fa-comment editUsers"
     button.style.top = "6vh";
@@ -176,7 +159,6 @@ loadContents = (res, role) => {
 
     document.getElementById('newCommentsButton_' + instanceId1).addEventListener('click', (ev) => {
         jsonBody = '{"comment": "' + document.getElementById('newComment').value + '"}';
-        console.log(jsonBody);
         fetch('/api/bpm/comments/' + instanceId1, {
             credentials: "include",
             method: "POST",
@@ -192,8 +174,7 @@ loadContents = (res, role) => {
 
 
 
-    console.log("AM I LOADING>");
-    console.log(tempArr);
+   
     var readOnly = "";
     if (role == "view") {
         readOnly = "readOnly";
@@ -369,16 +350,10 @@ loadContents = (res, role) => {
 
 
 
-                //            document.getElementById('megaCheck').style.height = "100%"
-                //            document.getElementById('megaCheck').style.width = "100%"
-                console.log(document.getElementById('megaCheck'));
+                
                 document.getElementById('megaCheck').style.display = "block"
                 document.getElementById('contentModal1').innerHTML = "";
-                //   document.getElementById('main-section').style.display="none"
-                //            document.getElementById('megaCheck').style.backgroundColor = "grey"
-                //            document.getElementById('megaCheck').style.position = "absolute"
-                //            document.getElementById('megaCheck').style.zIndex = "1"
-                //            document.getElementById('megaCheck').style.opacity = "0.7"
+                
                 var test = document.createElement("FORM");
                 test.id = "formModal";
                 var tis = new Date().getTime();
@@ -401,7 +376,6 @@ loadContents = (res, role) => {
                     var tempRow = "<tr>";
                     for (key in schemaStructure) {
                         var temp = String(ev.target.id).replace("modalAdd", key)
-                        console.log(temp);
                         tempRow += "<td value='" + key + "'>" + document.getElementById(temp).value + "</td>"
                     }
 
@@ -440,7 +414,6 @@ loadComments = () => {
             newRow1.id = "commentsDiv1" + i;
 
 
-            // newRow1.className = "row";
             newRow1.innerText = res[i].comment;
             newRow1.style.color = "white"
             newRow1.style.marginRight = "15px"
@@ -450,7 +423,6 @@ loadComments = () => {
             newRow2.style.width = "6em"
             newRow2.className = "commentsDiv"
 
-            // newRow2.className = "row";
             var dt = String(res[i].commentDate);
 
             newRow2.innerHTML = dt.substr(0, dt.indexOf("T")) + "-<strong class='commentsDiv' id='" + i + "_" + res[i].user + "'>" + res[i].user + "</strong>"
@@ -473,16 +445,12 @@ userName = (userId) => {
     fetch('/api/uam/user/' + (userId).substr(2), {
         credentials: 'include'
     }).then((prom) => prom.text()).then((doc) => {
-        console.log("*****");
-        console.log(doc);
-        console.log(userId);
-        console.log("*****");
+        
         document.getElementById(userId).innerText = JSON.parse(doc).user;
     })
 }
 
 document.addEventListener('click', (ev) => {
-    console.log(ev.target.id);
     if (String(ev.target.id).length > 0 && document.getElementById(ev.target.id) != undefined && document.getElementById(ev.target.id) !== 'undefined') {
         if (String(document.getElementById(ev.target.id).className).indexOf("commentsDiv") == -1 &&
             String(ev.target.id).indexOf("comments_button") == -1) {
@@ -541,15 +509,11 @@ eventPage = (type, id) => {
                                     var ts = schema[key].options.split(",")
                                     var checkedEl = "";
                                     for (k in ts) {
-                                        console.log(tempArr[i].id + "_" + key + "_" + ts[k]);
                                         if (document.getElementById(tempArr[i].id + "_" + key + "_" + ts[k]).checked) {
                                             checkedEl = ts[k];
                                         }
                                     }
-                                    console.log("####");
-                                    console.log(checkedEl);
-                                    console.log(document.getElementById(tempArr[i].id + "_" + key + "_0"));
-                                    console.log("####");
+                                    
                                     if (checkedEl.length == 0 && document.getElementById(tempArr[i].id + "_" + key +"_"+ ts[0]).required == true) {
                                         alert("Focussing on the problematic field");
                                         problemField = tempArr[i].id + "_" + key +"_"+ts[0];
@@ -565,7 +529,6 @@ eventPage = (type, id) => {
 
 
                                 } else {
-                                    console.log("#@#@##" + document.getElementById(tempArr[i].id + "_" + key).checkValidity() + "@@" + tempArr[i].id + "_" + key);
                                     if (document.getElementById(tempArr[i].id + "_" + key).checkValidity() == false) {
                                         alert("Focussing on the problematic field");
                                         problemField = tempArr[i].id + "_" + key;
@@ -585,9 +548,7 @@ eventPage = (type, id) => {
 
 
                                 }
-                                // if (le != (Object.keys(schema).length)) {
-                                //     jsonBody += ",";
-                                // }
+                            
                             }
                         }
 
@@ -628,10 +589,8 @@ eventPage = (type, id) => {
                 }
 
             }
-            console.log(jsonBody);
 
             if (problemField.length > 0) {
-                console.log(problemField);
                 document.getElementById(problemField).focus();
             } else {
                 jsonBody += "}"
@@ -644,7 +603,6 @@ eventPage = (type, id) => {
                     "instanceId1": instanceId1,
                     "objects": jsonBody
                 };
-                //alert(instanceId1);
                 fetch('/api/bpm/instance/' + instanceId1 + wi, {
                     method: "POST",
                     headers: {
@@ -682,9 +640,7 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
     fetch('/api/bpm/workitems/' + location.hash.substr(1), {
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
-        console.log("HERE1" + location.hash.substr(1));
         res = JSON.parse(res);
-        console.log(res);
         formId = res.formId;
         processId = res.processId;
         workitemId = res._id;
@@ -698,11 +654,9 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
                 credentials: "include",
                 method: "GET"
             }).then((prom) => prom.text()).then((steps) => {
-                console.log("###");
-                console.log(steps);
+               
                 steps = JSON.parse(steps);
-                console.log("HERE I AM ")
-                console.log(steps);
+                
                 var keys = Object.keys(steps)
                 rejectionOptions = "<option value=''></option>"
                 if (keys.length > 0) {
@@ -718,20 +672,17 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
                 fetch('/api/uam/roles?ids=' + role, {
                     credentials: 'include'
                 }).then((prom) => prom.text()).then((res123) => {
-                    console.log(res);
-                    console.log(res.instanceId + "!!@@");
+                   
                     instanceId1 = res.instanceId;
                     onLoad(formId, processId, workitemId, res.instanceId, res123);
                 })
-                console.log("###");
             })
 
 
         }
 
 
-        console.log("Instance ID after loading existing process:-" + instanceId1);
-        //alert(instanceId1);
+        
 
 
     })
@@ -741,28 +692,21 @@ if (location.hash.substr(1).indexOf("frm") != -1) {
 
 
 loadObjects = () => {
-    console.log("***************");
-    console.log("INSTANCE LOAD");
+   
     if (iaa.length > 0) {
         instanceId1 = iaa;
 
     }
-    console.log(instanceId1);
-    console.log(iaa);
+ 
     if (instanceId1.length > 0) {
         fetch('/api/bpm/instance/' + instanceId1, {
             credentials: 'include'
         }).then((prom) => {
-            console.log("###########################################");
-            console.log(prom);
-            console.log("###########################################");
+           
             return prom.text();
         }).then((res) => {
-            console.log("***1");
-            console.log(res);
-            console.log("***1");
+           
             for (obj in JSON.parse(res).objects) {
-                console.log(JSON.parse(res));
                 fetch('/api/bpm/objects/' + JSON.parse(res).objects[obj].id + '/' + JSON.parse(res).objects[obj].name, {
                     credentials: 'include'
                 }).then((prom1) => prom1.text()).then((res2) => {
@@ -771,10 +715,8 @@ loadObjects = () => {
                             var body = "";
                             objName = Object.keys(JSON.parse(res2))[1];
                             res2 = JSON.parse(res2)[objName];
-                            console.log(res2);
-                            console.log(tempArr[i]);
+                           
                             for (var j = 0; j < res2.length; j++) {
-                                console.log("$$" + tempArr[i].tagName + "$$");
                                 if (tempArr[i].tagName == "TABLE") {
                                     var tempRow = "<tr>";
                                     for (key in res2[j]) {
@@ -784,25 +726,18 @@ loadObjects = () => {
                                     }
                                     tempRow += "</tr>";
                                     document.getElementById("tbody" + tempArr[i].id).innerHTML += tempRow;
-                                    console.log(tempRow)
                                 }
                                 else {
 
                                     for (key in res2[j]) {
                                         if (key != "_id") {
-                                            console.log(tempArr[i].id + "_" + key);
-                                            console.log(res2[j]);
-                                            console.log("WHAT IS THIS???");
+                                           
                                             if (document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]) != undefined && document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]).type == "radio") {
-                                               console.log("Meh");
-                                               console.log(key);
-                                               console.log(document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]));
-                                               console.log(res2[j][key]);
+                                               
                                                
                                                 document.getElementById(tempArr[i].id + "_" + key + "_" + res2[j][key]).checked = true;
                                             } else {
-                                                console.log(res2[j]);
-                                                console.log(new Date(res2[j][key]));
+                                               
                                                 if(String(new Date(res2[j][key])).indexOf("Invalid")==-1){
                                                     var dt=new Date(res2[j][key]);
                                                     document.getElementById(tempArr[i].id + "_" + key).value = dt.getFullYear()+"-"+dt.getMonth()+"-"+dt.getDate();
@@ -817,12 +752,7 @@ loadObjects = () => {
 
                                 }
                             }
-                            //                            for (key in objs[i].schemaStructure) {
-                            //                                console.log(key + "#" + objs[i].schemaStructure[key].type);
-                            //                                body += "<tr>" + key + "</tr>";
-                            //
-                            //
-                            //                            }
+                            
 
 
                             break;
@@ -834,7 +764,6 @@ loadObjects = () => {
         })
 
     }
-    console.log("***************");
 
 }
 
@@ -853,7 +782,6 @@ bindObject = (bindObjName, currentEl, role) => {
             if (document.getElementById(currentEl).tagName == "FORM") {
                 var doc = document.createElement("DIV");
                 doc.id = ts;
-                //console.log(objs[i].schemaStructure)
                 var schema = objs[i].schemaStructure;
                 for (key in schema) {
                     if (schema[key].control == "text") {
@@ -878,7 +806,6 @@ bindObject = (bindObjName, currentEl, role) => {
                         if (typeof (schema[key].pattern) !== 'undefined' && schema[key].pattern.length > 0) {
                             newEl.pattern = decodeURI(schema[key].pattern);
                         }
-                        console.log(key + "#" + schema[key].required);
                         if (typeof (schema[key].required) !== 'undefined' && schema[key].required == true) {
                             newEl.required = true;
                         }
@@ -893,7 +820,6 @@ bindObject = (bindObjName, currentEl, role) => {
 
                     } else if (schema[key].control == "radio") {
                         var ts = schema[key].options.split(",")
-                        console.log(ts);
                         var alpha = document.createElement("DIV");
 
 
@@ -901,14 +827,10 @@ bindObject = (bindObjName, currentEl, role) => {
                             var newDiv = document.createElement("LABEL");
                             newDiv.className = "radio-inline";
                             var newEl = document.createElement("INPUT");
-                            //newEl.className = "form-control";
                             newEl.type = "radio";
                             newEl.name = key;
-                            console.log(key);
-                            console.log(k);
-                            console.log(ts);
+                           
                             newEl.value = ts[k];
-                            console.log(key + "#" + schema[key].required);
 
                             if (typeof (schema[key].required) !== 'undefined' && schema[key].required == true) {
                                 newEl.required = true;
@@ -923,9 +845,7 @@ bindObject = (bindObjName, currentEl, role) => {
 
 
                             newDiv.innerHTML += ts[k]
-                            console.log("########################");
-                            console.log(newDiv);
-                            console.log("########################");
+                           
                             alpha.appendChild(newDiv);
 
 
@@ -937,7 +857,6 @@ bindObject = (bindObjName, currentEl, role) => {
 
                     } else if (schema[key].control == "select") {
                         var ts = schema[key].options
-                        console.log(ts[0]);
                         var alpha = document.createElement("SELECT");
                         if (readOnly == "readonly") {
                             alpha.readOnly = true;
@@ -962,15 +881,12 @@ bindObject = (bindObjName, currentEl, role) => {
 
             } else {
                 var header = "";
-                console.log("#@$" + document.getElementById(currentEl).innerHTML);
                 schemaStructure = objs[i].schemaStructure;
                 for (key in objs[i].schemaStructure) {
-                    console.log(key + "#" + objs[i].schemaStructure[key].type);
                     header += "<th>" + key + "</th>";
 
 
                 }
-                console.log("%%%" + header);
 
                 document.getElementById(currentEl).innerHTML = header + "<tbody id='tbody" + currentEl + "'></tbody>";
 
@@ -991,27 +907,7 @@ document.getElementById('closeModal').addEventListener('click', (ev) => {
 });
 
 putMe = (node) => {
-    // if (node.lastElementChild != undefined) {
-    //     putMe(node.lastElementChild)
-    // } else {
-    //     console.log(node.getBoundingClientRect());
-    //     var but1 = document.createElement('BUTTON');
-    //     var but2 = document.createElement('BUTTON');
-    //     but1.id = "Submit";
-    //     but2.id = "Reject";
-    //     but1.innerText = "Submit";
-    //     but2.innerText = "Reject";
-    //     but1.className = "btn btn-primary";
-    //     but2.className = "btn btn-primary";
-    //     if (submitExists == false) {
-    //         document.getElementById('app').appendChild(but1);
-
-    //     }
-    //     if (rejectExists == false) {
-    //         document.getElementById('app').appendChild(but2);
-
-    //     }
-    // }
+    
     var divDown = document.createElement("DIV");
     divDown.style.display = "flex";
     var but1 = document.createElement('BUTTON');
@@ -1020,10 +916,8 @@ putMe = (node) => {
     var sel = document.createElement("SELECT");
     sel.className = "form-control"
     sel.id = "rejectSelect";
-    // sel.style.position = "fixed";
     sel.style.width = "100px"
 
-    // sel.style.bottom = "15px";
 
 
     but1.id = "Submit" + new Date().getTime();
@@ -1066,9 +960,7 @@ putMe = (node) => {
     // document.getElementById('app').appendChild(but2);
     //        document.getElementById('rejectSelect').style.left = (400 - document.getElementById('Reject').getBoundingClientRect().width - 80) + "px";
 
-    console.log("#@!");
-    console.log(divDown);
-    console.log("#@!");
+    
     document.getElementById('app').appendChild(divDown);
 
     if (rejectionOptions.length > 0 && rejectionApplicable == true) {

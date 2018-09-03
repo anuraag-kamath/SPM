@@ -38,7 +38,6 @@ loadPage = (page, message, popUp) => {
 
     // for (var i = 1; i <= 100; i++) {
     //     render(i);
-    //     console.log(document.getElementById('loading').style.width);
 
 
     // }
@@ -147,16 +146,13 @@ loadPage = (page, message, popUp) => {
             var script = document.createElement("script");
             script.src = "js/" + page + ".js";
             script.id = "currentScript"
-            console.log("#1");
             document.getElementsByTagName("head")[0].appendChild(script);
-            console.log("#2");
-            console.log("#3");
+           
 
 
         }
 
     }).catch((err) => {
-        console.log("ERRR");
     })
 }
 
@@ -244,7 +240,6 @@ hashCheck = () => {
 // formPreview = (formId) => {
 //     calledFrom = "formPreview"
 //     formId = formId
-//     console.log(formId+"##");
 //     loadPage("formViewer", "Form Viewer", "Y");
 
 // }
@@ -323,7 +318,6 @@ popupClose = () => {
 
 document.getElementById('loggedinUser').addEventListener('click', (ev) => {
     var div = document.createElement("DIV");
-    console.log(document.getElementById(ev.target.id).getBoundingClientRect());
     div.style.height = "30px";
     div.style.width = document.getElementById(ev.target.id).getBoundingClientRect().width * 4;
     div.style.backgroundColor = "pink";
@@ -356,7 +350,6 @@ document.getElementById('loggedinUser').addEventListener('click', (ev) => {
     document.getElementById('changePwd').addEventListener('click', (ev) => {
         if (document.getElementById('pwd1').value.length > 0 && document.getElementById('pwd2').value.length > 0 && document.getElementById('pwd1').value == document.getElementById('pwd2').value) {
             var bodyJson = '{"newPassword": "' + document.getElementById('pwd1').value + '"}'
-            console.log(bodyJson);
             fetch('/api/uam/user', {
                 method: "PUT",
                 credentials: "include",
@@ -388,26 +381,19 @@ document.addEventListener('click', (ev) => {
 
 
 instanceIdLoader = (bindingId, calledFrom1) => {
-    console.log("EVENT REGISTERED" + bindingId);
-    console.log(document.getElementById(bindingId));
+    
     document.getElementById(bindingId).addEventListener('click', (ev) => {
-        console.log("CLICK");
         instanceId = ev.target.id;
         if (String(ev.target.id).indexOf("_") != -1) {
             instanceId = String(ev.target.id).substr(String(ev.target.id).indexOf("_") + 1)
         }
-        console.log("I set" + instanceId);
         fetch('/api/bpm/instance/' + instanceId, {
             credentials: "include"
         }).then((prom) => prom.text()).then((proc) => {
-            console.log(JSON.parse(proc).processId + "#" + calledFrom1);
             processId = JSON.parse(proc).processId;
-            console.log("%%%" + processId);
 
             calledFrom = calledFrom1;
-            console.log("****");
-            console.log(calledFrom);
-            console.log("****");
+           
             loadPage("process", "Process Definition", "Y")
 
         })

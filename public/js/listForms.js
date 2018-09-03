@@ -30,7 +30,6 @@ listForms = () => {
 
                     document.getElementById("delete_" + alpha[i]._id).addEventListener("click", (ev) => {
                         fetch('/api/bpm/process?searchForm=' + String(ev.target.id).replace("delete_", "")).then((prom) => prom.text()).then((res) => {
-                            console.log(res);
                             if (JSON.parse(res).length > 0) {
                                 alert("The form cannot be deleted as it is being used in following processes:-" + res);
                             }

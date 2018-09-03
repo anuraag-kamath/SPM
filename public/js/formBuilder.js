@@ -9,11 +9,9 @@ onLoad = () => {
 
         credentials: 'include'
     }).then((prom) => prom.text()).then((res) => {
-        ////////console.log(res);
         objs = JSON.parse(res);
         document.getElementById('ctr-bind').innerHTML += "<option value=''></option>";
         for (var ob in JSON.parse(res)) {
-            //////console.log(objs[ob].schemaName);
             document.getElementById('ctr-bind').innerHTML += "<option value='" + objs[ob].schemaName + "'>" + objs[ob].schemaName + "</option>";
         }
 
@@ -22,9 +20,7 @@ onLoad = () => {
 
         formId = window.location.hash.substr(7);
         if (formId != undefined && formId != "undefined" && formId.length > 0) {
-            //console.log("ABCD");
 
-            //////console.log(formId);
         }
         else {
             removeLoadBar();
@@ -37,17 +33,12 @@ onLoad = () => {
             }).then((prom) => {
                 return prom.text()
             }).then((res) => {
-                //////console.log("***");
-                //////console.log(res);
-                //////console.log("***");
+            
                 var tempArr = (JSON.parse(res).structure)
 
                 document.getElementById("formName").value = (JSON.parse(res).name);
 
-                //document.getElementById('main-section').appendChild(alpha);
-                //////console.log(tempArr);
-                //console.log("contents of a form");
-                //console.log(tempArr);
+               
                 for (var i = 1; i < tempArr.length; i++) {
                     var beta = document.createElement(tempArr[i].tagName);
                     beta.id = tempArr[i].id;
@@ -55,7 +46,6 @@ onLoad = () => {
                     beta.className = tempArr[i].class;
                     if (tempArr[i].tagName != "DIV" && tempArr[i].tagName != "FORM" && tempArr[i].tagName != "TABLE") beta.innerText = tempArr[i].text;
                     beta.style.display = tempArr[i].display;
-                    //                    beta.style.backgroundColor = tempArr[i].bgc;
                     beta.style.height = tempArr[i].height;
                     beta.style.width = tempArr[i].width;
                     beta.style.overflow = tempArr[i].overflow;
@@ -71,7 +61,6 @@ onLoad = () => {
                     beta.style.border = tempArr[i].border;
                     beta.style.float = tempArr[i].float;
                     beta.style.color = tempArr[i].color;
-                    //////console.log(tempArr[i]);
 
                     document.getElementById(tempArr[i].parentId).appendChild(beta);
                     if (beta.tagName == "MYDMS") {
@@ -87,7 +76,6 @@ onLoad = () => {
                             for (var i = 0; i < objs.length; i++) {
 
                                 if (document.getElementById(String(ev.target.id).replace("bt", "")).getAttribute('bind') == objs[i].schemaName) {
-                                    //////console.log(objs[i].structure);
 
                                     schemaStructure = objs[i].schemaStructure;
                                 }
@@ -95,24 +83,16 @@ onLoad = () => {
 
 
 
-                            //            document.getElementById('megaCheck').style.height = "100%"
-                            //            document.getElementById('megaCheck').style.width = "100%"
-                            //////console.log(document.getElementById('megaCheck'));
+                           
                             document.getElementById('megaCheck').style.display = "block"
                             document.getElementById('contentModal1').innerHTML = "";
-                            //   document.getElementById('main-section').style.display="none"
-                            //            document.getElementById('megaCheck').style.backgroundColor = "grey"
-                            //            document.getElementById('megaCheck').style.position = "absolute"
-                            //            document.getElementById('megaCheck').style.zIndex = "1"
-                            //            document.getElementById('megaCheck').style.opacity = "0.7"
+                          
                             var test = document.createElement("FORM");
                             test.id = "formModal";
                             var tis = new Date().getTime();
-                            //////console.log("WHO" + schemaStructure);
-                            //////console.log(schemaStructure);
+                            
                             for (key in schemaStructure) {
 
-                                //////console.log(key + "#" + schemaStructure[key].type);
                                 test.innerHTML += "<input type='input' id=" + key + tis + " class='form-control' placeholder='" + key + "'>";
 
                             }
@@ -126,11 +106,9 @@ onLoad = () => {
 
                             document.getElementById('modalAdd' + tis).addEventListener('click', (ev) => {
                                 ev.preventDefault();
-                                //////console.log(document.getElementById('formModal'));
                                 var tempRow = "<tr>";
                                 for (key in schemaStructure) {
                                     var temp = String(ev.target.id).replace("modalAdd", key)
-                                    //////console.log(document.getElementById(temp).value);
                                     tempRow += "<td>" + document.getElementById(temp).value + "</td>"
                                 }
 
@@ -154,27 +132,12 @@ onLoad = () => {
 
                 }
 
-                //console.log(document.getElementById('main-section'));
 
                 document.getElementById('right-section').innerHTML = "";
-                //console.log(document.getElementById('main-section').childNodes);
                 checkForMe('main-section', 1, "none");
-                //console.log(testArr);
-                // //////console.log("*******************");
                 removeLoadBar();
 
-                for (var it in testArr) {
-                    ////console.log("display" + it + "#@");
-                    for (var it1 in testArr[it]) {
-                        //////console.log("*****************************");
-                        ////console.log("display" + testArr[it][it1]);
-
-                        //                        document.getElementById("display" + it1).style.display = "none";
-                        //////console.log("display"+testArr[it][it1]);
-                        //////console.log("*****************************");
-                    }
-                }
-
+                
 
             })
         }
@@ -186,7 +149,6 @@ finalNode = "";
 
 
 drag = (event) => {
-    //////console.log("DATA");
     event.dataTransfer.setData("dr", event.target.id);
 }
 
@@ -198,10 +160,7 @@ onDragOver = (event) => {
 
     event.preventDefault();
 
-    // ////console.log("***");
-    // ////console.log(event.target.id);
-    // ////console.log(document.getElementById(event.target.id).childNodes);
-    // ////console.log("***");
+ 
     if (event.target.id != "" && event.target.id != "tempDiv1" &&
         document.getElementById(event.target.id).tagName != "FORM") {
 
@@ -216,13 +175,11 @@ onDragOver = (event) => {
 
         }
 
-        // ////console.log(document.elementFromPoint(event.clientX,event.clientX).closest("div"));
         var cren = document.getElementById(event.target.id).childNodes;
         distance = -1;
         distanceX = event.x;
         distanceY = event.y;
         var tempEl = "";
-        //////console.log("#############################################");
         for (var i = 0; i < cren.length; i++) {
 
             if (cren[i].id != null && cren[i].id != "tempDiv1") {
@@ -237,14 +194,10 @@ onDragOver = (event) => {
                     distance1 = Math.sqrt(Math.pow((point1X - distanceX), 2) + Math.pow((distanceY - point1Y), 2));
                     distance2 = Math.sqrt(Math.pow((point2X - distanceX), 2) + Math.pow((distanceY - point2Y), 2));
                     distance3 = Math.sqrt(Math.pow((point3X - distanceX), 2) + Math.pow((distanceY - point3Y), 2));
-                    // distanceX = tempX;
-                    // distanceY = tempY;
+                   
                     distance = Math.min(distance1, distance2, distance3)
                     tempEl = cren[i].id;
-                    //     ////console.log("**2**");
-                    //     ////console.log(document.getElementById(tempEl));
-                    //     ////console.log(distance);
-                    //     ////console.log("**2**");
+                   
                 } else {
                     distance1 = Math.sqrt(Math.pow((point1X - distanceX), 2) + Math.pow((distanceY - point1Y), 2));
                     distance2 = Math.sqrt(Math.pow((point2X - distanceX), 2) + Math.pow((distanceY - point2Y), 2));
@@ -252,16 +205,10 @@ onDragOver = (event) => {
 
                     tempDistance = Math.min(distance1, distance2, distance3);
 
-                    // ////console.log(tempX);
-                    // ////console.log(tempY);
-                    //////console.log("**3**");
-                    //////console.log(document.getElementById(cren[i].id));
-                    //////console.log(tempDistance);
-                    //////console.log("**3**");
+                
 
                     if (tempDistance < distance) {
-                        // distanceX = tempX;
-                        // distanceY = tempY;
+                     
                         tempEl = cren[i].id;
                         distance = tempDistance;
 
@@ -270,13 +217,7 @@ onDragOver = (event) => {
                 }
             }
         }
-        // ////console.log("#############################################");
-
-        // ////console.log("********");
-        // ////console.log(tempEl);
-        // ////console.log(cren.length);
-        // ////console.log(cren);
-        // ////console.log("********");
+      
         if ((tempEl != "" && tempEl != currentElDrag) || cren.length == 0) {
             if (document.getElementById('tempDiv1') != null) {
                 document.getElementById('tempDiv1').parentNode.removeChild(document.getElementById('tempDiv1'))
@@ -287,48 +228,29 @@ onDragOver = (event) => {
 
                 nextNode = document.getElementById(tempEl).nextSibling;
             }
-            // ////console.log(tempEl);
-
-            // ////console.log(nextNode);
+          
 
             if (cren.length == 0) {
                 var div = document.createElement('DIV');
                 div.id = "tempDiv1"
-                // div.style.height = "100px";
-                // div.style.widows = "100px";
+                
                 div.style.backgroundColor = "blue";
                 mode = "parent";
-                //////console.log(event.target.id);
                 finalNode = document.getElementById(event.target.id);
                 document.getElementById(event.target.id).appendChild(div);
-                //////console.log("APPENDED 3");
             }
             else if (nextNode == null) {
                 var div = document.createElement('DIV');
                 div.id = "tempDiv1"
-                // div.style.height = "100px";
-                // div.style.widows = "100px";
+               
                 div.style.backgroundColor = "blue";
                 div.className = "col-1";
                 mode = "parent";
                 div.style.border = "2px solid grey"
-                // ////console.log(event.target.id);
-                // ////console.log(tempEl);
-                // ////console.log("APPENDING DUMMY")
-                // if (document.getElementById('formName').value == 'ABCD') {
-
-                //     var dummyDiv = document.createElement('DIV');
-                //     dummyDiv.id = "DUMMYDIV"
-                //     dummyDiv.style.height = "100px";
-                //     dummyDiv.style.widows = "100px";
-                //     dummyDiv.style.backgroundColor = "blue";
-                //     document.getElementById(tempEl).parentNode.appendChild(dummyDiv);
-
-                // }
+                
                 finalNode = document.getElementById(tempEl).parentNode;
                 document.getElementById(tempEl).parentNode.appendChild(div);
 
-                //////console.log("APPENDED 1");
             } else {
                 var div = document.createElement('DIV');
                 div.style.height = "100%";
@@ -337,12 +259,10 @@ onDragOver = (event) => {
                 div.style.backgroundColor = "blue";
                 div.className = "col-1";
 
-                // document.getElementById(tempEl).parentNode.appendChild(div);
                 mode = "next";
                 finalNode = document.getElementById(tempEl).parentNode;
 
                 document.getElementById(tempEl).parentNode.insertBefore(div, nextNode);
-                //////console.log("APPENDED 2");
             }
         }
     }
@@ -365,7 +285,6 @@ drop2 = (event) => {
 
     var buttonClose = document.createElement("BUTTON");
     buttonClose.innerText = "X";
-    //buttonClose.className = "right";
     buttonClose.id = "buttonClose"
     var button1 = document.createElement("BUTTON");
     var button2 = document.createElement("BUTTON");
@@ -405,7 +324,6 @@ drop2 = (event) => {
     newDiv.appendChild(hr);
     newDiv.appendChild(button3);
 
-    //    document.getElementById("app").style.display = "none";
     document.getElementById("app").style.opacity = 0.3;
     document.getElementById("pop-up").style.display = "block";
 
@@ -422,7 +340,6 @@ drop2 = (event) => {
         document.getElementById("app").style.opacity = 1;
         document.getElementById("pop-up").style.display = "none";
         source = dr20;
-        //////console.log(source);
         target = dr21;
         if ((document.getElementById(source).tagName == "BUTTON" ||
             document.getElementById(source).tagName == "TABLE" ||
@@ -482,12 +399,7 @@ drop2 = (event) => {
             sourceParent.insertBefore(target, sourceNext)
         }
 
-        // ////console.log("A:-" + sceneA);
-        // ////console.log("B:-" + sceneB);
-        // ////console.log("C:-" + sceneC);
-        // ////console.log("D:-" + sceneD);
-        // ////console.log("E:-" + sceneE);
-        // ////console.log("F:-" + sceneF);
+
 
     });
 
@@ -499,7 +411,6 @@ drop = (event) => {
     if (document.getElementById('tempDiv1') != null) {
         document.getElementById('tempDiv1').parentNode.removeChild(document.getElementById('tempDiv1'))
     }
-    //////console.log("DROPPED");
     ts = new Date().getTime();
     sourceElement = (event.dataTransfer.getData("dr"));
     id = new Date().getTime();
@@ -513,16 +424,13 @@ drop = (event) => {
         newContainer.id = id;
         newContainer.style.backgroundColor = "red";
         newContainer.style.height = "100%";
-        //newContainer.style.margin="20px";
-        //newContainer.style.border = "2px solid black";
+        
         if (mode == "parent") {
             finalNode.appendChild(newContainer);
         } else {
             finalNode.insertBefore(newContainer, nextNode);
         }
-        //        parentNode1.appendChild(newContainer);
-        //////console.log("DID I ADD?" + newContainer.id);
-        //////console.log("ADDED");
+     
     } else if (sourceElement == "table") {
         var newTable = document.createElement("TABLE");
         newTable.setAttribute("name","");
@@ -535,14 +443,12 @@ drop = (event) => {
         newTable.style.cursor = "pointer";
         newTable.className = "table";
         newTable.style.background = "yellow";
-        //newContainer.style.margin="20px";
-        //newTable.style.border = "2px solid black";
+       
         if (mode == "parent") {
             finalNode.appendChild(newTable);
         } else {
             finalNode.insertBefore(newTable, nextNode);
         }
-        //        parentNode1.appendChild(newTable);
         var newButton = document.createElement("BUTTON");
         newButton.id = "bt" + id;
         newButton.innerText = "+"
@@ -551,23 +457,15 @@ drop = (event) => {
         } else {
             finalNode.insertBefore(newButton, nextNode);
         }
-        //        parentNode1.appendChild(newButton)
         document.getElementById('bt' + id).addEventListener('click', (ev) => {
-            //////console.log(schemaStructure);
-            //            document.getElementById('megaCheck').style.height = "100%"
-            //            document.getElementById('megaCheck').style.width = "100%"
+        
             document.getElementById('megaCheck').style.display = "block"
             document.getElementById('contentModal1').innerHTML = "";
-            //   document.getElementById('main-section').style.display="none"
-            //            document.getElementById('megaCheck').style.backgroundColor = "grey"
-            //            document.getElementById('megaCheck').style.position = "absolute"
-            //            document.getElementById('megaCheck').style.zIndex = "1"
-            //            document.getElementById('megaCheck').style.opacity = "0.7"
+            
             var test = document.createElement("FORM");
             test.id = "formModal";
             var tis = new Date().getTime();
             for (key in schemaStructure) {
-                //////console.log(key + "#" + schemaStructure[key].type);
                 test.innerHTML += "<input type='input' id=" + key + tis + " class='form-control' placeholder='" + key + "'>";
 
             }
@@ -581,11 +479,9 @@ drop = (event) => {
 
             document.getElementById('modalAdd' + tis).addEventListener('click', (ev) => {
                 ev.preventDefault();
-                //////console.log(document.getElementById('formModal'));
                 var tempRow = "<tr>";
                 for (key in schemaStructure) {
                     var temp = String(ev.target.id).replace("modalAdd", key)
-                    //////console.log(document.getElementById(temp).value);
                     tempRow += "<td>" + document.getElementById(temp).value + "</td>"
                 }
 
@@ -601,8 +497,7 @@ drop = (event) => {
 
         });
         newTable.addEventListener('click', (event) => {
-            //////console.log("ABCD");
-            //            newTable.innerHTML = "<th>alpha</th><th>beta</th><tr><td>Gamma</td><td>Theeta</td></tr>"
+            
 
         })
         bindObject(objs[0].schemaName, ts);
@@ -614,13 +509,11 @@ drop = (event) => {
         newButton.innerText = "Submit";
         newButton.id = id;
         newButton.className = "btn btn-primary";
-        //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newButton);
         } else {
             finalNode.insertBefore(newButton, nextNode);
         }
-        //        parentNode1.appendChild(newButton);
     } else if (sourceElement == "form") {
         var newForm = document.createElement("FORM");
         newForm.setAttribute("name","");
@@ -629,42 +522,35 @@ drop = (event) => {
         newForm.className = "form-group";
         newForm.style.width = "100%";
         newForm.setAttribute("bind", objs[0].schemaName)
-        //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newForm);
         } else {
             finalNode.insertBefore(newForm, nextNode);
         }
-        // 
-        //bindObject(objs[0].schemaName, ts);
-        //        parentNode1.appendChild(newForm);
+        
     } else if (sourceElement == "para") {
         var newPara = document.createElement("P");
         newPara.setAttribute("name","");
 
         newPara.id = id;
         newPara.innerText = "This is the sample para. Change it using the text property below!"
-        //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newPara);
         } else {
             finalNode.insertBefore(newPara, nextNode);
         }
-        //        parentNode1e.appendChild(newPara);
     } else if (sourceElement == "hr") {
         var newHr = document.createElement("HR");
         newHr.setAttribute("name","");
 
         newHr.id = id;
         newHr.style.border = "1px solid black";
-        //////console.log("HR ADDED");
-        //newContainer.style.margin="20px";
+        
         if (mode == "parent") {
             finalNode.appendChild(newHr);
         } else {
             finalNode.insertBefore(newHr, nextNode);
         }
-        //       parentNode1.appendChild(newHr);
     } else if (sourceElement == "image") {
         var newImage = document.createElement("IMG");
         newImage.setAttribute("name","");
@@ -672,18 +558,15 @@ drop = (event) => {
         newImage.src = "sample.png";
         newImage.style.border = "1px solid black"
         newImage.id = id;
-        //newContainer.style.margin="20px";
         if (mode == "parent") {
             finalNode.appendChild(newImage);
         } else {
             finalNode.insertBefore(newImage, nextNode);
         }
-        //       parentNode1.appendChild(newImage);
     } else if (sourceElement == "text") {
         match = false;
         var test = event.target;
         while (test.id != 'main-section' && match == false) {
-            //////console.log(test.tagName);
             if (test.tagName == "FORM") {
                 match = true;
             } else {
@@ -696,7 +579,6 @@ drop = (event) => {
 
             newText.id = id;
             newText.className = "form-control";
-            //newContainer.style.margin="20px";
             event.target.appendChild(newText);
         } else {
             noClick = "Y";
@@ -708,8 +590,7 @@ drop = (event) => {
         newDMS.setAttribute("uniqueIdentifier", new Date().getTime());
         newDMS.setAttribute("name","");
 
-        //////console.log("HR ADDED");
-        //newContainer.style.margin="20px";
+        
         if (mode == "parent") {
             finalNode.appendChild(newDMS);
         } else {
@@ -718,11 +599,9 @@ drop = (event) => {
         createDms("builder");
     }
 
-    //    document.createElement();
     showData(document.getElementById("main-section"));
     document.getElementById('right-section').innerHTML = "";
     checkForMe('main-section', 1, "none");
-    ////console.log("I AM DONE");
     if (noClick != "Y") {
         document.getElementById('display' + ts).click();
 
@@ -734,21 +613,18 @@ drop = (event) => {
 }
 
 drop1 = (event) => {
-    //////console.log("Prevent");
     event.preventDefault();
 }
 
 
 
 showData = (node) => {
-    ////////console.log("Parent" + node);
     if (node.hasChildNodes) {
         node.childNodes.forEach((child) => {
-            ////////console.log("Child:-" + child.id + "#" + child.name + "#" + child.tagName);
             showData(child);
         });
     }
-    if (node.id != '' && node.id != 'undefined') //////console.log(node.id + "#" + node.name + "#" + node.tagName);
+    if (node.id != '' && node.id != 'undefined') 
         return node;
 }
 
@@ -768,21 +644,10 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     tesmp = tesmp.replace("display", "")
     tesmp = tesmp.replace("exp", "")
 
-    ////console.log(tesmp);
-    ////console.log(document.getElementById(tesmp));
+    
     if (cur.length > 0 && document.getElementById(cur) != undefined &&
         document.getElementById(cur).style != null) {
-        // if (testArr[cur] != undefined && testArr[cur] != "undefined" && !(testArr[cur].includes(tesmp))) {
-        //     for (var te = 0; te < testArr[cur].length; te++) {
-        //         //console.log("EXPANDED");
-        //         var tempMargin = String(document.getElementById("display" + cur).style.margin).substr(0, String(document.getElementById("display" + cur).style.margin).indexOf("px"));
-
-        //         document.getElementById("display" + testArr[cur][te]).style.display = "none";
-        //         document.getElementById("display" + testArr[cur][te]).style.margin = tempMargin + 5 + "px";
-
-        //     }
-        //     document.getElementById("exp" + cur).innerText = "+";
-        // }
+        
         document.getElementById(cur).style.border = curBorder;
         if (document.getElementById("display" + cur) != null && document.getElementById("display" + cur).style != null) {
             document.getElementById("display" + cur).style.backgroundColor = "grey";
@@ -791,17 +656,11 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
 
     }
     cur = tesmp;
-    ////console.log(cur);
-    ////console.log(testArr);
-    ////console.log(document.getElementById(cur).innerText);
-    //console.log(cur);
+    
     if ((String(expId).indexOf("exp") != -1)) {
-        ////console.log("@@@@");
-        ////console.log(testArr[cur]);
-
+      
         if (testArr[cur] != undefined && testArr[cur] != "undefined") {
             for (var te = 0; te < testArr[cur].length; te++) {
-                ////console.log(document.getElementById(cur));
                 var tempMargin = String(document.getElementById("display" + cur).style.margin).substr(0, String(document.getElementById("display" + cur).style.margin).indexOf("px"));
                 document.getElementById("display" + testArr[cur][te]).style.margin = tempMargin + 15 + "px";
                 document.getElementById("display" + testArr[cur][te]).style.display = "block";
@@ -811,7 +670,6 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
         }
 
     }
-    //////console.log("ERR" + cur + "#" + document.getElementById(cur));
     curBorder = document.getElementById(cur).style.border;
     document.getElementById(tesmp).style.border = "10px solid green";
     if (document.getElementById("display" + cur) != null && document.getElementById("display" + cur).style != null) {
@@ -820,7 +678,6 @@ document.getElementById('right-section').addEventListener('click', (ev) => {
     document.getElementById('ctr-width').value = document.getElementById(cur).style.width;
     document.getElementById('ctr-overflow').value = document.getElementById(cur).style.overflow;
     document.getElementById('ctr-class').value = document.getElementById(cur).classList;
-    //    document.getElementById('ctr-bg-clr').value = document.getElementById(cur).style.backgroundColor;
     document.getElementById('ctr-padding').value = document.getElementById(cur).style.padding;
     document.getElementById('ctr-margin').value = document.getElementById(cur).style.margin;
     document.getElementById('ctr-holder').value = document.getElementById(cur).getAttribute('placeholder');
@@ -1004,9 +861,7 @@ document.getElementById('ctr-class').addEventListener('focusout', (ev) => {
     document.getElementById(cur).classList = ev.target.value;
 })
 
-// document.getElementById('ctr-bg-clr').addEventListener('focusout', (ev) => {
-//     document.getElementById(cur).style.backgroundColor = ev.target.value;
-// })
+
 
 
 document.getElementById('ctr-padding').addEventListener('focusout', (ev) => {
@@ -1070,9 +925,7 @@ document.getElementById('ctr-border').addEventListener('focusout', (ev) => {
 })
 
 function click(ev) {
-    //////console.log("listener added");
     ev.preventDefault();
-    //////console.log("EVENTG" + keyValue[ev.target.id]);
     eval(keyValue[ev.target.id]);
 
 }
@@ -1100,20 +953,15 @@ bindObject = (bindObjName, currentEl) => {
             var ts = new Date().getTime();
 
             if (document.getElementById(currentEl).tagName == "FORM") {
-                ////console.log("OBJ NAME");
-                ////console.log(bindObjName);
+               
                 var doc = document.createElement("DIV");
                 doc.id = ts;
-                //////console.log(objs[i].schemaStructure)
                 var schema = objs[i].schemaStructure;
                 for (key in schema) {
                     if (schema[key].control == "text") {
                         var newEl = document.createElement("INPUT");
                         newEl.className = "form-control";
-                        //console.log(schema[key].type);
-                        //console.log("####");
-                        //console.log(schema[key].type == "String");
-                        //console.log("####");
+                      
                         if (schema[key].type == "String") {
                             newEl.type = "text";
 
@@ -1140,22 +988,18 @@ bindObject = (bindObjName, currentEl) => {
 
 
                         newEl.setAttribute("placeholder", key);
-                        //console.log("NEWEL:-");
-                        //console.log(newEl);
-                        //document.getElementById(cur).appendChild(newEl);
+                        
                         doc.appendChild(newEl);
 
                     }
                     else if (schema[key].control == "radio") {
                         var ts = schema[key].options.split(",")
-                        //console.log(ts);
                         var alpha = document.createElement("DIV");
 
                         for (k in ts) {
                             var newDiv = document.createElement("LABEL");
                             newDiv.className = "radio-inline";
                             var newEl = document.createElement("INPUT");
-                            //newEl.className = "form-control";
                             newEl.type = "radio";
                             newEl.name = key;
                             newEl.value = k;
@@ -1164,9 +1008,7 @@ bindObject = (bindObjName, currentEl) => {
 
 
                             newDiv.innerHTML += ts[k]
-                            //console.log("########################");
-                            //console.log(newDiv);
-                            //console.log("########################");
+                           
                             alpha.appendChild(newDiv);
 
 
@@ -1179,7 +1021,6 @@ bindObject = (bindObjName, currentEl) => {
 
                     else if (schema[key].control == "select") {
                         var ts = schema[key].options
-                        //////console.log(ts[0]);
                         var alpha = document.createElement("SELECT");
                         alpha.className = "form-control";
 
@@ -1201,10 +1042,8 @@ bindObject = (bindObjName, currentEl) => {
 
             } else {
                 var header = "";
-                //////console.log(document.getElementById(currentEl).innerHTML);
                 schemaStructure = objs[i].schemaStructure;
                 for (key in objs[i].schemaStructure) {
-                    //////console.log(key + "#" + objs[i].schemaStructure[key].type);
                     header += "<th>" + key + "</th>";
 
 
@@ -1227,7 +1066,6 @@ document.getElementById('right-section').addEventListener('contextmenu', (ev) =>
 
 
         var txt;
-        //console.log(ev.target.id);
         var r = confirm("Confirm deletion of the element?");
         if (r == true) {
             var tesmp = ev.target.id;
@@ -1246,7 +1084,6 @@ var tempArr = [];
 
 var parentMain = ""
 checkForMe = (mainNode, count, parent) => {
-    ////console.log("AVCD");
     if (document.getElementById("right-section").innerHTML.length == 0) {
         var s3 = document.createElement("STRONG");
         s3.innerText = "Right click to delete an element"
@@ -1269,7 +1106,7 @@ checkForMe = (mainNode, count, parent) => {
         if (document.getElementById(parent) != undefined) {
             parent_name = document.getElementById(parent).getAttribute("name");
         }
-        if (document.getElementById(parent) != undefined) { console.log(document.getElementById(parent).tagName); }
+        
         if (document.getElementById(parent) == undefined || (document.getElementById(parent) != undefined && document.getElementById(parent).tagName != "FORM" && document.getElementById(parent).tagName != "TABLE" && mainNode.indexOf("bt")==-1)) {
             tempArr.push({
                 id: document.getElementById(mainNode).id,
@@ -1282,7 +1119,6 @@ checkForMe = (mainNode, count, parent) => {
                 width: document.getElementById(mainNode).style.width,
                 display: document.getElementById(mainNode).style.display,
                 overflow: document.getElementById(mainNode).style.overflow,
-                //            bgc: document.getElementById(mainNode).style.backgroundColor,
                 align: document.getElementById(mainNode).style.textAlign,
                 padding: document.getElementById(mainNode).style.padding,
                 margin: document.getElementById(mainNode).style.margin,
@@ -1297,7 +1133,6 @@ checkForMe = (mainNode, count, parent) => {
                 binding: document.getElementById(mainNode).getAttribute('bind'),
                 border: document.getElementById(mainNode).style.border
             });
-            //////console.log(document.getElementById(mainNode).name + "#" + document.getElementById(mainNode).tagName + "#" + document.getElementById(mainNode).id + "--->" + "Parent->" + parent_name + "#" + parent + "STYLE->" + document.getElementById(mainNode).style);
             var temp = document.createElement("DIV");
             var h3 = document.createElement("H3")
             h3.id = "exp" + mainNode;
@@ -1313,11 +1148,7 @@ checkForMe = (mainNode, count, parent) => {
                 par += "-"
             }
 
-            //////console.log("*********************");
-            //////console.log("Parent:-" + parent);
-            //////console.log("Current" + mainNode)
-            //////console.log("Current" + document.getElementById(mainNode).hasChildNodes())
-            //////console.log("*********************");
+        
             if (parent == "none") {
                 testArr[parent] = [];
             } else if (testArr[parent] != undefined) {
@@ -1327,14 +1158,9 @@ checkForMe = (mainNode, count, parent) => {
                 testArr[parent] = [];
             }
             if (parent != "main-section" && parent != "none") {
-                // temp.style.display = "none";
-                //console.log("**");
-                //console.log(parent);
-                //console.log(document.getElementById(mainNode).name);
-
+              
                 var tempMargin = String(document.getElementById("display" + parent).style.marginLeft).substr(0, String(document.getElementById("display" + parent).style.marginLeft).indexOf("px"));
-                //console.log(tempMargin);
-                //console.log("**");
+               
 
                 temp.style.marginLeft = (Number(tempMargin) + 15) + "px";
             }
@@ -1342,27 +1168,12 @@ checkForMe = (mainNode, count, parent) => {
                 temp.style.marginLeft = "0px"
             }
             temp.innerHTML = "";
-            //        temp.appendChild(h3);
-            //        temp.innerHTML += '<p id="exp"'+mainNode+'><strong><i class="fas fa-plus"></i></strong> '+document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name+"</p> <br>" + par + mainNode + "<hr>";
-            //temp.innerHTML += '<p id="exp' + mainNode + '"><div><strong id="exp"'+mainNode+'><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "</p><hr></div>";
-            //temp.innerHTML += '<strong id="exp' + mainNode + '"><i class="fas fa-plus"></i></strong> ' + document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).name + "<hr>";
-            console.log(mainNode+"#"+document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).getAttribute("name"))
             temp.innerHTML += document.getElementById(mainNode).tagName + "->" + document.getElementById(mainNode).getAttribute("name") + "<hr>";
             document.getElementById('right-section').appendChild(temp);
-            // document.getElementById('exp' + mainNode).addEventListener('click', (ev) => {
-            //     if (document.getElementById(ev.target.id).innerText == "+") {
-            //         ////console.log("PLUS EXISTS");
-            //         document.getElementById(ev.target.id).innerText = "-"
-            //     } else {
-            //         document.getElementById(ev.target.id).innerText = "+"
-            //         ////console.log("MINUS EXISTS");
-
-            //     }
-            // })
+            
             mainNode = document.getElementById(mainNode);
             var nodes = mainNode.childNodes;
             var i = 0;
-            //  //////console.log(nodes)
 
             while (nodes != undefined && i < nodes.length) {
                 if (nodes[i].id != undefined && nodes[i].id != '') {
@@ -1371,9 +1182,7 @@ checkForMe = (mainNode, count, parent) => {
                 i += 1;
             }
         }
-        // //////console.log("*******************");
-        //console.log("***");
-        //console.log(testArr);
+      
     }
 }
 
@@ -1406,22 +1215,16 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
         tempArr = [];
         checkForMe('main-section', 1, "none");
 
-        //////console.log(tempArr);
 
 
         var jsonBody = '{"name":"' + document.getElementById('formName').value + '","structure":' + JSON.stringify(tempArr) + '}';
-        //console.log(JSON.parse(jsonBody).structure);
         var objs23 = [];
-        console.log(JSON.parse(jsonBody));
         var duplicateObject = "";
         for (var fin = 0; fin < JSON.parse(jsonBody).structure.length; fin++) {
-            //console.log("$$");
-            //console.log(JSON.parse(jsonBody).structure[fin].binding);
-            //console.log(JSON.parse(jsonBody).structure[fin].binding + "############");
+            
 
             if (JSON.parse(jsonBody).structure[fin].binding != null && JSON.parse(jsonBody).structure[fin].binding != "null") {
                 for (var fin1 = 0; fin1 < objs23.length; fin1++) {
-                    //console.log(JSON.parse(jsonBody).structure[fin].binding + "######" + objs23[fin1]);
                     if (JSON.parse(jsonBody).structure[fin].binding.indexOf(objs23[fin1]) != -1) {
                         duplicateObject = JSON.parse(jsonBody).structure[fin].binding;
                         alert("same object cannot be bound with more than 1 element in the same form!");
@@ -1442,14 +1245,7 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
 
         } else {
 
-            //////console.log(jsonBody);
-
-            //    body = '<html><head><link rel="stylesheet" href="css/bootstrap-4.0.0-dist/css/bootstrap.min.css">    <link rel="stylesheet" href="css/main.css"> </head><body>' + document.getElementById('main-section').innerHTML + '</body > '
-            //
-            //    var jsonBody = "{name:'sample',form:'" + body + "'}"
-            //    
-            //    //////console.log(jsonBody);
-            //
+           
             if (jsonBody.indexOf("Submit") == -1 && 1 == 2) {
                 alert("Submit button will be added by the system since the user has not added! And if reject is applicable, the same will also be added by the system");
             }
@@ -1467,7 +1263,6 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
                 }).then((res) => {
                     window.location.hash = "listForms"
 
-                    //////console.log(res);
                 })
             } else {
                 fetch('/api/bpm/forms', {
@@ -1482,7 +1277,6 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
                     return prom.text();
                 }).then((res) => {
                     window.location.hash = "listForms"
-                    //////console.log(res);
                 })
             }
         }
@@ -1497,17 +1291,11 @@ document.getElementById('saveForm').addEventListener('click', (ev) => {
 
 document.getElementById('clearForm').addEventListener('click', (ev) => {
 
-    //    var alpha = document.createElement(tempArr[1].tagName);
-    //    alpha.id = tempArr[1].id;
-    //    alpha.name = tempArr[1].name;
 
 
     document.getElementById('main-section').innerHTML = "";
 
 
-
-    //document.getElementById('main-section').appendChild(alpha);
-    //////console.log(tempArr);
     for (var i = 1; i < tempArr.length; i++) {
         var beta = document.createElement(tempArr[i].tagName);
         beta.id = tempArr[i].id;
@@ -1515,7 +1303,6 @@ document.getElementById('clearForm').addEventListener('click', (ev) => {
         beta.className = tempArr[i].class;
         if (tempArr[i].tagName != "DIV" && tempArr[i].tagName != "FORM" && tempArr[i].tagName != "TABLE") beta.innerText = tempArr[i].text;
         beta.style.display = tempArr[i].display;
-        //        beta.style.backgroundColor = tempArr[i].bgc;
         beta.style.height = tempArr[i].height;
         beta.style.width = tempArr[i].width;
         beta.style.overflow = tempArr[i].overflow;
@@ -1531,7 +1318,6 @@ document.getElementById('clearForm').addEventListener('click', (ev) => {
         beta.style.border = tempArr[i].border;
         beta.style.float = tempArr[i].float;
         beta.style.color = tempArr[i].color;
-        //////console.log(tempArr[i]);
 
         document.getElementById(tempArr[i].parentId).appendChild(beta);
 
@@ -1546,10 +1332,7 @@ document.getElementById('clearForm').addEventListener('click', (ev) => {
 
 
 
-    //    var previewWindow = window.open('', "Preview Window");
-    //    previewWindow.document.write('<html><head><link rel="stylesheet" href="css/bootstrap-4.0.0-dist/css/bootstrap.min.css">    <link rel="stylesheet" href="css/main.css"> </head><body>' + document.getElementById('main-section').innerHTML + '<script type="application/javascript" src="js/main.js"></body > ');
-    //
-    //    //////console.log(tempArr);
+ 
 
 });
 
@@ -1575,19 +1358,16 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
         var new_button2 = document.createElement('BUTTON');
         new_button2.id = "2_" + buttonId;
         var new_text = document.createElement('P');
-        ////console.log(document.getElementById(ev.target.id));
         new_text.innerText = document.getElementById(ev.target.id).getAttribute("name");
         new_div.style.position = "absolute";
         new_div.style.float = "left";
         new_div.style.display = "flex";
-        //        new_div.style.display = "flex";
         new_button1.innerText = "X";
         new_button2.innerText = "C";
         new_div.appendChild(new_button1);
         new_div.appendChild(new_button2);
         new_div.appendChild(new_text);
-        //////console.log("********" + new Date().getTime());
-        //////console.log(hoverElement);
+       
         if (hoverElement != "") {
             try {
                 document.getElementById(hoverElement).removeChild(document.getElementById(divId));
@@ -1597,7 +1377,6 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
 
         }
         if (document.getElementById(ev.target.id) != null) {
-            //console.log(ev.target.id);
             hoverElement = ev.target.id;
             if (String(ev.target.id) != "main-section" && 1 == 2) {
                 document.getElementById(ev.target.id).appendChild(new_div);
@@ -1607,11 +1386,9 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
                 })
                 document.getElementById("2_" + buttonId).addEventListener('click', (ev) => {
                     ev.preventDefault();
-                    //document.getElementById(hoverElement).parentNode.removeChild(document.getElementById(hoverElement))
                     var copiedEl = document.getElementById(hoverElement);
                     clonedEl = copiedEl.cloneNode(true);
                     document.getElementById(hoverElement).parentNode.appendChild(clonedEl);
-                    //////console.log("XXXXXXXXXXXXX");
                 })
             }
         }
@@ -1623,49 +1400,11 @@ document.getElementById('main-section').addEventListener('mouseover', (ev) => {
 
 
 
-// document.getElementById('addEvent').addEventListener('click', (ev) => {
-//     var newDiv = document.createElement("DIV");
-//     newDiv.className = "row";
-//     var div1 = document.createElement("DIV");
-//     var div2 = document.createElement("DIV");
-//     var select = document.createElement("SELECT");
-//     select.innerHTML += "<option></option><option value='click'>click</option>"
-//     select.id = "sel1"
-//     div1.className = "col-4";
-//     div1.appendChild(select);
-//     div2.className = "col-8";
-//     var text = document.createElement('INPUT');
-//     text.id = "scr1";
-//     div2.appendChild(text);
-//     newDiv.appendChild(div1);
-//     newDiv.appendChild(div2);
-//     document.getElementById('events').appendChild(newDiv);
-//     document.getElementById(text.id).addEventListener('focusout', (ev) => {
-//         document.getElementById(cur).addEventListener(document.getElementById('sel1').value, (ev) => {
-//             //////console.log(document.getElementById('scr1').value);
-//             eval(document.getElementById('scr1').value);
-//         })
-//     })
-// })
 
-
-// document.getElementById('toggle').addEventListener('click', (ev) => {
-//     //console.log(document.getElementsByClassName("left-section")[0].className);
-//     if (document.getElementsByClassName("left-section")[0].className.indexOf("col-2") != -1) {
-//         document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-2", "col-1");
-//         document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-8", "col-9");
-//         document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-2", "col-2");
-//         document.getElementById('left-section').style.cursor = "pointer";
-//         document.getElementById('left-hide-section').style.display = "none";
-//     }
-
-// })
 
 document.getElementById('left-section').addEventListener('click', (ev) => {
-    //console.log(document.getElementsByClassName("left-section")[0].className.indexOf("col-1"));
-    //console.log(ev.target.id);
+    
     if (document.getElementsByClassName("left-section")[0].className.indexOf("col-xs-1") != -1 && ev.target.id == "toggle") {
-        //console.log("IN 1");
         document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-xs-1", "col-2");
         document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-xs-9", "col-8");
         document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-xs-2", "col-2");
@@ -1676,7 +1415,6 @@ document.getElementById('left-section').addEventListener('click', (ev) => {
 
     }
     else if (document.getElementsByClassName("left-section")[0].className.indexOf("col-2") != -1 && ev.target.id == "toggle") {
-        //console.log("IN 2");
         document.getElementsByClassName("left-section")[0].className = String(document.getElementsByClassName("left-section")[0].className).replace("col-2", "col-xs-1");
         document.getElementsByClassName("main-section")[0].className = String(document.getElementsByClassName("main-section")[0].className).replace("col-8", "col-xs-9");
         document.getElementsByClassName("right-section")[0].className = String(document.getElementsByClassName("right-section")[0].className).replace("col-2", "col-xs-2");

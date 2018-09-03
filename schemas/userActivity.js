@@ -32,6 +32,9 @@ var userActivity = mongoose.model('userActivity', {
     },
     logDate:{
         type: Date
+    },
+    domain:{
+        type: String
     }
 })
 

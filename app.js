@@ -51,34 +51,36 @@ const email_id = process.env.EMAIL_ID || ""
 const email_password = process.env.EMAIL_PASSWORD || ""
 const email_provider = process.env.EMAIL_PROVIDER || "";
 const proxy_url = process.env.PROXY_URL || "";
-
+const logging_enabled = process.env.LOGGING_ENABLED || false
 
 
 app.use(bodyparser.json());
 
-logger = (token, activity, subActivity, subsubActivity, activityId, status, userId, ipAddress, method) => {
-    if (userId.length > 0) {
-        fetch(proxy_url + "/api/uam/user/" + userId, {
-            credentials: "include",
-            headers: {
-                cookie: 'token=' + token + ';'
-            }
-        }).then((prom) => prom.text()).then((res1) => {
-            res1 = JSON.parse(res1)
-            if (res1 != undefined && res1 !== 'undefined') {
-                act = new userActivity({
-                    activity, subActivity, subsubActivity, activityId, status, userId, user: res1.username, ipAddress, method, logDate: new Date()
-                });
-                act.save();
-            }
-        })
-    } else {
-        act = new userActivity({
-            activity, subActivity, subsubActivity, activityId, status, userId, user: "", ipAddress, method, logDate: new Date()
-        });
-        act.save();
-    }
-}
+// logger = (activity, subActivity, subsubActivity, activityId, status, userId, ipAddress, method) => {
+//     if (logging_enabled == true) {
+//         if (userId.length > 0) {
+//             user.findById(userId, (err, res1) => {
+//                 if (res1 != undefined && res1 !== 'undefined' && res1.user != undefined && res1.user !== 'undefined') {
+//                     act = new userActivity({
+//                         activity, subActivity, subsubActivity, activityId, status, userId, user: res1.user.username, ipAddress, method, logDate: new Date(), domain: "SPM"
+//                     });
+//                     act.save();
+
+//                 }
+
+
+//             })
+
+//         } else {
+//             act = new userActivity({
+//                 activity, subActivity, subsubActivity, activityId, status, userId, user: "", ipAddress, method, logDate: new Date(), domain: "SPM"
+//             });
+//             act.save();
+
+//         }
+
+//     }
+// }
 
 
 app.use(bodyparser.urlencoded({
@@ -109,15 +111,14 @@ app.use(express.static(__dirname + '/public'))
 
 
 app.get('/comments/:instanceId', (req, res) => {
-    logger(req.cookies.token, "API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+    //logger(req.cookies.token, "API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
     comments.find({ instanceId: req.params.instanceId }).then((docs) => {
         res.send(docs);
     })
 })
 
 app.post('/comments/:instanceId', (req, res) => {
-    logger(req.cookies.token, "API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
-    console.log("COMMENT SAVED for" + req.params.instanceId);
+    //logger(req.cookies.token, "API", "comments", "", req.params.instanceId, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
     var com = new comments({
         comment: req.body.comment,
         user: jsonwebtoken.verify(req.cookies.token, jwt_key).userId,
@@ -128,7 +129,6 @@ app.post('/comments/:instanceId', (req, res) => {
     })
     com.save().then(
         (res1) => {
-            console.log("COMMENT SAVED" + res1);
             res.send(res1);
         }
     );
@@ -141,15 +141,13 @@ app.delete('/comments/:id', (req, res) => {
 })
 
 app.post('/logout', (req, res) => {
-    logger(req.cookies.token, "API", "logout", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+    //logger(req.cookies.token, "API", "logout", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
-    console.log("**/logout entered**");
 
 
     res.cookie('token', '', { httpOnly: true }).send({
         url: ''
     })
-    console.log("**/logout exited**");
 
 });
 
@@ -197,7 +195,6 @@ sendMail = (senderMailId, subject, html) => {
 
 
 app.post('/objects', (req, res) => {
-    console.log("**/objects entered**");
     obj.find({ schemaName: req.body.schemaName + "_v0" }).then((objs) => {
         if (objs.length > 0) {
             res.send({ error: "Object with same root element exists! Please change the root element name" });
@@ -224,8 +221,6 @@ app.post('/objects', (req, res) => {
                 });
 
             }).catch((err) => {
-                console.log("ERR");
-                console.log(err);
             })
 
         }
@@ -233,15 +228,13 @@ app.post('/objects', (req, res) => {
 
 
 
-    console.log("**/objects exited**");
 
 
 })
 
 
 app.put('/objects/:id', (req, res) => {
-    console.log(req.body);
-    console.log("**/objects entered**");
+
 
     obj.findByIdAndUpdate(req.params.id, {
         obsolete: "yes"
@@ -250,9 +243,9 @@ app.put('/objects/:id', (req, res) => {
         req.body.schemaName = req.body.schemaName + version
         var obj1 = new obj((req.body));
         obj1.save().then((doc) => {
-            logger(req.cookies.token, "API", "object", doc._id, req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "UPDATE");
+            //logger(req.cookies.token, "API", "object", doc._id, req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "UPDATE");
 
-            logger(req.cookies.token, "API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
+            //logger(req.cookies.token, "API", "object", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
 
             fetch(proxy_url + "/api/uam/user/" + jsonwebtoken.verify(req.cookies.token, jwt_key).userId, {
                 credentials: "include",
@@ -283,7 +276,7 @@ app.put('/objects/:id', (req, res) => {
 
 
     });
-    console.log("**/objects exited**");
+
 
 
 
@@ -291,42 +284,32 @@ app.put('/objects/:id', (req, res) => {
 
 
 app.get('/objects', (req, res) => {
-    console.log("**/objects entered**");
 
     obj.find({}).then((docs) => {
-        logger(req.cookies.token, "API", "object", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        //logger(req.cookies.token, "API", "object", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         res.send(docs);
     });
-    console.log("**/objects exited**");
 
 });
 
 app.get('/objects/:id', (req, res) => {
-    console.log("**/objects entered**");
 
     obj.find({ _id: ObjectId(req.params.id) }).then((docs) => {
-        logger(req.cookies.token, "API", "object", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        //logger(req.cookies.token, "API", "object", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         res.send(docs);
     })
-    console.log("**/objects exited**");
 
 });
 
 app.get('/objects/:id/:name', (req, res) => {
-    console.log("#@#@#@" + req.params.id);
-    console.log(req.cookies.token);
     getObjects(req.params.id, req.params.name, req.query.mode, req.query.filter || "", req.connection.remoteAddress, jsonwebtoken.verify(req.cookies.token, jwt_key).userId, "actual", res, "", "", "", "", req.cookies.token);
 
 });
 
 
 getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, url, method, instanceId, wid, token) => {
-    console.log("**/get objects entered**");
-    console.log("##" + id);
-
-    console.log("##2" + token);
 
     if (filterText.length > 0 && mode != "undefined" && mode != undefined && mode == "showAll") {
 
@@ -334,7 +317,6 @@ getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, 
         var addedOne = false;
 
         obj.findById(id, (err, res22) => {
-            console.log("##");
             keys = Object.keys(res22.schemaStructure);
             for (var ip = 0; ip < keys.length; ip++) {
                 var cannotContinue = false;
@@ -364,9 +346,7 @@ getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, 
 
                 }
                 if (cannotContinue == false) {
-                    console.log(eval("res22.schemaStructure." + keys[ip] + ".type"));
-                    console.log(typeof (filterText))
-                    console.log(filterText);
+          
                     // if(eval("res22.schemaStructure."+keys[ip]+".type").indexOf(""))
                     if (ip != 0 && addedOne == true) {
                         search += ",";
@@ -377,7 +357,7 @@ getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, 
                 }
             }
             search += "]}";
-            logger(token, "API", "object", name, id, "success", userId, remoteAddress, "GET");
+            //logger(token, "API", "object", name, id, "success", userId, remoteAddress, "GET");
 
             fetch(proxy_url + "/api/objs/objects/" + id + "/" + name + "?filterText=" + filterText + "&mode=showAll&callMode=" + callMode + "&search=" + encodeURI(search), {
                 credentials: "include",
@@ -396,12 +376,11 @@ getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, 
 
 
 
-            // eval(name + '.find(' + (search) + ').then((docs)=>{console.log("AA");if(callMode=="actual"){res.send(docs)}else{return docs;}})');
 
         })
 
     } else if (filterText.length == 0 && mode != "undefined" && mode != undefined && mode == "showAll") {
-        logger(token, "API", "object", name, id, "success", userId, remoteAddress, "GET");
+        //logger(token, "API", "object", name, id, "success", userId, remoteAddress, "GET");
         fetch(proxy_url + "/api/objs/objects/" + id + "/" + name + "?filterText=" + filterText + "&mode=showAll&callMode=" + callMode, {
             credentials: "include",
             method: "GET",
@@ -420,8 +399,7 @@ getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, 
         // eval(name + '.find().then((docs)=>{if(callMode=="actual"){res.send(docs)}else{return docs;}})');
     }
     else {
-        console.log("@@@" + id + "@@@" + name);
-        console.log(token);
+   
         fetch(proxy_url + "/api/objs/objects/" + id + "/" + name + "?filterText=" + filterText + "&mode=&callMode=" + callMode, {
             credentials: "include",
             method: "GET",
@@ -439,10 +417,9 @@ getObjects = (id, name, mode, filterText, remoteAddress, userId, callMode, res, 
             }
             res.send(docs);
         });
-        // eval(name + '.findById("' + id + '",(err,docs)=>{console.log("**************");console.log(docs);console.log("**************");if(callMode=="actual"){res.send(docs)}else{console.log("EEEEEE");console.log(docs);doACall(url,method,docs,instanceId,wid,name);return docs;}})');
 
     }
-    console.log("**/objects exited**");
+ 
 
 }
 
@@ -453,22 +430,17 @@ doACall = (url, method, bodyJSON, instanceId, wid, name, token) => {
     var param = "";
     if (new URL(url).pathname.indexOf(":") != -1) {
         param = new URL(url).pathname.substr(new URL(url).pathname.indexOf(":") + 1)
-        console.log("####");
-        console.log(param);
-        console.log("####");
+
         var jsonBody = JSON.parse(bodyJSON);
 
         var paramValue = (eval("jsonBody." + name + "[0]." + param));
-        console.log(new URL(url).pathname.substr(new URL(url).pathname.indexOf(":")));
         url = url.replace(new URL(url).pathname.substr(new URL(url).pathname.indexOf(":")), paramValue)
-        console.log("###" + url)
 
 
     }
 
 
     if (method == "GET" || method == "DELETE") {
-        console.log("#24" + wid);
         fetch(url, {
             method: method,
             headers: {
@@ -480,18 +452,12 @@ doACall = (url, method, bodyJSON, instanceId, wid, name, token) => {
             }
         }).then((prom) => prom.json()).then((res) => {
 
-            console.log("##25" + wid);
             instanceWorkitemExecutor(instanceId, wid, JSON.stringify(res), null, null, "internal");
 
 
 
-            console.log(res);
         })
     } else {
-        console.log("#26" + wid);
-        console.log("$$$$$3");
-        console.log(url);
-        console.log("$$$$$3");
         fetch(url, {
             method: method,
             headers: {
@@ -503,23 +469,21 @@ doACall = (url, method, bodyJSON, instanceId, wid, name, token) => {
             body: bodyJSON
         }).then((prom) => prom.json()).then((res) => {
 
-            console.log("CALLED");
+      
             instanceWorkitemExecutor(instanceId, wid, JSON.stringify(res), null, null, "internal");
 
 
 
-            console.log(res);
         })
     }
 }
 
 app.get('/process', (req, res) => {
-    console.log("**/process entered**");
 
     var alpha = req.query.process;
     searchForm = req.query.searchForm;
     if (alpha != undefined) {
-        logger(req.cookies.token, "API", "process", "", req.query.process, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        //logger(req.cookies.token, "API", "process", "", req.query.process, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         searchQuery = "'_id':'" + ObjectID(alpha) + "'"
         process1.find({ "_id": ObjectId(alpha) }).select().then((docs) => {
@@ -531,45 +495,38 @@ app.get('/process', (req, res) => {
         });
     }
     else {
-        logger(req.cookies.token, "API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
-        console.log("");
+        //logger(req.cookies.token, "API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
         process1.find({ $and: [{ obsolete: { $ne: 'yes' } }, { deleted: { $ne: true } }] }).
             then((res1) => res.send(res1));
 
 
     }
-    console.log("**/process exited**");
 
 
 })
 app.delete('/objects/:id', (req, res) => {
-    console.log("**/objects entered**");
 
     _id = req.params.id;
     obj.deleteOne({ "_id": ObjectId(_id) }).then((doc) => {
-        logger(req.cookies.token, "API", "object", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "DELETE");
+        //logger(req.cookies.token, "API", "object", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "DELETE");
 
         res.send(doc)
     })
-    console.log("**/objects exited**");
 
 })
 
 app.post('/forms', (req, res) => {
-    console.log("**/forms entered**");
 
     var frm = new form1(req.body);
     frm.save().then((doc) => {
-        logger(req.cookies.token, "API", "form", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+        //logger(req.cookies.token, "API", "form", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
         res.send(doc);
     })
-    console.log("**/forms entered**");
 
 })
 
 app.delete('/forms/:id', (req, res) => {
-    console.log("**/forms entered**");
 
     var id = req.params.id;
 
@@ -579,26 +536,22 @@ app.delete('/forms/:id', (req, res) => {
         res.send({ deleted: true })
     })
 
-    console.log("**/forms entered**");
 
 })
 
 app.put('/forms/:id', (req, res) => {
-    console.log("**/forms entered**");
 
     id = req.params.id;
     var frm = new form1(req.body);
     form1.findByIdAndUpdate(id, req.body, (err, res1) => {
-        logger(req.cookies.token, "API", "form", "", res1._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
+        //logger(req.cookies.token, "API", "form", "", res1._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
 
         res.send(res1);
     })
-    console.log("**/forms exited**");
 
 })
 
 app.get('/forms/:id', (req, res) => {
-    console.log("**/forms entered**");
     id = req.params.id;
     canDelete = req.query.mode || "";
     var used = "N";
@@ -606,13 +559,10 @@ app.get('/forms/:id', (req, res) => {
     if (canDelete.length > 0 && canDelete === "canDelete") {
         process1.find({ formName: id }).then((processes) => {
             var count = 0;
-            console.log("AACC" + processes.length);
             if (processes.length == 0) {
-                console.log("SEND");
                 res.send(usedInstances)
             }
             for (var i = 0; i < processes.length; i++) {
-                console.log("PROCESS");
                 workitem.find({ processId: processes[i]._id, status: "scheduled" }).then((workitems) => {
                     if (workitems.length > 0) {
                         used = "Y";
@@ -626,38 +576,31 @@ app.get('/forms/:id', (req, res) => {
         })
     } else {
         form1.findById(id, (err, res2) => {
-            console.log(id);
-            logger(req.cookies.token, "API", "form", "", res2._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+            //logger(req.cookies.token, "API", "form", "", res2._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
             res.send(res2);
         })
 
     }
-    console.log("**/forms exited**");
 
 })
 
 app.get('/forms', (req, res) => {
-    console.log("**/forms entered**");
 
     fields = req.query.fields;
     form1.find({ deleted: { $ne: true } }).select(fields).then((docs) => {
-        logger(req.cookies.token, "API", "form", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        //logger(req.cookies.token, "API", "form", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
 
         res.send(docs);
     })
-    console.log("**/forms exited**");
 
 })
 
 
 
 app.put('/process/:id', (req, res) => {
-    console.log("##########");
-    console.log(req.params.id);
-    console.log("##########");
-    console.log("**/process entered**");
+
 
     var alpha = req.params.id;
 
@@ -669,7 +612,6 @@ app.put('/process/:id', (req, res) => {
         }).then((doc1) => {
             var searchParameters = '{ "latestVersionId": "' + alpha + '" }'
             processMaster.find(JSON.parse(searchParameters)).then((doc4) => {
-                console.log("@@@@@@@@WWW" + doc4);
                 searchId = doc4[0]._id;
                 processMaster.findByIdAndUpdate(searchId, {
                     latestVersionId: doc._id,
@@ -677,9 +619,9 @@ app.put('/process/:id', (req, res) => {
                         pastVersions: alpha
                     }
                 }, (err, doc3) => {
-                    logger(req.cookies.token, "API", "process", doc._id, req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "UPDATE");
+                    //logger(req.cookies.token, "API", "process", doc._id, req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "UPDATE");
 
-                    logger(req.cookies.token, "API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
+                    //logger(req.cookies.token, "API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
 
                     res.send(doc)
                 })
@@ -690,59 +632,49 @@ app.put('/process/:id', (req, res) => {
 
     })
     // process.findByIdAndUpdate(alpha, req.body).then((doc) => {
-    //     console.log("RESPONSE")
-    //     console.log(doc)
-    //     console.log("RESPONSE")
+
     //     res.send(doc);
     // })
-    console.log("**/process exited**");
 
 })
 
 
 app.post('/process', (req, res) => {
-    console.log("**/process entered**");
     var process2 = new process1(req.body);
     process2.save().then((doc) => {
         var master = new processMaster({ processName: req.body.processName, latestVersionId: doc._id, pastversions: [] });
         master.save().then((doc1) => {
-            logger(req.cookies.token, "API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+            //logger(req.cookies.token, "API", "process", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
             res.send(doc);
 
         })
     })
-    console.log("**/process exited**");
 })
 
 app.delete('/deleteAll', (req, res) => {
-    console.log("**/deleteAll entered**");
 
     process.deleteMany({}).then((doc) => {
-        logger(req.cookies.token, "API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "DELETE");
+        //logger(req.cookies.token, "API", "process", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "DELETE");
 
         res.send(doc)
     })
-    console.log("**/deleteAll exited**");
 
 })
 
 app.get('/process/:id', (req, res) => {
-    console.log("**/process entered**");
 
     id = req.params.id;
     process1.findById(id, (err, res1) => {
-        logger(req.cookies.token, "API", "process", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        //logger(req.cookies.token, "API", "process", "", req.params.id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         res.send(res1);
     }).select('processName formName');
 
-    console.log("**/process exited**");
 
 })
 
 app.post('/instance', (req, res) => {
-    console.log("**/instance entered**");
     processId = req.body.processId;
     fetch(proxy_url + "/api/uam/user/" + jsonwebtoken.verify(req.cookies.token, jwt_key).userId, {
         credentials: "include",
@@ -757,17 +689,15 @@ app.post('/instance', (req, res) => {
             status: "initiated"
         })
         ins.save().then((doc) => {
-            logger(req.cookies.token, "API", "instance", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+            //logger(req.cookies.token, "API", "instance", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
 
             res.send(doc);
         })
-        console.log("**/instance exited**");
     })
 
 })
 
 app.post('/instance/:id', (req, res) => {
-    console.log("**/instance entered**");
     instanceId = req.params.id;
     objects = JSON.parse(req.body.objects);
     oldObjects = [];
@@ -791,9 +721,7 @@ app.post('/instance/:id', (req, res) => {
             var escalationApplicable = false;
             var rejectionApplicable = false;
             //var differentEye=false;
-            console.log("###");
-            console.log(escalationDate);
-            console.log("###");
+           
             if ((data2).steps[0].days1 > 0) {
                 escalationApplicable = true;
                 escalationDate.setDate(escalationDate.getDate() + (data2).steps[0].days1)
@@ -813,9 +741,7 @@ app.post('/instance/:id', (req, res) => {
             // if ((data2).steps[0].difEye1 == true) {
             //     differentEye = true;
             // }
-            console.log("###");
-            console.log(escalationDate);
-            console.log("###");
+            
             var wi = new workitem({
                 processName: data2.processName,
                 processId: data.processId,
@@ -838,9 +764,8 @@ app.post('/instance/:id', (req, res) => {
 
 
             wi.save().then((doc) => {
-                console.log("WORKITEM SAVED");
-                console.log(doc);
-                logger(req.cookies.token, "API", "workitem", req.params.id, doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
+                
+                //logger(req.cookies.token, "API", "workitem", req.params.id, doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "POST");
                 if (doc.stepType == "Service Task") {
                     executeServiceTask(doc._id, doc.instanceId, doc.stepId, "1", doc.processId, req.cookies.token);
                 }
@@ -850,7 +775,6 @@ app.post('/instance/:id', (req, res) => {
         });
     })
 
-    console.log("**/instance exited**");
 
 
 })
@@ -868,7 +792,6 @@ app.get('/rejectionSteps/:wid', (req, res) => {
             var steps = res3.steps;
             var rejArr = {};
             for (var i = 0; i < steps.length; i++) {
-                console.log(stepId + "####" + steps[i]._id);
                 if (stepId == steps[i]._id) {
                     break;
                 } else {
@@ -901,7 +824,6 @@ app.get('/rejectionSteps/:wid', (req, res) => {
 app.get('/searchObjects/:id', (req, res) => {
     var instanceId = req.params.id;
     instance.findById(instanceId, (err, res1) => {
-        console.log(res1.objects.length);
 
         res.send(res1.objects);
     })
@@ -930,9 +852,7 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
             (doc) => {
                 workitem.find({ "instanceId": doc.instanceId, "status": "scheduled" }).then((docs) => {
 
-                    console.log("#R#R#R#");
-                    console.log(docs);
-                    console.log("#R#R#R#");
+                   
                     instance.findByIdAndUpdate(doc.instanceId, {
                         $push: {
                             workedUponUsers: {
@@ -944,16 +864,12 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
 
                     if (docs.length != 0) {
                         for (var d = 0; d < docs.length; d++) {
-                            console.log("###RR###" + docs[d]._id);
                             workitem.findByIdAndUpdate(docs[d]._id, {
                                 status: "parallelReject",
                                 user: res123.username,
                                 date: new Date()
                             }, (err, res44) => {
-                                console.log("#T#T#T");
-                                console.log(err);
-                                console.log(res44);
-                                console.log("#T#T#T");
+                                
                             });
                         }
 
@@ -966,11 +882,8 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
 
                     jumpTo = String(rejectStep).substr((String(rejectStep).indexOf("_") + 1));
                     jumpToLbl = String(rejectStep).substr(0, String(rejectStep).indexOf("_"));
-                    console.log(jumpTo + "#" + jumpToLbl + "#" + String(rejectStep));
                     for (var i = 0; i < doc1.steps.length; i++) {
-                        console.log("SEARCHING" + doc1.steps[i]._id);
                         if (doc1.steps[i]._id == jumpTo) {
-                            console.log("GOTCHA");
                             var status = "";
                             var date = new Date();
                             var escalationDate = date;
@@ -1020,7 +933,6 @@ app.get('/rejectWorkItem/:wid/:rejectToStep', (req, res) => {
                                     rejectionApplicable
                                 })
                                 wi1.save().then((doc) => {
-                                    console.log("SAVED1" + doc);
                                     res.send({})
 
                                 })
@@ -1084,7 +996,6 @@ app.post('/instance/:id/:wid', (req, res) => {
 })
 
 instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
-    console.log("**/instance entered**");
 
     workitem.findById(wid, (err, resWI) => {
         if (resWI.status != "finished" &&
@@ -1128,7 +1039,6 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
             }).then((prom) => prom.text()).then((res123) => {
                 res123 = JSON.parse(res123)
 
-                console.log("##XYZ5" + workitemId);
                 workitem.findByIdAndUpdate(workitemId, {
                     status: "finished",
                     user: res123.username,
@@ -1136,26 +1046,17 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                 }).then(
                     (doc) => {
                         workitem.find({ "instanceId": doc.instanceId, "status": "scheduled" }).then((docs) => {
-                            console.log("XYZ2" + docs);
 
                             if (docs.length == 0) {
                                 process1.findById(doc.processId, (err, doc1) => {
 
                                     for (var i = 0; i < doc1.steps.length; i++) {
-                                        console.log("COMPARING!!!" + doc1.steps[i]._id + "##" + wid);
-                                        console.log("###XYZ1####");
-                                        console.log(doc1);
-                                        console.log(wid);
-                                        console.log("###XYZ1####");
+                                     
 
                                         if (doc1.steps[i]._id == doc.stepId) {
-                                            console.log("MATCH FOUND!!!!" + "##" + wid);
                                             var status = "";
                                             i = i + 1;
-                                            console.log("###XYZ####");
-                                            console.log(doc1);
-                                            console.log(wid);
-                                            console.log("###XYZ####");
+                                       
                                             if (i == doc1.steps.length) {
                                                 status = "finished";
 
@@ -1167,7 +1068,6 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
 
                                             }
                                             else {
-                                                console.log("CAME INSIDE ELS" + "##" + wid);
                                                 status = doc1.steps[i]._id;
                                                 var date = new Date();
                                                 var escalationDate = date;
@@ -1211,7 +1111,6 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                     rejectionApplicable
                                                 })
                                                 wi1.save().then((doc) => {
-                                                    console.log("SAVED1" + doc);
                                                     if (doc.stepType == "Service Task") {
                                                         executeServiceTask(doc._id, doc.instanceId, doc.stepId, "1", doc.processId, token);
                                                     }
@@ -1259,7 +1158,6 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
                                                         rejectionApplicable
                                                     })
                                                     wi2.save().then((doc) => {
-                                                        console.log("SAVED2" + doc);
 
                                                         if (doc.stepType == "Service Task") {
                                                             executeServiceTask(doc._id, doc.instanceId, doc.stepId, "2", doc.processId, token);
@@ -1312,16 +1210,12 @@ instanceWorkitemExecutor = (id, wid, objects, token, res, mode) => {
     })
 
 
-    console.log("**/instance exited**");
 
 }
 
 executeServiceTask = (wid, instanceId, stepId, step, processId, token) => {
-    console.log("ENTER SERVICE TASK") + stepId;
     process1.find({ "steps._id": ObjectId(stepId) }).then((proc) => {
-        console.log("###########");
-        console.log(proc);
-        console.log(proc[0]);
+     
         var url = ""
         var method = ""
         var headers = [];
@@ -1350,13 +1244,7 @@ executeServiceTask = (wid, instanceId, stepId, step, processId, token) => {
                 break;
             }
         }
-        console.log(url);
-        console.log(method);
-        console.log(headers);
-        console.log(queryParams);
-        console.log(input);
-        console.log(output);
-        console.log("###########");
+  
 
         if (method == "GET" || method == "DELETE") {
 
@@ -1368,13 +1256,11 @@ executeServiceTask = (wid, instanceId, stepId, step, processId, token) => {
                 instance.findById(instanceId).then((ins) => {
                     var bodyJSON = {};
                     var inputObjectId = "";
-                    console.log("####$$$$" + input);
-                    console.log("####$$$$" + ins.objects);
+             
 
                     if (input.length > 0) {
                         for (var rt = 0; rt < ins.objects.length; rt++) {
                             if (input == ins.objects[rt].name) {
-                                console.log("####$$$$MATCHED" + input);
                                 inputObjectId = ins.objects[rt].id;
                                 break;
                             }
@@ -1416,7 +1302,6 @@ executeServiceTask = (wid, instanceId, stepId, step, processId, token) => {
                     })
 
 
-                    console.log(res);
                 })
             }
 
@@ -1424,13 +1309,11 @@ executeServiceTask = (wid, instanceId, stepId, step, processId, token) => {
             instance.findById(instanceId).then((ins) => {
                 var bodyJSON = {};
                 var inputObjectId = "";
-                console.log("####$$$$" + input);
-                console.log("####$$$$" + ins.objects);
+               
 
                 if (input.length > 0) {
                     for (var rt = 0; rt < ins.objects.length; rt++) {
                         if (input == ins.objects[rt].name) {
-                            console.log("####$$$$MATCHED" + input);
                             inputObjectId = ins.objects[rt].id;
                             break;
                         }
@@ -1438,13 +1321,11 @@ executeServiceTask = (wid, instanceId, stepId, step, processId, token) => {
 
                 }
                 if (inputObjectId.length > 0) {
-                    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$");
 
 
 
                     getObjects(inputObjectId, input, "", "", "", "system", "internal", null, url, method, instanceId, wid, token)
-                    console.log(bodyJSON);
-                    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$");
+                    
 
 
 
@@ -1465,20 +1346,16 @@ executeServiceTask = (wid, instanceId, stepId, step, processId, token) => {
 
 
 
-                        console.log(res);
                     })
                 }
 
             });
         }
     })
-    console.log("EXIT SERVICE TASK");
 }
 
 function addObjects(objects, instanceId, token) {
-    console.log("***ADDED OBJECTS TO INSTANCED ID:-****" + instanceId);
 
-    console.log(objects);
     var l = 0;
     var length = 0;
     var carryForward = [];
@@ -1503,10 +1380,7 @@ function addObjects(objects, instanceId, token) {
     for (key in objects) {
 
         l++
-        //console.log( objects[key]);
-
-        //console.log('{"' + key + '":' + JSON.stringify(objects[key]) + ',"instanceId":"'+instanceId+'"}');
-
+       
         fetch(proxy_url + "/api/objs/addObject/" + instanceId + "/" + key, {
             credentials: "include",
             method: "POST",
@@ -1518,9 +1392,7 @@ function addObjects(objects, instanceId, token) {
             body: JSON.stringify(objects[key])
         }).then((prom) => prom.text()).then((doc) => {
             var tempObj = JSON.parse(doc);
-            console.log("&&&&&1");
-            console.log(doc);
-            console.log("&&&&&1");
+          
             instance.findByIdAndUpdate(instanceId, {
                 $push: {
                     objects: {
@@ -1531,9 +1403,7 @@ function addObjects(objects, instanceId, token) {
 
 
             }).then((inst) => {
-                console.log("&&&&&2");
-                console.log(inst);
-                console.log("&&&&&2");
+            
 
             });
 
@@ -1571,7 +1441,6 @@ function addObjects(objects, instanceId, token) {
 app.delete('/process/:id', (req, res) => {
     var id = req.params.id;
 
-    console.log("DELETED" + id);
 
     process1.findByIdAndUpdate(id, {
         deleted: true
@@ -1600,23 +1469,19 @@ app.get('/instance', (req, res) => {
         search += '"user":' + '"' + initatedBy + '"';
     }
     search += "}"
-    console.log("XYZ" + searchProcess);
     if (searchProcess != undefined && searchProcess.length > 0) {
-        console.log(searchProcess);
         instance.find({ processId: searchProcess }, (err, res2) => {
             res.send(res2);
         })
     }
     else if (mode.length > 0 && mode == "listAll") {
-        console.log("########");
-        console.log(search);
-        console.log("########");
+   
         instance.find(JSON.parse(search), (err, res2) => {
             res.send(res2);
         })
     } else {
         instance.count({ status: searchStatus, processId: searchProcessId }).then((doc) => {
-            logger(req.cookies.token, "API", "instance", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+            //logger(req.cookies.token, "API", "instance", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
             res.send({ count: doc });
         })
@@ -1626,21 +1491,18 @@ app.get('/instance', (req, res) => {
 
 
 app.get('/instance/:id', (req, res) => {
-    console.log("**/instance entered**");
 
     instanceId = req.params.id;
     instance.findById(instanceId, (err, doc) => {
         var res1;
-        logger(req.cookies.token, "API", "instance", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        //logger(req.cookies.token, "API", "instance", "", doc._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
         res.send(doc);
 
         // process.findById(doc.processId, (err, res1) => {
-        //     console.log(res1.objects)
         //     res.send(res1.objects)
         // })
     }).select('objects processId')
-    console.log("**/instance exited**");
 
 })
 
@@ -1648,19 +1510,14 @@ app.get('/instance/:id', (req, res) => {
 //TIMER WORKITEMS
 setInterval(() => {
     workitem.find({ "status": "scheduled", "escalationApplicable": true, "escalationTriggered": false, "escalationStatus": "notTriggered" }).then((docs) => {
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$");
         for (var i = 0; i < docs.length; i++) {
             var currentDate = new Date().getTime();
             var wiescalation = docs[i].escalationDate.getTime();
-            console.log(docs[i].escalationDate.getTime());
-            console.log(currentDate);
-
-            console.log((wiescalation - currentDate));
+          
             if ((wiescalation - currentDate) < (300000 / 5)) {
                 waitForTrigger(docs[i]._id, currentDate, wiescalation, docs[i].escalationDate, docs[i].date, docs[i].instanceId);
             }
         }
-        console.log("$$$$$$$$$$$$$$$$$$$$$$$$");
     })
 }, 60000)
 
@@ -1697,16 +1554,11 @@ waitForTrigger = (triggerId, curr, esc, escDate, schDate, instanceId) => {
 //TIMER WORKITEMS
 
 app.get('/workitems', (req, res) => {
-    console.log("**/workitems entered**");
 
     var search = '';
 
-    console.log("SEARCH");
-    console.log(req.query.search);
     var searchStep = req.query.searchStep;
-    console.log("SEARCH");
     var userId = jsonwebtoken.verify(req.cookies.token, jwt_key).userId
-    console.log(proxy_url + "/api/uam/user/" + userId);
     fetch(proxy_url + "/api/uam/user/" + userId, {
         credentials: "include",
         headers: {
@@ -1714,26 +1566,21 @@ app.get('/workitems', (req, res) => {
         }
 
     }).then((prom) => prom.text()).then((res2) => {
-        console.log("#");
-        console.log(res2);
         res2 = JSON.parse(res2);
-        console.log("#");
 
         search = '{"$and":[ {"$or":['
         var roles = [];
         for (var t = 0; t < res2.roles.length; t++) {
             roles.push('{"participant":"' + res2.roles[t] + '"}');
         }
-        console.log("STEPID LENGTH" + searchStep);
         if (searchStep != undefined && searchStep.length > 0) {
             search += roles + ']},{"instanceId":"' + req.query.instanceId + '"},{"stepId": { "$in": [' + searchStep + '] } }]}'
         } else {
             search += roles + ']},{"status":"scheduled"}]}'
         }
-        console.log(search);
         workitem.find(JSON.parse(search)).then((data) => {
 
-            logger(req.cookies.token, "API", "workitem", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+            //logger(req.cookies.token, "API", "workitem", "", "", "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
             res.send(data)
         });
@@ -1741,12 +1588,10 @@ app.get('/workitems', (req, res) => {
     })
 
 
-    console.log("**/workitems exited**");
 
 })
 
 app.get('/workitems/:id', (req, res) => {
-    console.log("**/workitems entered**");
 
     var userId = jsonwebtoken.verify(req.cookies.token, jwt_key).userId;
 
@@ -1759,7 +1604,6 @@ app.get('/workitems/:id', (req, res) => {
     workitem.findById(id).then((data) => {
 
         if (canOpen != undefined && canOpen !== 'undefined' && canOpen.length > 0) {
-            console.log(data.currentUser + "#" + data.currentStatus + "#" + userId);
             if (data.currentStatus == "open" && data.currentUser != userId) {
                 res.send({ status: "open", user: data.currentUser })
             } else {
@@ -1776,15 +1620,13 @@ app.get('/workitems/:id', (req, res) => {
         }
 
 
-        logger(req.cookies.token, "API", "workitem", "", data._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+        //logger(req.cookies.token, "API", "workitem", "", data._id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
     });
-    console.log("**/workitems exited**");
 
 })
 
 
 app.put('/workitems/:id', (req, res) => {
-    console.log("**/workitems entered**");
 
     var userId = jsonwebtoken.verify(req.cookies.token, jwt_key).userId;
 
@@ -1801,8 +1643,7 @@ app.put('/workitems/:id', (req, res) => {
     })
 
 
-    logger(req.cookies.token, "API", "workitem", "", id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
-    console.log("**/workitems exited**");
+    //logger(req.cookies.token, "API", "workitem", "", id, "success", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "PUT");
 
 })
 
@@ -1811,14 +1652,14 @@ app.put('/workitems/:id', (req, res) => {
 
 
 app.use((req, res, next) => {
-    logger(req.cookies.token, "page", "index", "", "", "failure", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
+    //logger(req.cookies.token, "page", "index", "", "", "failure", jsonwebtoken.verify(req.cookies.token, jwt_key).userId, req.connection.remoteAddress, "GET");
 
     res.redirect("/index.html")
 })
 
 
 app.listen(port, () => {
-    console.log("Server started on:", port);
+    console.log("SPM started on:", port);
 })
 
 

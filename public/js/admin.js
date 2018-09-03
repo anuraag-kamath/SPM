@@ -109,7 +109,6 @@ loadUsers = () => {
 
 
             })
-            console.log(JSON.parse(res)[i].deactivated + "#" + deactivate);
             if (deactivate == true) {
                 document.getElementById("activate_" + JSON.parse(res)[i]._id).addEventListener('click', (ev) => {
                     selectedUserAction = ev.target.id;
@@ -245,9 +244,7 @@ document.getElementById('addUser').addEventListener('click', (ev) => {
                 body: jsonBody
             }).then((prom) => prom.text()).then((res) => {
                 var mess = JSON.parse(res).error;
-                console.log(mess);
                 if (mess.indexOf("OK") != -1) {
-                    console.log("REC");
                     document.getElementById('app').style.display = "block";
                     document.getElementById('pop-up').style.display = "none";
                     loadUsers();

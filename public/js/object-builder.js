@@ -23,7 +23,6 @@ loadObject = (objectId) => {
 
 
 document.getElementById('addChild').addEventListener('click', (ev) => {
-    console.log("ADD");
     addChild("", "String", "text", "", "", []);
 })
 
@@ -83,9 +82,7 @@ addChild = (name, type, control, pattern, required, options) => {
 
     }
     document.getElementById('control_' + ts).addEventListener('change', (ev) => {
-        console.log("#####");
-        console.log(ev.target.value);
-        console.log("#####");
+   
         if (ev.target.value == "text") {
             document.getElementById(String(ev.target.id).replace("control", "listAdd")).disabled = true;
             document.getElementById(String(ev.target.id).replace("control", "listAddButton")).style.visibility = false;
@@ -132,7 +129,6 @@ addOptions = (tid, optionValue) => {
     document.getElementById(String(tid).replace("listAddButton", "list")).appendChild(li);
     document.getElementById(button_ts).addEventListener("click", (ev1) => {
         ev1.preventDefault();
-        console.log(String(ev1.target.id).replace("btn", "li"));
         document.getElementById(String(ev1.target.id).replace("btn", "li")).parentNode.removeChild(document.getElementById(String(ev1.target.id).replace("btn", "li")))
     })
 }
@@ -140,7 +136,6 @@ addOptions = (tid, optionValue) => {
 document.getElementById('myForm').addEventListener('submit', (ev) => {
     ev.preventDefault();
     var nodes = document.getElementById('myFormDiv').childNodes;
-    console.log(nodes);
     var rootEl = document.getElementById('root').value;
     var json = ''
     for (var i = 0; i < nodes.length; i++) {
@@ -151,7 +146,6 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
             var elControl = String(_id).replace('div_', 'control_');
             var elPattern = String(_id).replace('div_', 'pattern_');
             var elRequired = String(_id).replace('div_', 'required_');
-            console.log(document.getElementById(elControl).value);
             var options = [];
             if (document.getElementById(elControl).value == "radio") {
                 var elList = String(_id).replace('div_', 'list_');
@@ -161,7 +155,6 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
                 }
             }
 
-            console.log(options);
             var temp = '"' + document.getElementById(elName).value + '":{"type":"' + document.getElementById(elType).value + '","control":"' + document.getElementById(elControl).value + '","options":"' + options.toString() + '","pattern":"' + encodeURI(document.getElementById(elPattern).value) + '","required":' + encodeURI(document.getElementById(elRequired).checked) + '}';
             json += temp;
             if (i != nodes.length - 1) {
@@ -172,7 +165,6 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
     }
     json += ''
     bodyJson = '{"schemaName":"' + rootEl + '","schemaStructure":{' + json + '}}'
-    console.log(bodyJson);
     var ext = "";
     var method = "POST";
     if (objectId != undefined && objectId.length > 0) {
@@ -180,11 +172,9 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
         method = "PUT";
 
     }
-    console.log(method);
     // var script = document.createElement("script");
     // script.src = "js/listObjects.js";
     // script.id = "listObjectsScript"
-    // console.log("#1");
     // document.getElementsByTagName("head")[0].appendChild(script);
     loadBar();
     document.getElementById("saveObj").disabled = true;
@@ -200,10 +190,7 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
     }).then((prom) => {
         return prom.text();
     }).then((res) => {
-        console.log("#1")
-        console.log(JSON.parse(res));
         if (JSON.parse(res) != undefined && JSON.parse(res).error != undefined && JSON.parse(res).error.length > 0) {
-            console.log("#2")
             removeLoadBar()
             document.getElementById("saveObj").disabled = false;
 
@@ -214,7 +201,6 @@ document.getElementById('myForm').addEventListener('submit', (ev) => {
                 document.getElementById('message').innerText = "";
             });
         } else {
-            console.log("#3")
 
 
             removeLoadBar()

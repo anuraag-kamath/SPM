@@ -43,11 +43,7 @@ getObjects = (filter) => {
                     tableBody += "</tr>"
 
                     document.getElementById('objectContent').innerHTML += tableBody
-                    console.log("****" + i + "********");
-
-                    console.log(i + "_" + JSON.parse(res2)[i]["instanceId"]);
-
-                    console.log("****" + i + "********");
+                
 
                 }
             }
@@ -67,7 +63,6 @@ getObjects = (filter) => {
 getObjects("");
 
 document.getElementById('seeker').addEventListener("keyup", (ev) => {
-    console.log(ev.target.value);
     var filter = ev.target.value;
     getObjects(filter);
 });
