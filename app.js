@@ -45,7 +45,7 @@ var app = express()
 
 var url = "";
 
-const port = process.env.SPM_PORT || 9099;
+const port = process.env.SPM_PORT || process.env.PORT || 9099;
 const jwt_key = process.env.JWT_KEY || "alphabetagamma"
 const email_id = process.env.EMAIL_ID || ""
 const email_password = process.env.EMAIL_PASSWORD || ""
