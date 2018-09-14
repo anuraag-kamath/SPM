@@ -13,8 +13,9 @@ fetch('/api/bpm/workitems?search={"status":"scheduled"}', {
 ).then(
     function (res) {
         ts = new Date().getTime();
-        document.getElementById('pop-up').style.display = "none";
-        document.getElementById('app').style.display = "block";
+        if (getCookie("firstTime") != "") {
+            document.getElementById('pop-up').style.display = "none";
+        } document.getElementById('app').style.display = "block";
 
         if (JSON.parse(res).length > 0) {
             document.getElementById('noWorkitems').style.display = "none";
@@ -35,11 +36,11 @@ fetch('/api/bpm/workitems?search={"status":"scheduled"}', {
                     wi_status = alpha[i].currentStatus;
                     if (alpha[i].currentUser == loggedInUser) {
                         wi_status += " by you"
-                    } else { 
+                    } else {
                         wi_status += " by some other user"
                     }
                 }
-                row.innerHTML = "<td class='smallScreen'>" + (i + 1) + "</td><td><u  class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + "  title='Click me to get all the objects associated with the selected workitem and instance!'>" + alpha[i]._id + "</u><div class='bigScreen'><hr>"+alpha[i].processName+"-"+alpha[i].stepName+"-"+wi_status+"</div></td><td class='smallScreen'><u  class='editUsers'  id='" + alpha[i].instanceId + "' title='Click me to get to know the current status of the instance!'>" + alpha[i].instanceId + "</u></td><td class='smallScreen'>" + alpha[i].processName + "</td><td class='smallScreen'>" + alpha[i].stepName + "</td><td class='smallScreen'>" + wi_status + "</td><td class='smallScreen'>" + alpha[i].date + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle' style='margin-top:50%'></i></h3></a></td>"
+                row.innerHTML = "<td class='smallScreen'>" + (i + 1) + "</td><td><u  class='editUsers' id=" + alpha[i]._id + " instanceId=" + alpha[i].instanceId + "  title='Click me to get all the objects associated with the selected workitem and instance!'>" + alpha[i]._id + "</u><div class='bigScreen'><hr>" + alpha[i].processName + "-" + alpha[i].stepName + "-" + wi_status + "</div></td><td class='smallScreen'><u  class='editUsers'  id='" + alpha[i].instanceId + "' title='Click me to get to know the current status of the instance!'>" + alpha[i].instanceId + "</u></td><td class='smallScreen'>" + alpha[i].processName + "</td><td class='smallScreen'>" + alpha[i].stepName + "</td><td class='smallScreen'>" + wi_status + "</td><td class='smallScreen'>" + alpha[i].date + "</td><td class='trigger' workitemId='" + alpha[i]._id + "'><a href='#" + alpha[i]._id + "'><h3><i class='far fa-play-circle' style='margin-top:50%'></i></h3></a></td>"
 
                 // {
 

@@ -112,7 +112,7 @@ loadPage = (page, message, popUp) => {
         } else {
 
             document.getElementById('app').innerHTML = "";
-            if(String(res).indexOf("not authorized")){
+            if (String(res).indexOf("not authorized")) {
                 removeLoadBar();
             }
             document.getElementById('app').innerHTML = res;
@@ -147,7 +147,7 @@ loadPage = (page, message, popUp) => {
             script.src = "js/" + page + ".js";
             script.id = "currentScript"
             document.getElementsByTagName("head")[0].appendChild(script);
-           
+
 
 
         }
@@ -169,8 +169,9 @@ document.getElementById('logout').addEventListener('click', (ev) => {
 
 hashCheck = () => {
     document.getElementById('app').style.display = "block";
-    document.getElementById('pop-up').style.display = "none";
-
+    if (getCookie("firstTime") != "") {
+        document.getElementById('pop-up').style.display = "none";
+    }
     document.getElementById("smallScreenOptions").style.display = "none";
 
     if (location.hash == "#listWorkitems" || location.hash == "#workitems") {
@@ -299,7 +300,9 @@ popUpConfirmBox = (confirmText, rejectText, paraText) => {
     button2.style.margin = "5px";
     popDiv.appendChild(para);
     popDiv.appendChild(button1);
-    popDiv.appendChild(button2);
+    if (rejectText.length > 0) {
+        popDiv.appendChild(button2);
+    }
     popDiv.style.textAlign = "center";
 
 
@@ -381,7 +384,7 @@ document.addEventListener('click', (ev) => {
 
 
 instanceIdLoader = (bindingId, calledFrom1) => {
-    
+
     document.getElementById(bindingId).addEventListener('click', (ev) => {
         instanceId = ev.target.id;
         if (String(ev.target.id).indexOf("_") != -1) {
@@ -393,7 +396,7 @@ instanceIdLoader = (bindingId, calledFrom1) => {
             processId = JSON.parse(proc).processId;
 
             calledFrom = calledFrom1;
-           
+
             loadPage("process", "Process Definition", "Y")
 
         })
@@ -410,3 +413,50 @@ document.getElementById('smallScreenBurger').addEventListener('click', (ev) => {
 
     }
 });
+
+
+
+document.addEventListener("DOMContentLoaded", (ev) => {
+    var curCookies = document.cookie;
+    console.log(getCookie("firstTime"));
+    if (getCookie("firstTime") == "") {
+        executeTutorials();
+    }
+})
+
+
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+executeTutorials = () => {
+    document.getElementById("index_header").style.opacity="0.4"
+    console.log("Executing Tutorials")
+    popUpConfirmBox("Close this amazing tutorial!:D", "", "1.Go to user tab and assign yourself all the roles to view and act on any section\n2.Create Objects\n3.Create Forms using the objects created in step 2 as either form or a table\n4.Create Process and use the forms created in step 3\n5.Trigger Process created in step 4\n6.Check out work items if your process has a user step");
+    document.getElementById("confirmButton").addEventListener("click", (ev) => {
+        console.log("A");
+        setCookie("firstTime","Y")
+        document.getElementById("index_header").style.opacity="1"
+        popupClose();
+    })
+}
