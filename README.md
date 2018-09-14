@@ -1,6 +1,6 @@
 Clone the repository using:-
 
-git clone https://<>@bitbucket.org/m4vr1ck/uam.git
+git clone https://<>@bitbucket.org/m4vr1ck/spm.git
 
 Go to the directory where the repository where the code is cloned.
 
